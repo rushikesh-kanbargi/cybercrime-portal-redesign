@@ -1,0 +1,2654 @@
+# Cybercrime Portal Redesign — Project Specification
+
+> **Evidence tagging used throughout this document**
+>
+> | Tag | Meaning |
+> |---|---|
+> | **VERIFIED** | Confirmed via an authoritative source (Tier‑1 government, or the official hackathon site). URL given. |
+> | **OBSERVED** | Seen directly by us on the live portal / in its own published documents during this research session (2026‑08‑25). |
+> | **REPORTED** | From users, community, or secondary press. User-research signal only — never authoritative truth. |
+> | **INFERRED** | A reasonable interpretation we drew from VERIFIED/OBSERVED facts. Explicitly our reasoning, not a fact. |
+> | **HYPOTHESIS** | An unvalidated belief. Must be tested. Never to be presented as fact in the pitch. |
+> | **NEEDS VERIFICATION** | We could not confirm this. Do not state it as fact anywhere. |
+>
+> **Source hierarchy:** Tier1 official government (cybercrime.gov.in, MHA, I4C, UIDAI, MeitY, DigiLocker) > Tier2 official hackathon site (buildwhatmovesindia.com) > Tier3 official technical docs > Tier4 reputable security/tech press > Tier5 community (Reddit/X/forums) as signal only.
+>
+> **Research date:** 2026‑08‑25. Portal content can change; re-verify before the pitch.
+
+---
+
+## 1. Project Overview
+
+### What
+A citizen-first redesign of India's **National Cyber Crime Reporting Portal (NCRP)** — `https://cybercrime.gov.in` — operated by the **Indian Cyber Crime Coordination Centre (I4C)** under the **Ministry of Home Affairs**. **VERIFIED** (portal footer: "Website Content Managed by Ministry of Home Affairs, Govt. of India"; Citizen Manual §1 Background).
+
+We are **not** building a government product, not integrating with any live government system, and not claiming endorsement. This is an **independent hackathon prototype** that demonstrates a better citizen experience for the same public need.
+
+### Why
+A person reporting cybercrime is, almost by definition, in the worst state to fill in a form: money just left their account, someone is threatening them, their child is involved, or their identity has been taken. Today the portal asks that person to do the system's classification work before it will listen to them.
+
+Concretely, and verifiably:
+
+- The official user manual for filing one "Other Cyber Crime" complaint is **91–92 pages long**. **OBSERVED** — `MHA-CitizenManualReportOtherCyberCrime-v10.pdf`, 92 PDF pages, internal pagination "Page 91 of 91", 6.1 MB, produced with "Microsoft: Print To PDF", created 2019‑08‑29, still linked from the live Citizen Manual page on 2026‑08‑25.
+- Before describing what happened, the citizen must pick **1 of 8 categories** and then a **sub‑category** from a dropdown. **VERIFIED** (Citizen Manual, Step 3).
+- The complaint form **mandatorily** requires the victim's **Father / Mother / Spouse Name** and a **National ID document upload** (Voter ID / PAN / Driving Licence / any govt-issued card). **VERIFIED** (Citizen Manual, Step 6a‑ii and Step 6a‑v, both marked "(Mandatory)").
+- The form asks the victim for a **"Reason for delay in reporting."** **VERIFIED** (Citizen Manual, Step 4‑ii).
+- The national helpline number **1930** appears on the homepage **only as a `.png` image inside a rotating carousel**, with **no `alt` text**, **no `title`**, and **no `tel:` link anywhere on the page**. **OBSERVED** (`images/fraction-slider/1930.png`; zero `tel:` occurrences in homepage HTML).
+
+That last one is the thesis of this project in a single artefact. The single most time-critical action a fraud victim can take is rendered as a decorative image, invisible to screen readers and un-tappable on a phone.
+
+### The redesign thesis
+> **The system should work for the citizen — the citizen should not have to work to understand the system.**
+
+Seven qualities, in priority order for this domain:
+**Calm → Trustworthy → Simple → Fast → Human → Accessible → Secure.**
+
+Calm comes first because every other quality fails if the victim is panicking. Secure is last in *design emphasis*, not in engineering rigour — security must be invisible and assumed, not performed at the user.
+
+### Hackathon context
+**"Build What Moves India"** — an independent builder initiative presented by **Varun Mayya in partnership with OpenAI**. Explicitly **not** a government hackathon. **VERIFIED** — https://buildwhatmovesindia.com/faq: *"It is an independent builder initiative presented by Varun Mayya in partnership with OpenAI."* and *"Is this an official government hackathon? No."*
+
+Full requirements in §3. The two constraints that dominate every decision in this document:
+
+1. **Submission deadline: 28 August 2026, 20:00 IST.** *"There is no grace period after the form closes."* **VERIFIED** — https://buildwhatmovesindia.com/brief. As of writing (2026‑08‑25) that is **~3 days**.
+2. **Mock/synthetic data is mandatory; real Aadhaar, PAN, OTPs, payments and passwords are explicitly prohibited.** **VERIFIED** — same source, "What not to do".
+
+### Repo and links
+| Item | Value |
+|---|---|
+| Repo | `/home/rushi/Projects/cybercrime-portal-redesign` |
+| Target being redesigned | https://cybercrime.gov.in/ |
+| Hackathon | https://buildwhatmovesindia.com/ · [brief](https://buildwhatmovesindia.com/brief) · [faq](https://buildwhatmovesindia.com/faq) |
+| I4C / MHA | https://mha.gov.in · https://i4c.mha.gov.in |
+| Official manuals used as primary evidence | `https://cybercrime.gov.in/UploadMedia/MHA-CitizenManualReportOtherCyberCrime-v10.pdf` · `https://cybercrime.gov.in/UploadMedia/instructions_citizenreportingcyberfrauds.pdf` |
+
+---
+
+## 2. Current-State Analysis of cybercrime.gov.in
+
+Analysis performed 2026‑08‑25 by fetching the live site and its own published documents. Where the complaint flow is behind an OTP-gated session we could not enter, we rely on the **portal's own official Citizen Manual** — a Tier‑1 source — and say so.
+
+**A note on intellectual honesty:** several things we expected to find wrong are, in fact, fine. We say so below. Overstating the current portal's failures would be both dishonest and bad strategy — the hackathon explicitly judges "Honesty".
+
+### 2.1 Homepage
+- **OBSERVED** — Server response is **fast**: TTFB ~123–148 ms, total ~0.20 s, 80.6 KB HTML, over three runs. **The portal is not slow at the origin.** Any claim that "the government site is slow" would be unverified; we will not make it. The performance problem, if any, is client-side asset count (36 CSS/JS references) and a carousel of full-bleed banner images — **NEEDS VERIFICATION** with a real field measurement (Lighthouse/CrUX) before we assert it.
+- **OBSERVED** — Above-the-fold real estate is spent on a **rotating banner carousel** (`pmhm.png`, `pmhm_mobile.png`, `banermbl.jpg`, `1930.png`), a "What's new" ticker, and social-media icons — not on the two things a visitor came for (report something / check something).
+- **OBSERVED** — Three complaint-category entry points are rendered as **images** (`child_women_crime.jpeg`, `financial.jpeg`, `other_crime.jpeg`) with **no `alt` text**.
+- **OBSERVED** — A prominent alert: *"Fake mails are being sent impersonating officials of Indian Cyber Crime Coordination Centre - CEO I4C, Intelligence Bureau and Delhi Police. The claim is FAKE."* This is genuinely good and important — a portal that is itself impersonated must say so. **Keep this idea in the redesign.**
+- **OBSERVED** — Footer: *"Best viewed in Mozilla Firefox, Google Chrome (B)"*, a visitor counter, and *"Last Updated: 05/06/2026"*.
+- **OBSERVED** — No visible complaint statistics, no "what happens next" explainer, no reassurance content, no service-status indicator.
+
+### 2.2 Navigation / Information Architecture
+**OBSERVED** — the mega-menu, reproduced from the live HTML:
+
+```
+Home
+Register a Complaint
+  ├ Women/Children Related Crime → Register ANONYMOUSLY | Register & TRACK
+  ├ FINANCIAL FRAUD
+  └ OTHER CYBER CRIME
+Track your Complaint
+Report & Check Suspect
+  ├ Suspect Repository → Check Suspect (mobile, email, etc.) | Check Suspect (Website/App)
+  ├ Report Suspect → Report Suspect to I4C
+  ├ Report Abuse to Social Media
+  ├ Know your Mobile connections - TAFCOP        (external → sancharsaathi.gov.in)
+  └ File an Appeal with GAC                       (external → gac.gov.in)
+Cyber Volunteers
+  ├ Cyber Volunteer Concept | Terms & Conditions | Register as a volunteer
+  ├ What is Unlawful Content
+  └ Login
+Learning Corner
+  ├ FAQ | Advisories | Cyber Safety Tips | Cyber Awareness
+  ├ Media Gallery → Photo | Video | Radio Jingles
+  ├ Daily Digest | Training Resources
+  └ Screen Reader | RTI Public Notices | CPGRAMS Public Notices
+Contact Us
+```
+
+Findings:
+- **OBSERVED** — The IA is organised by **institutional structure** (which I4C programme owns the thing), not by **citizen intent**. "Report & Check Suspect" mixes a victim action (report), a self-protection action (check), an external telecom service (TAFCOP), and a content-appeal tribunal (GAC) in one menu.
+- **OBSERVED** — "Screen Reader", "RTI Public Notices" and "CPGRAMS Public Notices" live under **"Learning Corner"**. An accessibility tool is filed under educational content.
+- **OBSERVED** — **The primary actions are ASP.NET postbacks, not URLs.** The homepage's "Register a Complaint", "Report & Track", "Report Anonymously", "Cyber Volunteers" and "Check Status" links are all `javascript:__doPostBack(...)`. Consequences, all **INFERRED** from that fact: you cannot bookmark "report financial fraud"; you cannot send a victim a direct link; browser Back is unreliable mid-flow; the flow is not shareable by a police officer, a bank, or a family member helping the victim.
+- **OBSERVED** — Deep pages *do* have real URLs (`/Webform/suspect_search_repository.aspx` etc.), so the postback pattern is inconsistent rather than universal.
+- **OBSERVED** — `/Webform/Crime_ReportCategory.aspx` and `/Webform/Crime_AuthorizeLogin.aspx` both 302 to `FileNotFound.htm`, i.e. commonly-circulated deep links are dead.
+
+### 2.3 Complaint registration (the core journey)
+**VERIFIED** from the portal's own Citizen Manual, `MHA-CitizenManualReportOtherCyberCrime-v10.pdf` (linked live on the portal 2026‑08‑25):
+
+| Step | What the citizen must do |
+|---|---|
+| 1 | Click "File a complaint" → read a message → tick "I Accept" → click "Report Other Cyber Crime" |
+| 2 | **Login/register**: User Name + Mobile Number + OTP (*"valid for 30 minutes"*) + **a security answer** |
+| 3 | Select **Category of complaint** (Mandatory) from 8 options, then **Sub‑Category** (Mandatory) |
+| 4 | **Incident Details**: Date & Time of incident (M); *Reason for delay in reporting*; "Where did the incident occur?" (M); Email ID (M); **Upload evidence — max 5 MB — (Mandatory)**; Additional information (Mandatory) |
+| 5 | **Suspect Details**: Suspect Name; Suspect ID type (Driving Licence / Email / Gov. Issued Card / Mobile Number / **PAN Card** / Voter Card / Other); suspect photograph; suspect full postal address incl. Country/State/District/**Police Station**/Pin code |
+| 6 | **Complainant Details**: Gender; DOB; **Father/Mother/Spouse Name (Mandatory)**; Relationship with victim; email; **Upload victim National ID — voter ID / PAN card / Driving Licence or any Govt. issued card — (Mandatory)**; Nationality; full postal address incl. State (M), District (M), Police Station, Tehsil, Pin code |
+| 7 | Preview & Submit → tick "I Agree" → "Confirm & Submit" → **Complaint ID** shown, plus SMS + email |
+| 8 | Download complaint PDF |
+
+The eight categories (**VERIFIED**, Manual Step 3): Online and Social Media Related Crime · Online Financial Fraud · Ransomware · Hacking · Cryptocurrency Related Crime · Online Trafficking · Online Gambling · Any Other Cyber Crime. Sub‑categories run to 30+ across §5.1–5.8 of the manual (e.g. Cyber Bullying/Stalking/Sexting, E‑Mail Phishing, Email Hacking, Fake/Impersonating Profile, Impersonating Email, Online Job Fraud, Online Matrimonial Fraud, Profile Hacking, Provocative Speech, Intimidating Email, Business Frauds/Email Takeover, Debit/Credit Card Fraud/SIM Swap Fraud, E‑Wallet Related Fraud, Fraud Call/Vishing, Internet banking Related Fraud, Ransomware, Unauthorized Access/Data Breach, Website Related/Defacement, Cryptocurrency Related Fraud, Online Trafficking, Online Gambling).
+
+Findings:
+- **VERIFIED** — Classification precedes narration. The citizen must correctly self-classify a crime, in legal-ish taxonomy, *before* the system will accept the story. A victim of a fake-investment-app scam must decide unaided between "Online Financial Fraud", "Cryptocurrency Related Crime", "Online and Social Media Related Crime" (if contacted on WhatsApp) and "Any Other Cyber Crime".
+- **VERIFIED** — The evidence field is worded *"Upload evidence if any (Maximum allowable limit is 5 MB). **(Mandatory)**"* — internally contradictory. **INFERRED**: a victim with no screenshot cannot proceed, or believes they cannot. Either way it is a hard stop at the worst moment. **NEEDS VERIFICATION** whether the *live* form enforces it as strictly as the manual states.
+- **VERIFIED** — **Father/Mother/Spouse Name is mandatory** to report a cybercrime. **INFERRED**: this is inherited from paper FIR conventions. It is a dignity and safety problem for, among others, adults estranged from family, survivors of domestic abuse, and anyone reporting a crime committed by a family member.
+- **VERIFIED** — **A National ID document upload is mandatory.** So the current portal *already* demands identity documents — and one of the accepted documents is PAN. This is essential context for §14: we are not adding identity friction that doesn't exist, we are deciding whether to keep it.
+- **VERIFIED** — *"Reason for delay in reporting"* asks the victim to account for their own trauma response before the system will help.
+- **OBSERVED** — Suspect details (Step 5) come **before** complainant details (Step 6). **INFERRED**: this is investigator-ordered, not victim-ordered. Most victims do not know the suspect and hit a wall of empty fields early.
+
+### 2.4 Financial fraud reporting
+**VERIFIED** — Portal Contact page: *"Report online financial fraud at the National cybercrime helpline number 1930."*
+**VERIFIED** — Portal text also lists: **112** (national police emergency), **181** (national women helpline), **1930** (cyber crime helpline).
+**VERIFIED** — `instructions_citizenreportingcyberfrauds.pdf`, still linked from the live Citizen Manual page, is titled **"Citizen Financial Cyber Frauds Reporting and Management System (For Delhi Only)"**. Its stated flow:
+
+1. Victim dials **1930** or reports on the portal. Banks/wallets/intermediaries may also report.
+2. If reporting by phone, the victim must supply: mobile number; name of bank/wallet/merchant debited; account no./wallet ID/merchant ID/UPI ID debited; transaction ID; transaction date; debit/credit card number if card credentials were used; screenshot of the transaction if available.
+3. *"After reporting of complaint/incident, the complainant will get a system generated Log-in Id/acknowledgement number through SMS/Mail. Using the above Log-in Id/acknowledgement number, the complainant **must complete registration of complaint on National Cybercrime Reporting Portal … within 24 hours. This is mandatory.**"*
+4. *"the designated Police Officer will quickly examine the matter and after verification report to concerned Bank/financial intermediary or payment wallet, etc., **for blocking the money** involved."*
+
+Findings:
+- **VERIFIED, and this is the single most important journey in the product**: calling 1930 is *not* the end. There is a **mandatory 24-hour follow-up on the portal**, and if the victim doesn't complete it the complaint does not progress. The handoff from phone to web is the highest-stakes, least-designed moment in the entire system.
+- **OBSERVED** — The only official document explaining that flow, published on the national portal in 2026, is scoped **"For Delhi Only"** and dates from 2020 (PDF CreationDate 2020‑09‑07). This is content rot on a life-critical page. **NEEDS VERIFICATION**: whether a current all-India version exists elsewhere that we did not find.
+- **NEEDS VERIFICATION** — the exact official status and current national scope of CFCFRMS, and any official "golden hour" wording. We will not use the phrase "golden hour" as if it were official policy unless verified.
+
+### 2.5 Women / children reporting
+- **OBSERVED** — Two distinct paths in the nav: **"Register ANONYMOUSLY"** and **"Register & TRACK"**. This is a genuinely good design decision and one of the best things on the portal.
+- **VERIFIED** — FAQ: for crimes related to women/children you may *"Report Anonymously"* for online rape/gang-rape content without providing personal information, though *"information related to the complaint should be accurate and complete."*
+- **INFERRED** — The trade-off is stated implicitly rather than explicitly: anonymous means untrackable. The redesign should make that trade-off an explicit, informed choice rather than two unexplained buttons.
+
+### 2.6 Anonymous reporting
+- **VERIFIED** — Exists, but **only** for the women/children category (per the nav structure and the FAQ). **INFERRED**: a victim of a threat/sextortion attempt who does not want their name in a police file has no anonymous path unless the content fits the women/children category.
+
+### 2.7 Report & Track / status tracking
+**VERIFIED** (Citizen Manual §6): to check status the citizen must go to the homepage → "File a Complaint" → read & accept acknowledgement → "Report Other Cyber Crime" → log in with **User Name + Mobile Number + OTP + security answer** → click "Check Status" → **"select date to search for your registered complaint."**
+
+Findings:
+- **VERIFIED** — Tracking requires remembering a **self-chosen User Name** from possibly months earlier, having the **same mobile number**, passing an **OTP**, answering a **security question**, and then **selecting a date**. There is no "enter your Complaint ID" path documented.
+- **VERIFIED** — There is no persistent dashboard concept: status is reached by re-entering the *reporting* flow.
+- **VERIFIED** — *"For future tracking of the complaint, the complainant will receive a complaint ID… **This complaint ID is not an FIR number** but is a confirmation of registration of complaint on the portal."* **INFERRED**: this distinction is critical and near-universally misunderstood; the portal states it in a 91-page PDF rather than at the moment of confirmation.
+- **VERIFIED** — Additional features exist and are hard to find: **Recover Your Username**, **Update Mobile Number**, **Case Withdrawal** (*"You shall not be able to withdraw a complaint, if FIR has been lodged."*).
+
+### 2.8 Suspect Repository ("Check Suspect")
+- **OBSERVED** — Two separate pages: identifiers (`suspect_search_repository.aspx`) and websites/apps (`suspect_search_websites.aspx`).
+- **OBSERVED** — Searchable identifier types: **Mobile** (*"Do not add +91 with Mobile number"*), **E-mail**, **Bank Account Number**, **Social Media**, **UPI ID**. Separately: **Website URL**, **Mobile App**.
+- **OBSERVED** — **No login required.** CAPTCHA required.
+- **OBSERVED** — Strong, honest disclaimer: *"This search database is created on the basis of cybercrime complaints received from the public. Indian Cybercrime Coordination Centre (I4C) does not certify the authenticity of complaints which are a matter of investigation with the local police authorities."* Plus notes that the database is incomplete and may contain errors, *"user discretion is advised."* Redress path: email cyberdost[at]mha[dot]gov[dot]in, or appeal via GAC.
+- **Assessment**: this is the **best-designed feature on the portal** — no login, one field, honest about its own limits, and a redress path for people wrongly listed. The redesign should keep its substance and fix only its discoverability and its split across two pages.
+
+### 2.9 Report Suspect
+- **OBSERVED** — Eight reportable types: Website URLs · WhatsApp Numbers/Telegram Handles · Phone Numbers · Email Addresses · SMS Headers/Numbers · Social Media URLs · **Deepfakes** · Mobile Apps.
+- **OBSERVED** — **No login, no OTP.** CAPTCHA required. Fields: State of Incident (M), the identifier (M), supporting evidence upload **max 5 MB** (M), Description **500-character limit** (M).
+- **OBSERVED** — Page states its purpose is building *"a repository for analysis and monitoring of cybercrime"* rather than victim support, and correctly redirects victims: *"If you have become a victim of Cybercrime, please report immediately at https://www.cybercrime.gov.in/ or 1930 National Helpline Number."*
+- **Assessment**: this proves the portal **already accepts a useful, meaningful submission with zero login**. That is the single strongest existing precedent for our no-login emergency mode (§13). We are not inventing a new posture; we are extending one the portal already uses.
+
+### 2.10 Cyber Volunteers
+- **OBSERVED** — Concept page, T&Cs, "Register as a volunteer", "What is Unlawful Content", and a separate volunteer **Login**. Sits as a top-level nav item equal in weight to "Track your Complaint".
+- **INFERRED** — Volunteering is a low-frequency, low-urgency action occupying prime navigational real estate.
+
+### 2.11 Safety resources / Learning Corner
+- **OBSERVED** — Citizen Manual, Cyber Safety Tips, Cyber Awareness, Daily Digest, Advisories, Training Resources, Photo/Video/Radio galleries.
+- **OBSERVED** — Cyber Safety Tips is segmented by audience (Parents / Teens / Organizations), text-based with two PDF handbooks (Hindi + English), no embedded imagery.
+- **OBSERVED** — Content is **overwhelmingly preventive**. There is no "I have just been scammed — do these five things in the next hour" page. The only response guidance found was of the form *"consult your relatives and friends."*
+- **INFERRED** — This is a major, cheap-to-fix gap. The moment of highest traffic intent ("I was just scammed") has the least content.
+
+### 2.12 FAQ
+- **VERIFIED** — Answers who can file (Indian citizens victimised by foreign nationals/companies; non-Indians victimised in India, *"must use valid Indian mobile number for registration"*), registration + 30-minute OTP, the anonymous option for women/children, recommended evidence types, that mandatory fields are marked with red asterisks, that an acknowledgement number enables tracking, and that complaints are *"handled by the concerned State/UT police authorities based on your selection of State/UT while reporting the complaint."*
+- **VERIFIED** — **The FAQ does not state a file-size limit.** The 5 MB limit is stated in the Citizen Manual and on the Report Suspect form. **INFERRED**: a citizen reading the FAQ learns the limit only by hitting it.
+- **INFERRED** — A dependency on a **valid Indian mobile number** is a hard eligibility gate for NRIs and for victims whose SIM was the thing that got compromised (SIM-swap victims — itself a listed sub-category).
+
+### 2.13 Contact / grievance
+- **VERIFIED** — A table of all 36 States/UTs with **Nodal Cyber Cell Officers** (name, rank, email) and **Grievance Officers** (name, rank, phone, email).
+- **OBSERVED** — Email addresses are obfuscated as `igp[dot]and[at]nic[dot]in` etc. **INFERRED**: anti-scraping intent, but the cost is that no address is clickable and every user must mentally decode it — a meaningful barrier for low-literacy and elderly users, and for anyone on a phone.
+- **VERIFIED** — Escalation is explained: *"Complainant who registered complaint using 'Report & Track' option … may contact the respective State/UT Nodal Officer or Grievance Officer if the response has not been appropriate."* Good that it exists; it is buried.
+
+### 2.14 Language support
+- **OBSERVED** — A `हिन्दी / English` toggle in the header, pointing to `Hindi/Defaulthn.aspx`.
+- **VERIFIED** — FAQ: *"The portal offers English and Hindi language options."*
+- **INFERRED** — Two languages for a country whose Constitution recognises 22 scheduled languages. **NEEDS VERIFICATION**: whether the Hindi version covers the entire complaint flow or only static pages — we could not test the OTP-gated flow.
+
+### 2.15 Accessibility
+Measured directly against the live homepage HTML. All **OBSERVED**:
+
+| Finding | Detail | Likely WCAG 2.1 criterion |
+|---|---|---|
+| No page language declared | `<html xmlns="...">` — **no `lang` attribute at all**, on a bilingual site | 3.1.1 Language of Page (A) |
+| Zoom blocked | **Two conflicting** `<meta name="viewport">` tags; the second sets `maximum-scale=1` | 1.4.4 Resize Text (AA) |
+| Missing alt text | **29 of 41** `<img>` elements have no `alt` attribute — including all four banner images, all three complaint-category cards, and every social icon | 1.1.1 Non-text Content (A) |
+| Text in images | The helpline number **1930** exists only inside `1930.png`, with no alt and no text equivalent | 1.4.5 Images of Text (AA) + 1.1.1 |
+| No skip link | Zero "skip to content" mechanism | 2.4.1 Bypass Blocks (A) |
+| No landmarks | No `<main>`, no `role="main"`, no `aria-label` on either `<nav>` | 1.3.1 / 2.4.1 |
+| Heading structure | **Three `<h1>` elements** on one page; h1×3, h2×1, h3×1, h4×2, h5×4 | 1.3.1 Info and Relationships (A) |
+| No declared conformance | The Website Policies page states no WCAG level and no **GIGW** conformance claim, despite GIGW being the Government of India's own web standard | — |
+| Provided instead | A High/Normal contrast toggle and a link to download NVDA from nvaccess.org | — |
+
+**INFERRED**: offering a screen-reader *download link* while shipping HTML with no `lang`, no landmarks and 29 missing alts is accessibility as gesture rather than as function. **This is not a "gotcha" — it is exactly the kind of measurable, fixable gap a redesign should target,** and it gives us objective before/after numbers for the pitch.
+
+### 2.16 Mobile experience
+- **OBSERVED** — A responsive framework is present (Bootstrap, `base-responsive.css`, a mobile-specific banner `pmhm_mobile.png`), so the site is not desktop-only.
+- **OBSERVED** — But: pinch-zoom is disabled via `maximum-scale=1`; the helpline is un-tappable (zero `tel:` links); the mega-menu has up to 3 levels of nesting; 88 inline `style="…"` attributes suggest layout patched per-breakpoint.
+- **NEEDS VERIFICATION** — Real device testing of the OTP-gated complaint form on a small screen. We have **not** done this and will not claim the form is broken on mobile. **HYPOTHESIS** (to be labelled as such if used): a 6-step form with 30+ fields, cascading State→District→Police Station dropdowns and a file upload is painful on a phone.
+- **VERIFIED** — This matters because the hackathon brief explicitly requires designing *"for real Indian users, including people on mobile devices, slower connections or with limited digital experience."*
+
+### 2.17 Login / OTP / CAPTCHA
+- **VERIFIED** — Complaint filing requires registration: **User Name + Mobile Number + OTP (30-min validity) + a security answer**. There is no password; the "User Name" is a self-chosen string that later becomes required for tracking.
+- **OBSERVED** — CAPTCHA is used on the no-login public tools (Suspect search, Report Suspect) but the OTP flow is what gates complaint filing.
+- **INFERRED** — Requiring a self-chosen **User Name** as a *retrieval key* months later is a design error: it is a credential the user has no reason to remember and no prompt to record. The portal itself acknowledges this by shipping a "Recover Your Username" feature.
+- **OBSERVED** — Only the homepage `__VIEWSTATE` was inspected (284 bytes, small). We make **no claim** about ViewState size or timeout behaviour inside the complaint form — **NEEDS VERIFICATION**.
+
+### 2.18 Forms & validation
+- **VERIFIED** — Mandatory fields marked with red asterisks (FAQ).
+- **VERIFIED** — Cascading location selection: Country → State → District → Police Station → Tehsil → Pin code, for both suspect and complainant.
+- **VERIFIED** — 500-character description cap on Report Suspect.
+- **NEEDS VERIFICATION** — Inline vs on-submit validation, error message wording, and whether data survives a validation failure. We could not enter the OTP-gated form. **We will not claim the form loses data on error.** Community signal on this is in §4.
+
+### 2.19 Evidence upload
+- **VERIFIED** — **5 MB maximum**, stated in the Citizen Manual (Step 4‑v) and on the Report Suspect form.
+- **VERIFIED** — Recommended evidence (FAQ): credit card receipts, bank statements, email copies, chat transcripts, URLs, webpage screenshots, images, videos, documents, mobile-number screenshots.
+- **INFERRED** — 5 MB is below a **single modern smartphone screen-recording**, and often below 3–4 high-resolution screenshots from a recent Android/iOS device. The manual explicitly invites "videos" while capping at 5 MB. **NEEDS VERIFICATION** whether the live limit is per-file or total, and the accepted MIME types — neither is documented.
+
+### 2.20 Confirmation
+- **VERIFIED** — On submit: a **Complaint ID** shown on screen, plus SMS and email to the registered mobile/email, plus a downloadable **PDF** of the complaint.
+- **Assessment**: substantively good — ID + SMS + email + PDF is a solid receipt. **INFERRED** the weakness is *informational*: at that moment the citizen is not told what happens next, who now owns the case, how long it takes, that the Complaint ID is not an FIR, or what to do in the next hour (freeze cards, change passwords, preserve evidence).
+
+### 2.21 Privacy & security messaging
+- **OBSERVED, and significant** — the page linked as **"Privacy Policy"** (`/Webform/privacy_policy.aspx`) is a privacy policy for the **Cyber Dost mobile Application**, not for the web portal. It describes collecting *"name, email address, age, user name, password and other registration information"* plus **"credit card information"**, device identifiers, IP addresses and **GPS location** — *"determine your current location"*, which *"may be sent to authorities."*
+- **OBSERVED** — It contains **no mention of Aadhaar, PAN or identity documents** — even though the complaint form mandatorily collects a National ID upload.
+- **OBSERVED** — It contains **no mention of the DPDP Act 2023**, no consent mechanism, no opt-in/opt-out, no purpose limitation.
+- **OBSERVED** — Contradiction: Website Policies states the site *"does not use cookies"*, while the homepage loads `jquery.cookie.js`. Minor, but it undermines the same page's credibility.
+- **OBSERVED** — Website Policies does contain one genuinely reassuring line: *"We will not identify users or their browsing activities, except when a law enforcement agency may exercise a warrant to inspect the service provider's logs."*
+- **INFERRED** — For a portal that mandates uploading a government ID and describes handling credit-card data, the absence of a portal-specific, DPDP-aligned privacy notice is the largest **trust** gap on the site — larger than any UI issue.
+
+### 2.22 Error handling
+- **OBSERVED** — Missing pages 302 to `FileNotFound.htm?aspxerrorpath=…`, exposing the internal ASP.NET path in the query string. Low severity, but it leaks stack detail into a user-facing URL.
+- **NEEDS VERIFICATION** — In-form error handling, session-expiry behaviour, and OTP-failure messaging.
+
+### 2.23 What the current portal genuinely does well
+Stated plainly, because the pitch is stronger for it:
+1. **Anonymous reporting exists** for the most sensitive category.
+2. **Suspect Repository is excellent**: no login, honest disclaimer about its own accuracy, and a redress path for the wrongly-listed.
+3. **Report Suspect proves zero-login submission works** at national scale.
+4. **The impersonation warning is prominent** and correctly placed.
+5. **Confirmation is substantive**: ID + SMS + email + PDF.
+6. **Escalation is real and named**: per-State Nodal and Grievance Officers, published with contact details.
+7. **The origin is fast** (~130 ms TTFB).
+8. **Content breadth is large**: manuals, advisories, daily digests, multi-format awareness material.
+
+We are redesigning the **experience**, not disputing the **institution**. Several of the above are ideas worth *amplifying*, not replacing.
+
+---
+
+## 3. Hackathon Requirements — "Build What Moves India"
+
+All **VERIFIED** from the official site unless marked otherwise. Retrieved 2026‑08‑25.
+
+### 3.1 Identity
+- **Name:** Build What Moves India — https://buildwhatmovesindia.com/
+- **Presented by:** Varun Mayya, **in partnership with OpenAI**. Source HTML carries `<meta name="generator" content="VM x OAI">`.
+- **Not a government hackathon.** FAQ: *"No. … Government or public-service representatives may be invited, but their participation or endorsement should not be assumed."*
+- Registration/submission data managed by Varun Mayya's team; *"The OpenAI team will not have access to this data."*
+- Announced ~2026‑08‑10 — **REPORTED** (Storyboard18).
+
+### 3.2 Brief (exact wording, https://buildwhatmovesindia.com/brief)
+> *"Pick one real problem you have faced on an Indian public-service website or digital service. Then build a simpler, clearer and more useful way to solve it."*
+> *"You could rethink a service related to travel, taxes, pensions, certificates, payments, grievances or any other public need. **IRCTC, EPFO and the Income Tax portal are examples, not a fixed list.**"*
+
+Prototype must:
+- *"Solve one clearly defined user problem."*
+- *"Let us complete the main journey from start to finish."*
+- *"Be easier to understand or use than the current experience."*
+- *"Be designed for real Indian users, including people on mobile devices, slower connections or with limited digital experience."*
+- *"Use mock or synthetic data wherever personal information, payments, OTPs or government systems would normally be involved."*
+
+Also: *"A static design is not enough."* Reviewers *"will test the citizen experience, not an admin panel."*
+
+> ⚠️ A third-party article claims participants must choose from "10 designated public service platforms." This is **contradicted by the official brief** ("examples, not a fixed list") and is **NOT VERIFIED**. Ignore it. Cybercrime reporting is a valid "grievances / public need" target.
+
+### 3.3 Dates
+| Milestone | Date | Tag |
+|---|---|---|
+| **Submission deadline** | **28 Aug 2026, 20:00 IST** — *"There is no grace period after the form closes."* | VERIFIED |
+| Stage 1 review (team + OpenAI) | 28 Aug – 1 Sep 2026 | VERIFIED |
+| Top 250 announced | End of Stage 1; everyone who submitted gets an email | VERIFIED |
+| Mentorship sprint | One week, WhatsApp group, five mentors | VERIFIED |
+| Resubmission of improved build | **7 Sep 2026** | VERIFIED |
+| 10 finalists announced | 8–12 Sep 2026 | VERIFIED |
+| Finale (Bengaluru, filmed not live-streamed) | **12 Sep 2026** | VERIFIED |
+| Registration open/close dates | — | **NEEDS VERIFICATION** — never published; the form was live on 2026‑08‑25 |
+
+> Two aggregator sites list **27 Aug** as the deadline and one lists eligibility as "college students". Both are **wrong** per the official site. Do not rely on aggregators.
+
+### 3.4 Judging criteria (exact wording; **weights are not published**)
+- **Problem** — *"Is this a real and important user problem?"*
+- **Working build** — *"Does the main journey actually work?"*
+- **Usability** — *"Is the experience simpler, clearer and more accessible?"*
+- **Product thinking** — *"Are the choices thoughtful and well explained?"*
+- **End-to-end thinking** — *"Does the solution address the backend, infrastructure and processes, not just the interface?"*
+- **Honesty** — *"Are limitations, mock data and dependencies clearly disclosed?"*
+
+FAQ: *"Will visual design alone win? Good design matters, but it is not enough."*
+FAQ: *"Every feature you demo must work. If you present it on stage, show it working; do not rely on an explanation."*
+FAQ: *"Is a Figma design enough? No."*
+
+**Strategic read (INFERRED):** six criteria, and only one of them is UI. "End-to-end thinking" and "Honesty" are where most hackathon submissions will lose points and where a spec like this document plus an in-product "what's real vs mocked" disclosure will win them. This directly shapes §21, §22 and §26.
+
+### 3.5 Submission requirements
+1. **A live public link** that *"opens in a browser without requesting access."* *"Reviewers will not download a mobile app."* Include **mock login credentials** if login is required.
+2. **One video, ≤ 2 minutes.** Minute 1 = demo as a citizen. Minute 2 = how you built it and why. Loom/OBS/public link fine.
+3. **A project summary under 250 words.**
+4. **Partner's registered email** if a team of two (blank if solo); both must register and each enter the other's email.
+5. *"Make sure every link works without requesting access."*
+- **A public GitHub repo is NOT a listed submission requirement.** Whether code is requested from finalists later is **NEEDS VERIFICATION**.
+- *"Never submit a real password or sensitive personal data."*
+- **Use the same email address at every step** — *"we cannot move an entry to another address."*
+
+### 3.6 Eligibility
+Solo or **team of two** (no larger). Both members register separately. **18+**. Not restricted to developers. Registration is *"an expression of interest"*, not a confirmed place. The registration form requires a **valid Indian mobile number** and asks about attending the Bengaluru finale; a formal residency/citizenship rule is **NEEDS VERIFICATION**. Entry fee: **NEEDS VERIFICATION** (no official statement; an aggregator says free).
+
+### 3.7 Prizes
+Top 10: *"a year of Codex Pro and a Codex Micro."* Top 3: *"a MacBook, on top of the above."* Winner: *"a trip to San Francisco (subject to visa) + All of the above."* No cash prize mentioned. Exact specs **NEEDS VERIFICATION**.
+
+### 3.8 Technical requirements
+- **Codex is mandatory.** FAQ: *"Is Codex mandatory? **Yes, for the prototype submitted to this hackathon.** Codex should be meaningfully involved in the build."* Brief: the prototype *"should be built with Codex or powered by an OpenAI model … not something added only for the submission."* **The submission must explain how Codex contributed.**
+- Other tools/libraries allowed *"provided you have the right to use them and disclose them in your submission."* No stack restriction otherwise.
+- Must be **web/browser-based**.
+- **Mock/synthetic data mandatory** for personal info, payments, OTPs, government systems.
+- **No live government integration** — *"No, unless the organizers provide a specifically approved public sandbox."*
+- Open-source release **not required**.
+- IP: *"You retain full rights to the build."*
+- *"There is no promise of adoption."*
+
+### 3.9 Explicitly prohibited (exact list)
+- *"Try to access, test or interfere with a live government system."*
+- *"Reverse-engineer private systems or use undocumented private APIs."*
+- *"Scrape personal or restricted information."*
+- **"Use real Aadhaar numbers, PAN details, passwords, OTPs, payment details, health information or other sensitive data."**
+- *"Present your prototype as an official government product."*
+- *"Use government logos in a way that suggests approval or partnership."*
+- *"Submit an old project with only small changes."*
+- *"Include code, assets or data you do not have permission to use."*
+
+Also: you may **study** an existing government site, but *"You cannot copy its code, build on its infrastructure or reverse-engineer its private systems. Your prototype should be an independent build."*
+
+> **This single rule resolves the entire Aadhaar/PAN debate for the hackathon** (see §14): real Aadhaar and PAN are *prohibited*, so any identity feature is mocked by rule, not by choice. What remains is the *product* question of whether we should design for them at all — and our answer is largely no.
+
+### 3.10 Requirements → design consequences
+| Requirement | Consequence for us |
+|---|---|
+| 3 days to deadline | Ruthless MVP. One-and-a-half journeys, finished, beats six journeys, half-built. (§25) |
+| "Every feature you demo must work" | Zero dead buttons. Anything not built gets removed from the UI, not stubbed. (§26) |
+| Live public URL, no access request | Static-friendly hosting, no login wall on the demo, published mock credentials. (§20) |
+| Codex meaningfully involved | Track and be able to describe it. Build log kept for the video's minute 2. |
+| Mock data mandatory | An explicit, visible "Prototype — mock data" disclosure in the product itself. (§18) |
+| "Honesty" is a judging criterion | Ship a `/whats-real` page listing exactly what is real vs mocked. This is a scoring feature, not a footnote. |
+| "End-to-end thinking" is a judging criterion | Ship the architecture + data model + API design as part of the submission, not just screens. (§21–23) |
+| Mobile / slow connections / low digital experience | Mobile-first, small JS payload, works without exotic APIs. |
+
+---
+
+## 4. User Research Findings
+
+**All findings in this section are Tier‑5 community signal, tagged REPORTED.** They indicate where to look; they never establish that a system behaves a certain way. Confidence ratings are honest, including where they are low.
+
+### 4.1 Research limitations — stated up front
+- **Reddit was inaccessible** to our tooling (hard block on `reddit.com` and `old.reddit.com`; zero results in the search index). r/india, r/legaladviceindia, r/personalfinanceindia and r/developersIndia almost certainly hold the richest first-person UX accounts, and we did not read them. **This is a real gap in this research.**
+- **X/Twitter reply threads were inaccessible.** Only official @CyberDost posts surfaced.
+- **Quora returned 403** on direct fetch; thread *titles* confirm relevant discussions exist, bodies do not.
+- **No official NCRP citizen mobile app was found** on Google Play or the App Store — nothing to review. (Consistent with the portal being web-only.)
+- What did work: LocalCircles large-N surveys, Grapevine, LinkedIn, Google Chrome Help Community, practitioner guides, mainstream press, parliamentary committee coverage.
+
+**Consequence:** our UX evidence is thinner than our process evidence. We say so in the pitch. Overclaiming here would violate the hackathon's "Honesty" criterion.
+
+### 4.2 Class A — Website / UX signals
+
+| # | Signal | Source | Date | Severity | Confidence |
+|---|---|---|---|---|---|
+| A1 | Session dies mid-form; **"Refreshing asks for OTPs again"**; progress lost; author needed **8 attempts** to submit one complaint. Quote: *"Reporting fraud shouldn't feel harder than committing it."* | [LinkedIn, product manager teardown](https://www.linkedin.com/posts/deep-dave-1b251811b_productmanager-productmanagement-civictech-activity-7346550466723368961-Ot1c) | ~mid‑2025 (date uncertain) | **High** | **Low‑Med** — 1 detailed first-person source, not independently corroborated. **Must be verified with a live filing attempt before we claim it.** |
+| A2 | OTP valid 30 min; and if the registered mobile is *"unavailable, changed, lost, or compromised"* the user **cannot check their own complaint status at all** | [scamscan.in guide](https://scamscan.in/guides/how-to-check-cyber-crime-complaint-status/) + [NCRP FAQ](https://cybercrime.gov.in/Webform/FAQ.aspx) | 2026 | **Med‑High** | **Med** — 2 sources; the FAQ half is VERIFIED |
+| A3 | Incident description has a **200-character minimum** and **rejects special characters** (`# $ @ ^ * \` ' ~ \| !`) — i.e. URLs, emails and UPI handles cannot be pasted into the narrative | [ncsai.in](https://www.ncsai.in/file-a-proper-complaint-with-details) · [nahar.om guide](https://blogs.nahar.om/fraud-cybercrime/cyber-crime-complaint-process-guide/) | 2026 | **Med** | **Med** — 2 independent guides agree; no victim complaint found about it specifically |
+| A4 | ID upload capped at 5 MB and **image formats only** (.jpeg/.jpg/.png) — victims typically hold **PDF** bank statements | [nahar.om guide](https://blogs.nahar.om/fraud-cybercrime/cyber-crime-complaint-process-guide/) | 2026 | **Med** | **Low‑Med** — 1 source |
+| A5 | Chrome Help Community thread: *"https://cybercrime.gov.in/, this site is not working in my mobile."* **Body and replies not retrievable — title only.** | [support.google.com](https://support.google.com/chrome/thread/125514713/) | unknown | **Unknown** | **Very Low — do not cite as proof of a mobile defect** |
+| A6 | Availability complaints; CAPTCHA reportedly blocking VPN/shared IPs | [isitdownorjustme](https://isitdownorjustme.net/status/cybercrime-gov-in/) · Quora thread title | unknown | **Med if real** | **Low — verify independently** |
+| A7 | **Category choice has real, irreversible consequences and is not self-evident.** Only the financial-fraud path triggers CFCFRMS bank-nodal coordination and account freezing; picking "Other Cyber Crime" forfeits the freeze window. An entire **cottage industry of explainer guides exists purely to tell citizens which button to press.** | [apnilaw](https://www.apnilaw.com/legal-articles/acts/how-to-file-a-complaint-on-the-national-cyber-crime-reporting-portal-ncrp-step-by-step-guide/) · [prashantkanha SOP](https://www.prashantkanha.com/ncrp-cfcfrms-cyber-fraud-sop-2026/) · [nahar.om](https://blogs.nahar.om/fraud-cybercrime/ncrp-portal-guide/) | 2026 | **High** | **Med‑High** — 3+ independent sources feel the need to disambiguate. The existence of the guides *is* the evidence. |
+| A8 | **Status vocabulary is opaque.** Citizens read **"Disposed"** as "case over"; it actually marks handover to a jurisdiction. Users are not told **which police unit** now holds the case. Guide calls stopping the chase on seeing "Disposed" *"the costliest error."* | [righttoinformation.wiki](https://righttoinformation.wiki/practical-guides/cybercrime-portal-complaint-disposed-without-action) (upd. 2 Aug 2026) · [scamscan.in](https://scamscan.in/guides/how-to-check-cyber-crime-complaint-status/) | 2026 | **High** | **Med‑High** — 2 independent practitioner sources |
+| A9 | Whether the Hindi version works **end-to-end** through the complaint flow | — | — | Unknown | **Insufficient evidence found. Needs direct testing.** |
+
+### 4.3 Class B — Process / helpline / police follow-up signals
+*A different problem class. A perfect UI fixes none of these — and we will say so.*
+
+| # | Signal | Source | Date | Severity | Confidence |
+|---|---|---|---|---|---|
+| B1 | 1930 unreachable and language-gated: caller tried **~20 times** to connect; operator demanded Kannada, cut the call when the caller couldn't speak it; retry in Tamil answered two questions, 10-minute hold, then cut. Followed by **scam calls impersonating "control room police"** asking for Aadhaar and card details. | [Grapevine post](https://www.grapevine.in/post/1930-cyber-crime-helpline-is-a-joke-got-more-scam-calls-after-reporting-a-fraud-d921be72-4b5b-46c3-988d-8d77384a2eb1) | unknown | **High** | **Low — single anonymous account, retrieved second-hand.** The post-report scam-call claim is **uncorroborated and must never be repeated as established fact.** |
+| B2 | 1930 congestion peaks 9 PM–1 AM and weekends; standing advice is to redial every 60 s, *"most callers get through within 5 attempts"* | [righttoinformation.wiki 1930 script](https://righttoinformation.wiki/1930-helpline-cyber-fraud-script) | 2026 | **Med‑High** | **Med** — consistent with B1 |
+| B3 | **51% of UPI-fraud victims filed no official complaint at all.** LocalCircles survey, Mar–Jun 2025, **32,000+ respondents across 365 districts** (15,862 answered this question). Of those who did complain: cyber crime portal 38%, UPI platform 25%, bank 13%, NPCI 13%, RBI 13%. Survey's own conclusion: *"User feedback points to need for easy/single click fraud complaint reporting that is responsive."* | [LocalCircles](https://www.localcircles.com/a/press/page/upi-fraud-complaint) · [NewsMeter](https://newsmeter.in/data-stories/51-percent-of-upi-fraud-victims-never-filed-a-complaint-localcircles-survey-750856) | 2025 | **High** | **High — the single strongest citizen-voice signal in this report** |
+| B4 | **~2.2%** of ~82 lakh portal complaints converted to FIRs (as of Dec 2025). 53.93 lakh NCRP complaints 2019–2024, ~₹31,594 cr defrauded. CFCFRMS Apr 2021–Nov 2025: ~₹7,647 cr stopped of ~₹52,969 cr reported, but only **~₹167 cr (~2.18%) actually restored to victims** — money frozen but not returned, because absent an FIR there is no legal route to release the lien. Parliamentary Standing Committee on Home Affairs is examining NCRP→e‑FIR conversion. **e‑Zero FIR** piloted in Delhi but gated at **>₹10 lakh** losses only. | [VisionIAS on the Standing Committee report](https://visionias.in/current-affairs/news-today/2025-08-22/security/parliamentary-standing-committee-on-home-affairs-releases-report-on-cyber-crime) · [Fox Mandal](https://foxmandal.in/News/parliamentary-panels-recommendations-on-cybercrime/) · [Daily Pioneer](https://dailypioneer.com/news/panel-turns-heat-on-big-tech) | Aug–Dec 2025 | **High** | **High** — multiple outlets citing an official parliamentary committee |
+| B5 | No police contact after filing; complaint marked disposed; user never told which station holds it | Quora thread titles + [righttoinformation.wiki](https://righttoinformation.wiki/practical-guides/cybercrime-portal-complaint-disposed-without-action) | 2026 | **High** | **Med** — thread titles only; consistent with B4's 2.2% |
+| B6 | Beneficiary bank's lien lapses after **7 working days** without a court order or police direction — frozen money can silently un-freeze | [righttoinformation.wiki](https://righttoinformation.wiki/1930-helpline-cyber-fraud-script) | 2026 | **High** | **Low‑Med** — 1 source, mechanistically consistent with B4 |
+
+### 4.4 Class C — Positive experiences (actively sought, genuinely found)
+We looked for these deliberately. A redesign pitch that presents the current system as uniformly broken is both wrong and less persuasive.
+
+| # | Signal | Source | Confidence |
+|---|---|---|---|
+| C1 | **Mumbai 1930 handled 8.7 lakh calls in 2025 and blocked/recovered ~₹202 crore** (~₹21 cr in December alone). A South Mumbai businessman lost ₹11.3 cr to phishing, called 1930 immediately — **₹11.19 cr frozen** and returned by court order. A Bandra doctor lost ₹1.29 cr to a "digital arrest" scam and reported **full recovery**. | [the420.in](https://the420.in/mumbai-1930-cyber-helpline-saves-202-crore-2025/) | Med‑High |
+| C2 | **It works for small sums too**, not only crore-scale: Pradeep Patwa recovered his **full ₹60,000**; Rakesh Pandey recovered **₹30,000 of ₹70,000** — both after complaining immediately. Separately ~₹40 lakh extortion payment frozen; ₹3.67 cr of ₹3.70 cr retrieved. | [Deccan Herald](https://www.deccanherald.com/india/maharashtra/mumbai-man-dials-1930-police-save-rs-40-lakh-extorted-by-cyber-fraudster-3036167) | Med |
+| C3 | **Fast reporting demonstrably works.** Bengaluru entrepreneur lost ₹2.7 cr, reported within hours on 22 Apr 2024; ₹1.7 cr set to be returned after funds were traced and frozen in mule accounts, plus ₹30 lakh traced later. | [Moneylife, 3 May 2024](https://moneylife.in/article/fraud-alert-use-golden-hour-to-report-scam-and-increase-your-chances-to-get-money-back/74091.html) | Med‑High |
+| C4 | State-level restitution at scale: Telangana facilitated **₹85.05 cr** in refunds; Odisha returned **₹1.91 cr** via an organised "money return mela"; Chandigarh recovered ₹2.79 cr in six months; Himachal reports complaints registered in **15–20 minutes** via linked helpline+portal. | [Deccan Herald](https://www.deccanherald.com/india/telangana/telangana-facilitates-rs-8505-crore-refund-to-cyber-fraud-victims-3137767) | Med |
+| C5 | Bengaluru police publicly advised citizens the national portal is the **best** channel for cyber crime complaints, over walking into a station | [Deccan Herald](https://www.deccanherald.com/amp/story/india%2Fkarnataka%2Fbengaluru%2Fnational-portal-best-for-cyber-crime-complaints-988520.html) | Low — headline-level |
+
+> **Note the framing on C4:** the fact that a state had to organise a *physical fair* to hand money back is itself evidence that the digital restitution loop (B4) does not close.
+
+### 4.5 What this research actually tells us
+1. **The two problem classes are asymmetric in evidence strength.** Class B (process) is near-certain: 51% non-reporting on n=32,000, 2.2% FIR conversion, 2.18% restitution. Class A (UX) is thin: the strongest UX finding (A1) is one person's account.
+2. **The speed of *first* report is the single highest-leverage variable.** C1, C2 and C3 all turn on it. B2 and B6 both attack it. This is the journey to build.
+3. **The most defensible UX targets** are A8 (status vocabulary), A7 (category fork), and reducing time-to-first-report — because the last one is what LocalCircles' own respondents asked for (B3).
+4. **Three things we must not claim to solve:** FIR conversion (B4), police follow-up quality (B5), 1930 call capacity and language routing (B1/B2). Saying this out loud scores on "Honesty".
+
+---
+
+## 5. Problem Definition & Ranking
+
+Severity = harm to the citizen. Frequency = how many people hit it. Hackathon Value = how well fixing it demonstrates the thesis in a 2-minute video, weighted by 3-day feasibility.
+
+| # | Problem | Category | Severity | Evidence | Frequency | User Impact | Hackathon Value |
+|---|---|---|---|---|---|---|---|
+| **P1** | **Time-to-first-report is far too long.** Category taxonomy → OTP registration → 6-step form → 30+ fields → mandatory ID upload → mandatory evidence file, all before anything is recorded. Meanwhile money-freeze success is a function of minutes. | Emergency journey / Forms / Process | **Critical** | VERIFIED (Manual Steps 1–8) · REPORTED B3 (51% never report), C1–C3 (fast reports recover money), A1 (8 attempts) | Every financial-fraud victim | Money that could have been frozen is gone | **Highest** — this is the whole pitch |
+| **P2** | **The citizen must classify the crime before the system will listen.** 8 categories × 30+ sub-categories, chosen in legal-ish vocabulary, at the moment of maximum panic. Wrong choice loses the bank-freeze path. | UX / IA / Digital literacy | **Critical** | VERIFIED (Manual Step 3) · REPORTED A7 (explainer-guide industry) | Every complainant | Abandonment, misrouting, forfeited freeze window | **Highest** — "tell us what happened" vs a dropdown is the most demoable contrast in the product |
+| **P3** | **The 1930 → portal handoff is undesigned.** Calling 1930 creates a mandatory 24-hour obligation to complete registration on the portal. Nothing in the web experience acknowledges or supports the citizen arriving mid-flow with an acknowledgement number. | Process / Communication / Emergency journey | **Critical** | VERIFIED (`instructions_citizenreportingcyberfrauds.pdf`, step iv: *"must complete registration … within 24 hours. This is mandatory."*) | Every 1930 caller | Complaint dies silently at the handoff | **Very High** — nobody else will build this; it proves end-to-end thinking |
+| **P4** | **"Disposed" does not mean resolved, and nobody is told.** Status vocabulary is police-internal. Citizens read closure, stop chasing the bank, and lose recoverable money. Victim is never told which unit holds the case. | Communication / Trust | **High** | REPORTED A8 (2 independent guides, "the costliest error") · VERIFIED (Complaint ID ≠ FIR, stated only in a 91-page PDF) | Every tracked complaint | Gives up on recoverable money | **Very High** — cheap to build, immediately legible in a demo |
+| **P5** | **Mandatory dignity-hostile and blocking fields.** Father/Mother/Spouse Name (M). National ID document upload (M). Evidence file (M) — worded *"if any … (Mandatory)"*. "Reason for delay in reporting." | Forms / Privacy / Trust / Accessibility | **High** | VERIFIED (Manual Steps 4 & 6) | Every complainant | Hard stops; retraumatising; excludes abuse survivors and the undocumented | **High** — removing a field is the most honest kind of redesign |
+| **P6** | **Accessibility is decorative, not functional.** No `lang`, pinch-zoom disabled, 29/41 images missing `alt`, no skip link, no landmarks, 3× `<h1>`, no WCAG/GIGW conformance claim — and **the national helpline exists only as an un-alt'd PNG with zero `tel:` links.** | Accessibility | **High** | OBSERVED (direct HTML audit) | Every screen-reader, low-vision, elderly and one-handed-phone user | Cannot use the site; cannot call the helpline | **Very High** — objectively measurable before/after, and the 1930-as-image finding is the single best slide in the deck |
+| **P7** | **No "I was just scammed — do this now" content.** All safety content is preventive. The highest-intent moment has the least guidance. | Communication / Content | **High** | OBSERVED (Cyber Safety Tips is prevention-only; only response advice found: *"consult your relatives and friends"*) | Every victim in the first hour | Evidence lost, cards not frozen, passwords not changed | **High** — trivial to build, huge perceived value |
+| **P8** | **No portal-specific, DPDP-aligned privacy notice.** The "Privacy Policy" link serves the *Cyber Dost mobile app's* policy, describing GPS collection and **credit card information**, with no mention of Aadhaar/PAN/ID documents and no mention of the DPDP Act — while the complaint form mandatorily collects a government ID. | Privacy / Trust / Security | **High** | OBSERVED (`/Webform/privacy_policy.aspx`) | Everyone who checks before trusting the site | Rational refusal to upload ID to a government site | **High** — consent-first UX is a strong differentiator |
+| **P9** | **Core actions have no URLs.** Register a Complaint / Report & Track / Report Anonymously are `javascript:__doPostBack(...)`. Nothing is linkable, bookmarkable, or shareable; Back is unreliable. | Technical / UX | **Med‑High** | OBSERVED (homepage HTML) | Anyone helped by another person; anyone who returns | Cannot be sent a link by a bank, an officer, or a family member | **Med** — invisible in a demo but powerful in the write-up |
+| **P10** | **Tracking requires remembering a self-chosen User Name, plus the same mobile, plus OTP, plus a security answer, plus a date.** There is no "enter your Complaint ID" path. | UX / Auth | **Med‑High** | VERIFIED (Manual §6, §7.1) · REPORTED A2 | Everyone who returns weeks later | Locked out of their own case; SIM-swap victims permanently | **High** — save/resume + ID-based lookup demos beautifully |
+| **P11** | **Session and OTP fragility mid-form.** *"Refreshing asks for OTPs again"*; 8 attempts to submit one complaint. | Technical / UX | **High if confirmed** | REPORTED A1 — **single source, NEEDS VERIFICATION** | Unknown | Total abandonment | **Med** — build the fix (durable local draft) but **do not assert the flaw as fact** |
+| **P12** | **Evidence rules are hostile and undocumented.** 5 MB cap while inviting "videos"; images-only for ID (PDF bank statements rejected); the FAQ never states any limit. | Forms / Technical | **Med** | VERIFIED (5 MB, Manual + Report Suspect form) · REPORTED A3/A4 | Most complainants | Fails at the last step | **Med** — client-side compression demos well |
+| **P13** | **Description field rejects the exact strings that matter** — 200-char minimum and special characters (`@ # $ * ! ~ \| ' \``) rejected, so URLs, emails and UPI IDs cannot be pasted into the narrative. | Forms / Validation | **Med** | REPORTED A3 — 2 guides, **NEEDS VERIFICATION on the live form** | Most complainants | Silent validation failure on a long form | **Med** |
+| **P14** | **Only 2 languages** (English, Hindi) for 22 scheduled languages; unverified whether Hindi covers the whole flow. | Multilingual / Accessibility | **Med‑High** | VERIFIED (FAQ) · A9 insufficient evidence | Hundreds of millions | Cannot report in their own language | **Med** — a full i18n build is out of scope in 3 days; a credible 3-language slice is not |
+| **P15** | **IA is organised by institution, not by intent.** "Screen Reader" under "Learning Corner". Cyber Volunteers at the same nav level as "Track your Complaint". External services (TAFCOP, GAC) mixed into a victim menu. | IA / Navigation | **Med** | OBSERVED (nav map) | Every first-time visitor | Cannot find the thing they came for | **Med** |
+| **P16** | **Suspect Repository is the best feature on the site and is buried** three levels deep, split across two pages, and known to almost nobody. | IA / Discoverability | **Med** | OBSERVED | Anyone who could have avoided being a victim | Preventable fraud happens | **High** — a prevention feature in a reporting product is a great demo beat |
+| **P17** | **Stale, wrong-scoped content on life-critical pages.** The only financial-fraud instruction document is titled **"(For Delhi Only)"** and dates to 2020; the Citizen Manual is a 2019 Word→PDF print; the footer says *"Best viewed in Mozilla Firefox, Google Chrome."* | Content / Trust | **Med** | OBSERVED (PDF metadata + titles) | Anyone who reads the docs | Erodes trust in everything else on the site | **Low‑Med** — good rhetoric, not a build target |
+| **P18** | **Anonymous reporting exists for only one category.** A sextortion or threat victim who does not want their name in a file has no anonymous path. | Trust / Process | **Med** | VERIFIED (nav + FAQ) | Threat/sextortion victims | Under-reporting of the most coercive crimes | **Med** — the *trade-off explainer* is buildable; a new anonymous legal path is not ours to invent |
+| **P19** | **A valid Indian mobile number is a hard gate** — including for SIM-swap victims, whose compromised number is the very thing the portal demands. | Auth / Edge case | **Med** | VERIFIED (FAQ) | NRIs, SIM-swap victims | Cannot report the crime that took their number | **Med** — a great edge case to *name* honestly even if unsolved |
+| **P20** | **Confirmation says what happened, not what happens next.** Complaint ID + SMS + email + PDF is good; the citizen is told nothing about ownership, timeline, or the next hour's actions. | Communication | **Med‑High** | VERIFIED (Manual Step 7) · INFERRED | Every complainant | Anxiety, repeat filing, abandonment | **High** — cheap, and the emotional payoff of the demo |
+
+### 5.1 Problems we are explicitly NOT solving
+Stated so the pitch cannot be accused of overreach:
+- **FIR conversion (2.2%)** — requires legislation and police process change. Not a UI problem.
+- **Police follow-up quality** — not a UI problem.
+- **1930 call-centre capacity and language routing** — an operations problem.
+- **Lien expiry after 7 working days** — a banking-regulation problem.
+- **Actual money recovery** — we can shorten the path to the freeze request; we cannot execute it.
+
+We will *surface* these honestly inside the product (see §26 and the `/whats-real` page), because naming a limit you cannot fix is a design decision, not a failure.
+
+---
+
+## 6. Personas
+
+Thirteen personas. Each is grounded in a VERIFIED portal behaviour or a REPORTED signal from §4 — none is invented whole-cloth. Where a persona rests on assumption, it says so.
+
+---
+
+### P‑1 · Ramesh, 41 — the money-loss victim
+*Grounded in: B3 (51% never report), C1–C3 (fast reports recover money), P1, P3.*
+- **Goal:** Stop the money before it moves again. Everything else is secondary.
+- **Context:** Small-business owner, Nagpur. ₹1.8 lakh left his current account at 11:40 PM via a fake "KYC update" link. Has an SMS alert and a UPI reference number.
+- **Emotional state:** Adrenaline, self-blame, tunnel vision. Cannot read more than one sentence at a time.
+- **Pain points:** Must choose between "Financial Fraud" and "Other Cyber Crime" without knowing only one triggers the bank-freeze path (A7). Must register with OTP before anything is recorded. Must upload a National ID at 11:40 PM (VERIFIED, Step 6a‑v).
+- **Digital literacy:** Medium. Uses UPI, WhatsApp, Google Pay daily. Has never filed anything online with a government.
+- **Device:** Android phone, 6.1", one hand, in the dark. Mobile data.
+- **Accessibility needs:** None permanent. Situationally impaired: shaking hands, low light, panic-narrowed attention.
+- **Barriers:** Time. Every minute is money. The 5 MB upload cap when his bank statement is a PDF (A4).
+- **Desired outcome:** Within 5 minutes: the freeze request is in, he has a reference number, and he knows the three things to do in the next hour.
+
+---
+
+### P‑2 · Sneha, 27 — the hacked-account victim
+*Grounded in: sub-category "Profile Hacking" / "Email Hacking" (VERIFIED, Manual §5.1.3, §5.1.8), P19.*
+- **Goal:** Get the account back and stop the impersonator messaging her contacts.
+- **Context:** Instagram and email compromised. The attacker changed the recovery phone. Friends are receiving money requests in her name.
+- **Emotional state:** Violated, embarrassed, urgent. Watching the damage spread in real time.
+- **Pain points:** No money was lost, so "Financial Fraud" is wrong — but "Online and Social Media Related Crime → Profile Hacking" requires knowing that taxonomy exists. The portal offers no platform-recovery guidance; "Report Abuse to Social Media" is a separate nav item she will never find.
+- **Digital literacy:** High.
+- **Device:** iPhone + laptop.
+- **Accessibility needs:** None.
+- **Barriers:** The portal treats reporting and *recovery* as unrelated. She needs both, and only one exists here.
+- **Desired outcome:** File the report *and* be handed the platform-specific recovery links and the "lock everything down" checklist in the same flow.
+
+---
+
+### P‑3 · Anjali, 22 — the harassment / sextortion victim
+*Grounded in: VERIFIED anonymous path exists only for women/children; P18; sub-categories "Cyber Bullying/Stalking/Sexting", "Intimidating Email".*
+- **Goal:** Make it stop, without her family or her college finding out.
+- **Context:** A stranger has intimate images and is demanding money, threatening to send them to her contacts within 24 hours.
+- **Emotional state:** Terror, shame, isolation. Actively considering paying. At genuine risk of self-harm.
+- **Pain points:** **Father/Mother/Spouse Name is a mandatory field** (VERIFIED). For her this is not friction — it is the reason she may close the tab. The anonymous path exists but the trade-off (anonymous = untrackable) is never explained.
+- **Digital literacy:** High.
+- **Device:** Phone only. May be sharing the device or the household network.
+- **Accessibility needs:** **Privacy as an accessibility need** — browser history, notifications, and a visible tab title are all threats.
+- **Barriers:** Fear of exposure exceeds fear of the crime.
+- **Desired outcome:** Report safely; be told plainly *do not pay, do not delete, here is what happens next*; understand exactly what anonymity costs her; have a quick-exit that clears the screen.
+
+---
+
+### P‑4 · Suresh, 48 — the parent reporting a child-related crime
+*Grounded in: VERIFIED "Women/Children Related Crime" category with two paths; portal's stated "special focus on cybercrime against women and children".*
+- **Goal:** Protect his 13-year-old daughter and get the content taken down.
+- **Context:** A stranger groomed her over a gaming chat and now has images.
+- **Emotional state:** Rage, guilt, protectiveness. Will not read a 91-page manual.
+- **Pain points:** Must choose "Register ANONYMOUSLY" vs "Register & TRACK" with no explanation of consequences. Must decide "Relationship with the victim" (VERIFIED, Step 6a‑iii) in a form built assuming complainant = victim.
+- **Digital literacy:** Medium.
+- **Device:** Android phone; laptop available.
+- **Accessibility needs:** None.
+- **Barriers:** Reporting on behalf of a minor is a first-class case treated as an edge case.
+- **Desired outcome:** Report as a parent; get takedown help; be told what to say to his daughter and what not to delete.
+
+---
+
+### P‑5 · Farhan, 34 — the identity-theft victim
+*Grounded in: VERIFIED mandatory National ID upload; P8 (no portal privacy notice); B1 (post-report impersonation calls — low confidence).*
+- **Goal:** Stop accounts and loans being opened in his name.
+- **Context:** A loan app account and a SIM were issued using his documents.
+- **Emotional state:** Slow-burning dread. This is not one incident but an ongoing bleed.
+- **Pain points:** The portal demands he **upload a government ID** to report that his government ID was misused — while its own "Privacy Policy" is the Cyber Dost *app's* policy and mentions no ID handling at all (OBSERVED). His hesitation is rational, not paranoid.
+- **Digital literacy:** High.
+- **Device:** Laptop.
+- **Accessibility needs:** None.
+- **Barriers:** Justified distrust of giving more identity data to fix an identity problem.
+- **Desired outcome:** File without handing over more than necessary; be told exactly what is stored, for how long, and who sees it, *before* uploading anything.
+
+---
+
+### P‑6 · Meera, 31 — the suspicious-link recipient (not yet a victim)
+*Grounded in: OBSERVED Suspect Repository (no login, CAPTCHA, 5 identifier types) and its burial three levels deep (P16).*
+- **Goal:** Find out in 20 seconds whether this number/link is a known scam, before she acts.
+- **Context:** A WhatsApp message from an unknown number claiming to be a courier, with a payment link.
+- **Emotional state:** Mildly suspicious, low commitment. Will leave instantly if it takes effort.
+- **Pain points:** The Suspect Repository is exactly what she needs and she has no idea it exists. It is split across two pages (identifiers vs websites/apps) so she may search the wrong one and see "not found".
+- **Digital literacy:** High.
+- **Device:** Phone, mid-conversation.
+- **Accessibility needs:** None.
+- **Barriers:** Discoverability, and the 5-vs-2 identifier-type split.
+- **Desired outcome:** Paste anything, get an honest answer including *"we don't know"*, and be told what to do next either way.
+- **Why she matters:** She is the only persona who can still be prevented from becoming P‑1. A reporting portal that also prevents is strictly better.
+
+---
+
+### P‑7 · Vikram, 38 — the suspect-checker (due diligence)
+*Grounded in: OBSERVED Suspect Repository disclaimer and redress path.*
+- **Goal:** Verify a seller / employer / matrimonial match before sending money or documents.
+- **Context:** About to pay a ₹40,000 advance to a Facebook Marketplace seller.
+- **Emotional state:** Calm, deliberate, sceptical.
+- **Pain points:** Needs to understand what "not found" means — absence of evidence is not evidence of safety, and the portal's own disclaimer says the database is incomplete.
+- **Digital literacy:** High.
+- **Device:** Desktop.
+- **Accessibility needs:** None.
+- **Barriers:** Risk of false confidence from a clean result.
+- **Desired outcome:** A result that is explicitly probabilistic and never says "safe".
+
+---
+
+### P‑8 · Kavita, 29 — the suspect-reporter (altruist)
+*Grounded in: OBSERVED Report Suspect form — no login, 8 identifier types, 5 MB, 500 chars.*
+- **Goal:** Report a scam number so nobody else falls for it. She lost nothing.
+- **Context:** Recognised a fraud attempt and did not fall for it.
+- **Emotional state:** Civic, mildly annoyed, low patience. Zero personal stake.
+- **Pain points:** She is not a victim and the whole site is built for victims. Report Suspect already handles her well — no login, one identifier, done — but she'd never find it.
+- **Digital literacy:** High.
+- **Device:** Phone.
+- **Accessibility needs:** None.
+- **Barriers:** Any login kills this persona entirely.
+- **Desired outcome:** 30 seconds, no account, a thank-you.
+
+---
+
+### P‑9 · Prakash, 52 — the existing complainant
+*Grounded in: VERIFIED tracking flow (User Name + mobile + OTP + security answer + date); A8 ("Disposed"); P4, P10, P20.*
+- **Goal:** Find out whether anything is happening. Filed 6 weeks ago. Silence.
+- **Context:** Lost ₹95,000. Has a Complaint ID on a piece of paper. Does not remember the "User Name" he invented.
+- **Emotional state:** Resigned, mistrustful, increasingly angry.
+- **Pain points:** Cannot track with the Complaint ID he was given. Must re-enter the *reporting* flow to check status. If he gets in, he may see **"Disposed"** and conclude it is over — the single costliest misreading in the system (A8).
+- **Digital literacy:** Low‑medium.
+- **Device:** Phone; asks his son for help.
+- **Accessibility needs:** Larger text.
+- **Barriers:** A credential he had no reason to remember (the portal ships a "Recover Your Username" feature, which is an admission).
+- **Desired outcome:** Enter the Complaint ID, see plain-language status, know which unit holds it, know what he can do next.
+
+---
+
+### P‑10 · Lakshmi, 44 — the low-digital-literacy user
+*Grounded in: hackathon brief's explicit requirement to design for "limited digital experience"; VERIFIED form complexity; P2, P5.*
+- **Goal:** Tell someone what happened. She does not know the word "cybercrime".
+- **Context:** A caller impersonating a bank officer talked her through a screen-share app and drained ₹22,000.
+- **Emotional state:** Confused, ashamed, afraid of being blamed.
+- **Pain points:** Every field is jargon. "Sub-Category of Crime." "Where did the incident occur?" She does not know what a URL is. She has no idea what to write in a **200-character-minimum** description (A3).
+- **Digital literacy:** Low. WhatsApp voice notes and YouTube only. Reads Hindi slowly, English barely.
+- **Device:** Budget Android, 720p screen, patchy 4G.
+- **Accessibility needs:** Large text, high contrast, plain language at roughly a Class‑6 reading level, ideally audio.
+- **Barriers:** Language, jargon, literacy, shame, and the assumption that she can type a narrative.
+- **Desired outcome:** Answer three simple questions in her own words and have the system do the classification.
+- **Design implication:** **This persona is the acceptance test.** If Lakshmi can file in under 5 minutes, everyone can.
+
+---
+
+### P‑11 · Mr. Iyer, 71 — the elderly user
+*Grounded in: OBSERVED accessibility audit (§2.15), especially disabled pinch-zoom and text-in-images.*
+- **Goal:** Report a "digital arrest" scam that cost him ₹4 lakh of retirement savings.
+- **Context:** Held on a video call for six hours by people in fake police uniforms.
+- **Emotional state:** Deep humiliation, fear of being judged incompetent, fear of telling his children.
+- **Pain points:** **Pinch-zoom is disabled** (`maximum-scale=1`, OBSERVED) so he cannot enlarge text. The helpline is an **image** with no `tel:` link, so he cannot tap to call. CAPTCHA is hard to read.
+- **Digital literacy:** Low. Uses a phone for calls and WhatsApp.
+- **Device:** Phone with system font size already at maximum — which the viewport tag partially defeats.
+- **Accessibility needs:** Zoom must work. Tap targets ≥ 44 px. High contrast. No timed steps. Ideally a phone number he can press.
+- **Barriers:** Physical (vision, dexterity), technical (zoom lock), emotional (shame).
+- **Desired outcome:** Large, calm, unhurried, and a one-tap route to a human.
+
+---
+
+### P‑12 · Arjun, 24 — the smartphone-only user
+*Grounded in: hackathon brief requirement ("mobile devices, slower connections"); OBSERVED viewport and menu depth.*
+- **Goal:** File a complaint about an online job-fraud scam (₹6,500 "registration fee").
+- **Context:** Has never owned a laptop. Everything he does is on a phone.
+- **Emotional state:** Pragmatic, impatient, mild embarrassment.
+- **Pain points:** A 3-level mega-menu, cascading State→District→Police Station dropdowns, and a file upload — all one-handed. Evidence is already on the phone, so upload should be trivial; the 5 MB cap makes it not.
+- **Digital literacy:** High **on mobile**, near-zero on desktop conventions.
+- **Device:** Android, mid-range, 4G that drops in his building.
+- **Accessibility needs:** Thumb-reachable primary actions; must survive a dropped connection mid-form.
+- **Barriers:** Desktop-shaped interactions on a phone; no offline tolerance.
+- **Desired outcome:** Finish on the phone, in one sitting, and if the network drops, not lose anything.
+
+---
+
+### P‑13 · Divya, 33 — the unsure-which-category user
+*Grounded in: A7 (explainer-guide industry); VERIFIED 8 categories × 30+ sub-categories.*
+- **Goal:** Report something that is genuinely several crimes at once.
+- **Context:** Met someone on a matrimonial site. Over four months he built trust, then got her to "invest" ₹3.2 lakh in a crypto app that now won't let her withdraw.
+- **Emotional state:** Grief plus financial panic. Also grieving a relationship.
+- **Pain points:** Is this **Online Matrimonial Fraud**? **Online Financial Fraud**? **Cryptocurrency Related Crime**? All three are real categories (VERIFIED) and only one is the path wired to the bank-freeze mechanism (A7). She must guess, unaided, and the wrong guess costs her the freeze window.
+- **Digital literacy:** High.
+- **Device:** Laptop + phone.
+- **Accessibility needs:** None.
+- **Barriers:** The taxonomy assumes crimes come one at a time. Real ones don't.
+- **Desired outcome:** Describe it once, in her words, and let the system decide the category — and tell her *which* it chose and *why*, so she can correct it.
+- **Why she matters:** **P‑13 is the single best demo persona.** Her story defeats a dropdown and is solved elegantly by "tell us what happened". This is the story for the 2-minute video.
+
+---
+
+### 6.1 Persona → design pressure summary
+| Pressure | Personas | Feature it forces |
+|---|---|---|
+| Speed above all | P‑1, P‑12 | Emergency mode, no-login start (§13) |
+| Don't make me classify | P‑1, P‑10, P‑13 | Describe-first intake (§7, §15) |
+| Don't expose me | P‑3, P‑5 | Anonymity trade-off explainer, quick exit, data minimisation (§14, §18) |
+| I'm not the victim | P‑4, P‑8 | First-class "reporting for someone else" |
+| I can't read this | P‑10, P‑11 | Plain language, real i18n, working zoom (§16, §17) |
+| Where is my case | P‑9 | ID-based tracking, plain-language status (§10) |
+| Stop me before I'm a victim | P‑6, P‑7 | Surfaced identifier check (§10) |
+| Zero personal stake | P‑8 | No-login suspect reporting |
+| Never lose my work | P‑12, P‑1 | Local-first draft, save/resume (§10) |
+
+---
+
+## 7. Core Product Philosophy & Critical Idea Evaluation
+
+### 7.1 The central UX question: "tell us what happened" vs category-driven
+
+**The current model (VERIFIED):** category → sub-category → then the form. The citizen performs the state's classification work as the price of admission.
+
+**Three ways to change it:**
+
+| Option | Description | Verdict |
+|---|---|---|
+| **A. Keep category-first, improve it** | Better labels, plain-language descriptions, search over the taxonomy. | **Rejected.** It optimises a step that shouldn't exist. Does not help P‑10 (doesn't know the words) or P‑13 (crime spans three categories). Weak demo. |
+| **B. Pure free-text → AI classifies** | One textarea. Model returns the category. | **Rejected as the whole answer.** Blank-page paralysis is real: P‑10 will not know what to write; A3 reports a 200-char minimum on the current form and we should not reproduce that failure mode. A single unstructured field also loses the *specific* fields the freeze path needs (transaction ID, UPI ID — VERIFIED from the 1930 script). And it makes the product a demo of a model, not of a service. |
+| **C. Guided narration → structured extraction → confirmed classification** | **Chosen.** Three or four plain questions in the citizen's own words ("What happened?" · "Did you lose money?" · "When?" · "Do you have anything to show us?"). The system extracts entities, proposes a category **and shows its reasoning**, and the citizen confirms or corrects with one tap. | **Chosen.** |
+
+**Why C, precisely:**
+1. It removes the taxonomy from the citizen without removing it from the system — police still get a correctly categorised complaint.
+2. **It keeps the human in charge.** The category is *proposed*, never silently assigned. The citizen sees "We think this is **Online Financial Fraud** because you mentioned money leaving your account and a UPI reference — is that right?" and can change it. This satisfies the honesty criterion and is the correct pattern for a consequential, legally-adjacent decision.
+3. It degrades gracefully. If the model is unavailable, deterministic keyword rules pick a category and the citizen still confirms. **The journey never depends on an API call succeeding** — see §15.
+4. It solves P‑13 without inventing anything.
+5. It demos in 25 seconds.
+
+**The design rule this produces:**
+> **Narration first, classification second, confirmation always.**
+> The citizen tells the story. The system does the paperwork. The citizen approves the paperwork.
+
+### 7.2 Critical evaluation of every proposed idea
+
+Verdicts are **KEEP / MODIFY / REMOVE / ADD**, against a 3-day build. Reasoning is adversarial by design — several of these are being cut.
+
+---
+
+#### 1. Login / signup — **MODIFY (demote, never gate)**
+Current portal (VERIFIED): registration with mobile + OTP + a self-chosen User Name + a security answer is **required before a complaint can be filed at all**.
+
+But the same portal already accepts **Report Suspect submissions with no login whatsoever** (OBSERVED). So "identity must precede submission" is not even the portal's own consistent position.
+
+**Decision:** Login is **never** the entry point. The citizen reports first; identity is collected at the *end*, in exchange for something concrete (tracking, save/resume, updates). Rationale: at the moment of panic, an auth wall is where you lose the 51% (B3). Verification is a real requirement — it is just not a *first* requirement.
+
+**What we build:** a mock OTP step *after* the report is captured, presented as "Want updates on this? Verify your number." Skippable.
+
+---
+
+#### 2. Emergency / no-login mode — **KEEP (this is the product)**
+**Decision:** the primary path. Landing → "Money just left my account" → 3 questions → freeze request submitted with a reference number, no account, target **under 90 seconds**.
+
+**The counter-argument, taken seriously:** no-login invites abuse — spam, false complaints, harassment-by-proxy. That is a genuine risk. Mitigations: rate-limit per IP/device, CAPTCHA at submission (the portal already does exactly this on Report Suspect — OBSERVED), require verification *before the case escalates* rather than before it is *recorded*, and hold unverified reports in a lower-trust queue. **Nothing is lost by recording first and verifying second; everything is lost by verifying first.**
+
+Precedent is domestic, not invented: NCRP's own Report Suspect accepts a 5 MB file and a 500-character narrative with only a CAPTCHA.
+
+---
+
+#### 3. Aadhaar — **REMOVE (do not collect, do not integrate, do not mock as a feature)**
+This is the most important call in the document, so the full reasoning:
+
+1. **The hackathon explicitly prohibits it.** *"Use real Aadhaar numbers … or other sensitive data"* is in the "What not to do" list (VERIFIED). Not a judgement call.
+2. **Real integration is not available to us.** Aadhaar authentication requires UIDAI licensing as an AUA/KUA under the Aadhaar Act framework. A hackathon team cannot obtain it. **VERIFIED as a general framework; see §14 for the detailed position and remaining verification gaps.**
+3. **It does not solve the actual problem.** Verifying that the complainant is really Ramesh does not make the money come back faster. The bottlenecks are report *speed* (P1) and bank coordination (B4) — neither is identity-gated.
+4. **It actively harms the personas who need the product most.** P‑3 (harassment) and P‑5 (identity theft) are made *worse* by demanding stronger identity. Asking an identity-theft victim to prove identity with the identity system that failed them is a design error, not a security control.
+5. **Mocking it is worse than omitting it.** A fake "Verify with Aadhaar" button teaches people that this pattern is normal and invites exactly the impersonation the portal itself warns about (OBSERVED fake-mail alert; B1 reports scammers already asking victims for Aadhaar post-report). **We will not draw an Aadhaar box on a screen.**
+
+**Decision: not in the product. Not in the mock. Not on a slide as a "future integration".** We will state this position explicitly in the submission, because *choosing not to collect* is the kind of product thinking the "Product thinking" criterion rewards.
+
+---
+
+#### 4. PAN — **REMOVE (never ask; accept nothing that isn't needed)**
+The current portal accepts PAN as one option for the mandatory National ID upload, and as a suspect ID type (VERIFIED).
+
+**Decision: we ask for no PAN, at any point.** A PAN number identifies a taxpayer. It contributes nothing to freezing a fraudulent transaction, nothing to routing a complaint to a jurisdiction, and nothing to contacting the victim. Collecting it creates a high-value data liability for zero functional gain. Under DPDP-style data-minimisation logic this fails on its face.
+
+**The harder question — should we require *any* ID?** The current portal makes a National ID upload **mandatory** (VERIFIED). Our position: **no ID upload in the reporting flow.** What routing actually needs is a **district/state** (for jurisdiction) and a **contact number** (for follow-up). Identity assurance, if the state needs it, belongs at the point where the complaint converts to a legal proceeding — not at the point where a frightened person is trying to describe what happened. We will say this in the write-up as a deliberate, defended choice.
+
+---
+
+#### 5. DigiLocker — **MODIFY → reduced to a clearly-labelled, optional, mocked convenience**
+DigiLocker is the one identity idea with a defensible use: a victim who *chooses* to attach an official document could do so without typing. Partner API access for non-government developers, sandbox availability, and onboarding are covered in §14 — and **production integration cannot currently be verified by us, so we should mock this for the hackathon.**
+
+**Decision:** **cut from the 3-day MVP.** It is a P2 idea (§11). If it ever appears it must be (a) optional, (b) consent-first with a plain-English statement of exactly which document is fetched and why, (c) labelled "Simulated — not connected to DigiLocker", and (d) skippable in one tap. Given 3 days, building it would consume time that belongs to the core journey, and a mocked identity integration is precisely the kind of thing "Honesty" scoring punishes if done sloppily.
+
+---
+
+#### 6. Smart autofill — **MODIFY (autofill facts from the narrative, not identity from a database)**
+**Reject:** pulling a citizen's name/address from any identity system. Not available, not appropriate, not needed.
+**Keep:** extracting **incident** facts from what the citizen already typed or pasted. Paste the bank SMS → we pre-fill amount, date/time, UPI reference, bank name — the exact fields the 1930 script demands (VERIFIED). The citizen confirms each one.
+This is the highest value-per-hour feature in the build: it removes the most typing at the worst moment, and every extracted value is shown for confirmation, never silently used.
+
+---
+
+#### 7. Save / resume — **KEEP, but reframe as "never lose anything" (local-first)**
+Framed as an account feature it requires login, which we've rejected as an entry gate. Framed correctly it is a **resilience** feature: the draft is written to `localStorage` on every keystroke-debounce, so a dropped 4G connection (P‑12), a dead battery, or a closed tab loses nothing. **No account needed for the default case.**
+An optional "get a resume link by SMS" (mocked) covers device-switching. Directly addresses A1 if A1 is real — and costs nothing if it isn't.
+
+---
+
+#### 8. AI categorization — **KEEP (with a deterministic floor)**
+Justified because the classification is genuinely hard for humans (P‑13's case spans three real categories) and genuinely easy for a model. See §15 for the full justification and the fallback rules. Non-negotiable constraints: the category is always *proposed with a reason*, always confirmable, and the flow completes with rules alone if the model fails.
+
+---
+
+#### 9. AI assistant / chatbot — **REMOVE**
+A general chat assistant on a cybercrime portal is a bad idea, and we should say why rather than just skipping it:
+- **Liability:** a hallucinated answer about police procedure, legal rights, or money recovery causes real harm to someone in crisis.
+- **It is a worse interface than the thing it sits next to.** A guided 3-question flow is faster and more reliable than free-form chat for a person who is panicking.
+- **It is the default AI-product cliché** and would read as bolted-on to any judge.
+- **"Every feature you demo must work"** — a chatbot's failure surface is unbounded and cannot be made demo-safe in 3 days.
+**Replaced by:** a small, deterministic, hand-written **"What do I do right now?"** checklist that is correct because a human wrote it, not because a model generated it.
+
+---
+
+#### 10. Complaint timeline — **KEEP, and make it the emotional centre of the tracking experience**
+Directly attacks P4/A8, the highest-confidence UX problem we found. A vertical timeline in plain language: *Reported → Sent to your bank → With Cyber Cell, Nagpur → Under investigation*, each with a date, a plain-English meaning, and an explicit "what you can do now".
+**Critically: we translate "Disposed".** The redesigned status card says what it actually means — *"Your complaint has been handed to a police unit. This does not mean it is closed. Keep following up with your bank."* This single string may be the most valuable thing in the product.
+
+---
+
+#### 11. Suspect checking — **KEEP (promote to a top-level action)**
+Already exists, already excellent, already login-free, already honest about its limits (OBSERVED). Our changes are small and high-value: merge the two split pages into one field that accepts anything, put it on the homepage, and design the **"not found"** result properly — *"We have no reports for this number. That does not mean it is safe."* Prevention inside a reporting product is a genuinely strong story.
+
+---
+
+#### 12. Suspect reporting — **KEEP (as-is in spirit, better in form)**
+Already no-login, already 8 identifier types including deepfakes (OBSERVED). We keep the posture and cut the friction: drop the 500-character minimum-narrative burden, make evidence genuinely optional, and confirm with a thank-you rather than a bare ID. Cheap to build; serves P‑8 completely.
+
+---
+
+#### 13. Mobile-first — **KEEP (non-negotiable)**
+The hackathon brief mandates it (VERIFIED). P‑1, P‑10, P‑11 and P‑12 are all phone users. Concretely: single-column, thumb-reachable primary action, **working pinch-zoom** (the fix for an OBSERVED defect), ≥44 px targets, `tel:` links on every phone number, no horizontal scroll, and a small enough payload to work on a degraded connection.
+
+---
+
+#### 14. Multilingual — **MODIFY (three languages, done properly, over twelve done badly)**
+Current portal: English + Hindi (VERIFIED). Ambition says 22 scheduled languages; 3 days says otherwise, and machine-translating legal-adjacent instructions into ten languages unreviewed would be irresponsible.
+**Decision:** ship **English + Hindi + Kannada** with the *entire chosen journey* translated end-to-end, including error messages and the confirmation screen — plus a visible, honest note that the remaining languages are the obvious next step. A complete 3-language journey demonstrates the architecture; a 12-language façade that breaks mid-flow demonstrates the opposite. (Kannada because the finale is in Bengaluru and because B1's language-mismatch account is a Kannada story — but any third language proves the point.)
+
+---
+
+#### 15. Accessibility — **KEEP (and treat as a first-class scoring feature, not a chore)**
+This is the rare case where the current portal's failures are objectively measurable (§2.15), which means our improvement is objectively demonstrable. Semantic HTML, real `lang` switching, zoom that works, alt text everywhere, visible focus rings, keyboard-complete flows, ≥4.5:1 contrast, and `tel:` on the helpline. Target WCAG 2.1 AA on the journeys we ship, and **state honestly** which pages we audited.
+
+---
+
+#### 16. Personalized dashboard — **REMOVE from MVP**
+A dashboard is what you build when you assume a returning, logged-in, multi-case user. Our dominant persona files **once** in their life. Building a dashboard would optimise for the rarest user while consuming the time the emergency journey needs.
+**Replaced by:** a single **case page** reachable by Complaint ID (+ mock OTP), which is what P‑9 actually wants. If a user has more than one case, they get a list. That is not a dashboard; it is a list.
+
+---
+
+#### 17. Notifications — **MODIFY (simulate, don't build infrastructure)**
+Real SMS/email delivery is out of scope and would consume a day. But the *communication design* is the valuable part — and the current portal's weakness is what the messages **say**, not whether they arrive (it already sends SMS + email, VERIFIED).
+**Decision:** show the **exact SMS copy** we would send, rendered as a phone notification in the UI, at each status change. Zero infrastructure, full demonstration of the idea, honestly labelled as simulated.
+
+---
+
+#### 18. Evidence management — **MODIFY (fix the two things that actually block people)**
+Not a file manager. Two specific fixes to VERIFIED problems:
+- **Client-side image compression before upload** — kills the 5 MB wall (P12) without a server change.
+- **Accept PDFs** — because bank statements are PDFs (A4).
+Plus: evidence is **genuinely optional** in our flow (fixing the *"if any … (Mandatory)"* contradiction), with clear guidance that not having a screenshot must never stop someone from reporting, and a plain warning **not to delete the original**.
+
+---
+
+### 7.3 Verdict summary
+| Idea | Verdict | In 3-day MVP? |
+|---|---|---|
+| Login / signup | MODIFY — never an entry gate; mock OTP after capture | Yes (thin) |
+| Emergency / no-login mode | **KEEP — this is the product** | **Yes** |
+| Aadhaar | **REMOVE entirely — not even mocked** | No |
+| PAN | **REMOVE entirely — never asked** | No |
+| DigiLocker | MODIFY → optional, consent-first, mocked | No — P2 |
+| Smart autofill | MODIFY — incident facts from pasted text, not identity | **Yes** |
+| Save / resume | KEEP — local-first, no account | **Yes** |
+| AI categorization | KEEP — proposed + explained + confirmable, rules fallback | **Yes** |
+| AI assistant / chatbot | **REMOVE** | No |
+| Complaint timeline | KEEP — plain-language status, translate "Disposed" | **Yes** |
+| Suspect checking | KEEP — promote to homepage, merge two pages | **Yes** |
+| Suspect reporting | KEEP — no login, less friction | P1 |
+| Mobile-first | KEEP — non-negotiable | **Yes** |
+| Multilingual | MODIFY — 3 languages complete, not 12 partial | **Yes** |
+| Accessibility | KEEP — WCAG 2.1 AA on shipped journeys | **Yes** |
+| Personalized dashboard | **REMOVE** → single case page | No |
+| Notifications | MODIFY — simulated, copy is the deliverable | **Yes** |
+| Evidence management | MODIFY — compress + accept PDF + truly optional | **Yes** |
+
+---
+
+## 8. Product Strategy & Principles
+
+### 8.1 Strategy in one paragraph
+Win on the **first five minutes** of a cybercrime victim's worst day. Every hour spent goes to shortening time-to-first-report and to making what happens afterwards legible. We do not compete on breadth with a portal that has volunteer programmes, media galleries and daily digests — we replace one journey completely and prove it is better, then say honestly what we did not build.
+
+### 8.2 Principles
+1. **Report first, verify second.** Nothing stands between a victim and being heard. Identity is exchanged for a benefit, later.
+2. **Narration over classification.** The citizen describes; the system categorises; the citizen confirms.
+3. **Never ask for what you do not need.** Every field must justify itself against "does this help freeze the money, route the case, or contact this person?" Father's name, PAN and Aadhaar all fail that test.
+4. **The system explains itself.** Every status, every AI decision, every data request carries its reason in plain language.
+5. **Calm is a feature.** No red, no countdown timers, no alarm iconography, no shame. Urgency is expressed through *ordering*, not decoration.
+6. **Nothing is ever lost.** Local-first drafts. A dropped connection is not a failure state.
+7. **Degrade, don't die.** Every AI feature has a deterministic fallback. The journey completes with JavaScript-lite, with no model, and on a bad network.
+8. **Honesty is shipped, not claimed.** A `/whats-real` page states exactly what is real, what is mocked, and what we did not solve. Directly targets a judging criterion.
+9. **Design for Lakshmi (P‑10).** If the lowest-literacy persona can complete it, everyone can. She is the acceptance test, not an edge case.
+10. **Amplify what already works.** Anonymous reporting, the Suspect Repository, the impersonation warning and the confirmation receipt are good ideas already in the portal. We keep them and make them findable.
+
+### 8.3 Success metrics (measured on our prototype, honestly)
+| Metric | Current (VERIFIED/INFERRED) | Target |
+|---|---|---|
+| Time to first recorded report, financial fraud | Registration + OTP + 6 steps + 30+ fields + mandatory ID upload before anything is recorded | **< 90 seconds**, no account |
+| Decisions required before the story is told | ≥ 2 (category + sub-category) from 8 × 30+ options | **0** |
+| Mandatory fields before submission | ~12+ incl. Father/Mother/Spouse Name and a National ID upload | **≤ 5** |
+| Identity documents required | 1 (mandatory upload) | **0** |
+| Pages of manual needed | 91 | **0** |
+| Steps to check status with a Complaint ID | No documented ID-based path; needs User Name + mobile + OTP + security answer + date | **2** |
+| WCAG 2.1 AA on shipped journeys | Multiple Level‑A failures observed | **Pass, and say which pages we tested** |
+| Languages, complete end-to-end | 2 (Hindi completeness unverified) | **3, verified complete** |
+
+---
+
+## 9. Information Architecture
+
+### 9.1 The rule
+The old IA answers *"which I4C programme owns this?"*. The new IA answers *"what just happened to you?"*. Everything else is subordinate.
+
+### 9.2 Proposed structure
+```
+/                          Home — two questions, nothing else
+                           "Something happened to me"  |  "I want to check something"
+                           + a permanently visible, tappable 1930 (tel: link)
+
+/report                    Guided intake  (NO LOGIN)
+  /report/money            Money was taken            → fastest path, freeze-first
+  /report/account          An account was taken over
+  /report/threat           Someone is threatening or harassing me
+  /report/child            Something involving a child
+  /report/other            Something else / I'm not sure   → describe it, we'll route it
+  /report/:draftId         Resume a draft (local-first)
+
+/check                     Is this number / link / UPI ID known?   (NO LOGIN)
+/report-suspect            Report a scam identifier — I wasn't a victim  (NO LOGIN)
+
+/track                     Enter Complaint ID → plain-language status + timeline
+  /track/:complaintId
+
+/help/just-happened        "It just happened — do this now"   ← the page that doesn't exist today
+/help/what-happens-next    What the police actually do, and how long it takes
+/help/is-this-a-scam       Recognising the common patterns
+
+/whats-real                What is real, what is mocked, what we did not solve
+/accessibility             Our conformance statement, honestly scoped
+/privacy                   Plain-language, portal-specific, DPDP-shaped
+```
+
+### 9.3 Why each decision
+
+| Decision | Reasoning |
+|---|---|
+| **Home is two choices, not a mega-menu** | Every visitor is in one of two states: something happened, or something *might* be about to happen. OBSERVED: today's homepage spends its best space on a carousel and social icons. |
+| **Intent labels replace legal categories** | "Money was taken" is a state a human recognises. "Online Financial Fraud → Internet banking Related Fraud" is a taxonomy (VERIFIED). Directly fixes P2/P13/A7. |
+| **`/report/other` is a first-class option, not a fallback** | P‑13's crime is three categories at once. "I'm not sure" must be a legitimate, unembarrassing choice — that is where narration + AI classification earns its place. |
+| **`/check` is promoted to the homepage** | The Suspect Repository is the best thing on the current site and is three levels deep, split across two pages (OBSERVED, P16). Promotion costs nothing and prevents victims. |
+| **`/track` takes the Complaint ID** | The portal *gives* the citizen a Complaint ID and then doesn't let them track with it (VERIFIED §6). P‑9's entire problem. |
+| **`/help/just-happened` is new** | OBSERVED: all safety content is preventive; the only response guidance found was *"consult your relatives and friends"*. Highest-intent moment, least content (P7). |
+| **`/whats-real` is new** | Targets the "Honesty" judging criterion directly (VERIFIED). Also the right thing to do. |
+| **Everything is a real URL** | OBSERVED: today's primary actions are `javascript:__doPostBack(...)` — unbookmarkable, unshareable, Back-hostile (P9). Real URLs mean a bank, a police officer, or a family member can send a victim straight to the right place. |
+| **Volunteers, galleries, advisories, RTI notices: removed from the prototype** | Not part of a citizen's reporting journey. Out of scope, and §26 says so out loud rather than pretending they don't exist. |
+| **1930 is a `tel:` link in persistent chrome** | OBSERVED: today it exists only as an un-alt'd PNG inside a carousel with zero `tel:` links anywhere. The fix is one line of HTML and it is the most important line in the product. |
+
+### 9.4 Navigation depth
+| | Current | Proposed |
+|---|---|---|
+| Max menu depth | 3 levels | 1 |
+| Clicks to start a financial-fraud report | ≥ 4, then registration + OTP before anything is recorded | **1** |
+| Clicks to check an identifier | 3, and the wrong one of two pages is easy to pick | **1** |
+| Clicks to check status with a Complaint ID | No documented path | **1** |
+
+---
+
+## 10. Key User Flows
+
+Notation: **Entry → Intent → Screens → Decisions → Errors → Exit → Recovery**.
+Flows marked ★ are in the 3-day MVP (§25).
+
+---
+
+### ★ Flow 1 — Financial fraud (the flagship)
+- **Entry:** `/` → "Money was taken from my account" · or direct link `/report/money` · or a QR/link sent by a bank
+- **Intent:** Get the freeze request in before the money moves again. Target: **under 90 seconds, no account.**
+- **Screens:**
+  1. **`/report/money`** — one screen. *"Tell us what happened."* A textarea with a real placeholder (not a blank page): *"I got a call saying my KYC expired. They sent a link. ₹18,000 left my account."* Plus a **"Paste your bank SMS"** box.
+  2. **Confirm the facts** — the system extracts and displays what it found: amount, date/time, bank, UPI/transaction reference, the channel it came through. Each is an editable chip. Missing critical fields are asked for individually, one per line, largest first.
+  3. **Where are you?** — State + District only (jurisdiction routing). Geolocation offered, typing always available.
+  4. **How do we reach you?** — mobile number. One field.
+  5. **Anything to show us?** — optional upload, client-side compressed, PDFs accepted, with *"No screenshot? That's fine — report anyway."*
+  6. **Review** — the complaint rendered as plain sentences, not a form. Proposed category shown **with its reason** and one tap to change it.
+  7. **Confirmation** — Complaint ID, large and copyable. **"Save this ID"** with copy / download / (mock) SMS. Then: **"What to do in the next hour"** — 3 concrete actions. Then: **"What happens next"** — plain-language, honest, including that this ID is **not an FIR**.
+- **Decisions:** Report anonymously or with contact details · confirm/override the proposed category · upload evidence or skip · verify number now or later
+- **Errors:** No amount detected → ask directly. Model unavailable → deterministic keyword rules pick the category, banner says *"We couldn't auto-detect — please confirm the category."* Upload > limit → compress client-side, then offer "submit without it". Network drop → draft is already in `localStorage`; a *"Reconnecting… nothing is lost"* bar appears.
+- **Exit:** Complaint ID + next-hour checklist + a `tel:1930` button.
+- **Recovery:** Returning to `/report/money` offers *"Continue where you left off (2 minutes ago)?"* The Complaint ID alone reaches the case at `/track`.
+- **Design note:** this flow **never blocks on the AI**. Extraction is an accelerator; every field can be typed.
+
+---
+
+### ★ Flow 2 — Existing complaint tracking
+- **Entry:** `/track` from the home header, or the link in the confirmation
+- **Intent:** *"Is anything happening?"* (P‑9)
+- **Screens:** `/track` → one field: **Complaint ID** → (mock OTP to the registered number) → **case page**: a plain-language vertical timeline — *Reported · Sent to your bank · With Cyber Cell, Nagpur · Under investigation* — each step dated, each with what it means and what you can do now.
+- **Decisions:** Add more evidence · escalate to the State Grievance Officer (contacts exist and are published — VERIFIED, §2.13) · withdraw
+- **Errors:** Unknown ID → *"We couldn't find that. Check for a typo, or look in the SMS we sent you."* — never a bare "Invalid". OTP to a lost number → an honest, named dead-end with the grievance-officer route (this is P19; we do not pretend to solve it).
+- **Exit:** Understanding, and a next action.
+- **Recovery:** ID lookup is stateless — no username to remember, which is the fix for P10/A2.
+- **The key string:** where the government system says **"Disposed"**, we render *"Handed to a police unit for investigation. **This does not mean your case is closed.** Keep following up with your bank."* (A8)
+
+---
+
+### Flow 3 — Hacked account
+- **Entry:** `/report/account`
+- **Intent:** Stop the impersonator; get the account back. (P‑2)
+- **Screens:** Which account (Instagram / WhatsApp / email / bank / other) → what is happening now → **immediately, before any form:** the platform's own recovery link and the "lock it down" checklist → then the report → confirmation.
+- **Decisions:** Recover first or report first (we offer both and recommend recovery first — the honest answer)
+- **Errors:** Platform not listed → generic recovery guidance + report anyway.
+- **Exit:** Complaint ID + recovery links.
+- **Why it matters:** it is the only flow where the *fastest useful action is not filing a complaint*, and saying so builds more trust than pretending otherwise.
+
+---
+
+### Flow 4 — Threat / harassment / sextortion
+- **Entry:** `/report/threat`
+- **Intent:** Make it stop, safely. (P‑3)
+- **Screens:** **Safety first, before any question:** *"Do not pay. Do not delete anything. You have not done anything wrong."* → an explicit anonymity choice with its trade-off stated in one sentence each → describe → optional evidence → confirmation with 181 and 1930 as `tel:` links.
+- **Decisions:** **Anonymous vs trackable** — presented as a real, explained choice, not two unlabelled buttons (fixes an OBSERVED gap)
+- **Errors:** Anonymous + wanting updates → we say plainly that we cannot do both, and why.
+- **Exit:** Report filed; support numbers; a **quick-exit control** that clears the screen.
+- **Non-negotiable:** **no Father/Mother/Spouse Name field.** For this persona that field is the reason the tab closes (P5).
+
+---
+
+### Flow 5 — Child-related
+- **Entry:** `/report/child`
+- **Intent:** Protect the child; get content removed. (P‑4)
+- **Screens:** *"Are you reporting for yourself or for a child?"* → anonymous vs trackable, explained → describe → evidence guidance (**explicitly: do not download or forward the material**) → confirmation with the child-safety helpline.
+- **Decisions:** Reporting-for-another is **first-class**, not a "Relationship with the victim" dropdown bolted onto a self-report form.
+- **Errors:** Uncertainty about what is illegal → *"If you're not sure, report it. That's what we're here for."*
+- **Exit:** Report filed + takedown guidance + what to say to the child.
+- **Note:** We keep the anonymous path the current portal already offers here (VERIFIED) — we just explain it.
+
+---
+
+### ★ Flow 6 — Suspicious-identifier check
+- **Entry:** `/` → "I want to check something" · or `/check`
+- **Intent:** 20 seconds, no commitment. (P‑6, P‑7)
+- **Screens:** One field that accepts **anything** — phone, email, UPI ID, URL, app name, bank account — auto-detecting the type (fixes the OBSERVED two-page split) → result.
+- **Decisions:** After a result: report it, or leave.
+- **Errors:** Unparseable input → *"We're not sure what that is — pick a type"* rather than rejecting it.
+- **Exit — and this is the whole design of the flow:**
+  - **Found:** *"This number has been reported N times."* Plus the current portal's own honest disclaimer, kept verbatim in spirit: I4C does not certify these reports.
+  - **Not found — the important case:** *"We have no reports for this. **That does not mean it is safe.** New scam numbers appear every day."* + three signs to watch for.
+- **Recovery:** N/A — stateless.
+- **Data honesty:** the prototype's dataset is **synthetic**, clearly labelled on the page. This is required by the hackathon rules and is exactly what "Honesty" scoring rewards.
+
+---
+
+### Flow 7 — Report a suspect (not a victim)
+- **Entry:** `/report-suspect`
+- **Intent:** Civic contribution, 30 seconds, zero personal stake. (P‑8)
+- **Screens:** Identifier → what happened (short, **optional**, no minimum) → optional evidence → thanks.
+- **Decisions:** None meaningful. That is the point.
+- **Errors:** Duplicate identifier → *"Already reported — thank you, this still helps."* (never a rejection)
+- **Exit:** A thank-you, and an invitation to `/check`.
+- **Delta from today:** the current form makes State, evidence upload **and** a description all mandatory (OBSERVED). We make everything except the identifier optional.
+
+---
+
+### ★ Flow 8 — Save / resume
+- **Entry:** Automatic. There is no "Save" button.
+- **Intent:** Never lose work. (P‑12, and A1 if real)
+- **Mechanics:** Debounced write of the draft to `localStorage` on every change. Returning to any `/report/*` route offers *"Continue where you left off?"* with a timestamp and a clear "Start fresh" alternative. Optional (mocked) "send me a link to continue on another device".
+- **Errors:** Storage unavailable (private mode) → a one-line honest warning: *"We can't save your progress in this browser — try to finish in one go."*
+- **Exit:** Seamless continuation.
+- **Recovery:** Drafts expire after 7 days and are then deleted. Stated on screen — a draft of a cybercrime report is sensitive data and should not linger.
+
+---
+
+### Flow 9 — Emergency → account (the upgrade path)
+- **Entry:** The confirmation screen, after the report is already filed.
+- **Intent:** Convert an anonymous report into a trackable one **without ever having blocked the report**.
+- **Screens:** *"Want updates on this complaint?"* → mobile number → mock OTP → linked. One screen, skippable, framed as a benefit rather than a requirement.
+- **Decisions:** Skip is a first-class, unpunished option.
+- **Errors:** OTP fails → *"No problem — save your Complaint ID and you can still check status later."* **The report is never at risk**; it already exists.
+- **Exit:** Same confirmation screen, now with tracking enabled.
+- **Why this ordering matters:** it is the structural inversion of the current portal (VERIFIED: register → OTP → *then* report). Same verification, opposite order, and the order is the entire difference for the 51% who never report (B3).
+
+---
+
+### Flow 10 — Identity-assisted autofill (SCOPED DOWN — read this carefully)
+- **What we are NOT doing:** no Aadhaar, no PAN, no eKYC, no live DigiLocker (§7.2 #3/#4/#5, §14).
+- **What "autofill" means here:** extracting **incident** facts from text the citizen already has — the bank SMS, a transaction email, a chat screenshot. Nothing is fetched from any identity system.
+- **Screens:** *"Paste the message from your bank"* → extracted fields shown as editable chips, each labelled with where it came from → citizen confirms → fields populate.
+- **Decisions:** Every extracted value is confirmable and editable. Nothing is silently used.
+- **Errors:** Nothing extracted → the normal manual form, no dead end.
+- **Exit:** A much shorter form.
+- **Honesty:** the review screen states which fields were auto-filled and from what — visible provenance, not invisible magic.
+
+---
+
+### Flow 11 — 1930 → portal handoff (the differentiator nobody else will build)
+- **Entry:** `/track` or `/report/money`, by a citizen who has **already called 1930** and holds an acknowledgement number.
+- **Intent:** Complete the **mandatory 24-hour portal registration** (VERIFIED: *"must complete registration … within 24 hours. This is mandatory."*).
+- **Screens:** A prominent home option — *"I already called 1930"* → enter the acknowledgement number → the form appears **pre-filled with everything the 1930 script already collected** (mobile, bank, account/UPI ID, transaction ID, transaction date — all VERIFIED from the official script) → the citizen fills only the gaps → submit.
+- **Decisions:** None beyond confirming what was already told to the operator.
+- **Errors:** Unrecognised acknowledgement number → fall back to the normal report flow, losing nothing.
+- **Exit:** Registration completed inside the 24-hour window.
+- **Why this is the strongest end-to-end story we have:** it is a **process** fix, not a UI fix. It shows we read the actual government workflow, found the seam where complaints silently die, and designed for it. This is exactly what the "End-to-end thinking" criterion is asking for (VERIFIED). In the prototype the acknowledgement lookup is **mocked against a synthetic dataset** and labelled as such.
+
+---
+
+## 11. Feature Prioritization
+
+Complexity/Feasibility are scored **against 3 days**. Demo impact is scored against a **2-minute video**.
+
+### P0 — Without these there is no submission
+
+| # | Feature | Problem | Evidence | UX value | Complexity | Security | Privacy | Feasibility | Demo impact | Priority |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | **Describe-first intake** (narration → extraction → proposed category → confirm) | P2, P13 | VERIFIED Manual Step 3; REPORTED A7 | Very High | Med | Low | Low | High | **Very High** | **P0** |
+| 2 | **No-login emergency financial-fraud report, < 90 s** | P1 | VERIFIED Steps 1–8; REPORTED B3, C1–C3 | Very High | Med | Med (abuse) | Med | High | **Very High** | **P0** |
+| 3 | **Confirmation that explains what happens next** (ID + next-hour checklist + "this is not an FIR") | P20, P4 | VERIFIED Step 7 + Manual §2‑iv | Very High | **Low** | Low | Low | **Very High** | **High** | **P0** |
+| 4 | **Track by Complaint ID + plain-language timeline** (incl. translating "Disposed") | P4, P10 | REPORTED A8; VERIFIED Manual §6 | Very High | Low‑Med | Med | Med | High | **Very High** | **P0** |
+| 5 | **Local-first draft / never lose work** | P11 | REPORTED A1 | High | **Low** | Low | Med | **Very High** | Med | **P0** |
+| 6 | **Mobile-first, WCAG 2.1 AA on shipped journeys** | P6 | OBSERVED a11y audit | Very High | Med | Low | Low | High | **High** | **P0** |
+| 7 | **`tel:` 1930 in persistent chrome** | P6 | OBSERVED (image-only, zero `tel:`) | Very High | **Trivial** | None | None | **Trivial** | **Very High** | **P0** |
+| 8 | **`/whats-real` honesty page** | Hackathon "Honesty" criterion | VERIFIED judging criteria | High | **Trivial** | None | None | **Trivial** | **High** | **P0** |
+| 9 | **`/help/just-happened` — do this now** | P7 | OBSERVED prevention-only content | High | **Low** | None | None | **Very High** | High | **P0** |
+| 10 | **Real URLs for every action** | P9 | OBSERVED `__doPostBack` | Med | **Trivial** (free with any modern router) | Low | Low | **Trivial** | Low (huge in write-up) | **P0** |
+
+### P1 — Ship if the P0 set lands early
+
+| # | Feature | Problem | Evidence | UX value | Complexity | Security | Privacy | Feasibility | Demo impact | Priority |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 11 | **Unified identifier check on the homepage** | P16 | OBSERVED (buried, split) | High | Low‑Med | Low | Med | High | **High** | P1 |
+| 12 | **1930 handoff — "I already called"** | P3 | VERIFIED 24-hour mandate | High | Med | Low | Med | Med | **Very High** | P1 |
+| 13 | **3 languages, complete end-to-end** | P14 | VERIFIED (2 today) | High | Med | Low | Low | Med | **High** | P1 |
+| 14 | **Paste-your-bank-SMS autofill** | P1 | VERIFIED 1930 field list | High | Med | Low | Med | Med | **Very High** | P1 |
+| 15 | **Simulated notification copy** | P20 | INFERRED | Med | Low | Low | Low | High | Med | P1 |
+| 16 | **Threat/harassment flow with anonymity explainer** | P18, P5 | VERIFIED anon path exists | High | Low‑Med | Low | High | High | High | P1 |
+| 17 | **Evidence: client-side compression + PDF accepted + truly optional** | P12 | VERIFIED 5 MB; REPORTED A4 | Med‑High | Med | Med | Med | Med | Med | P1 |
+| 18 | **Emergency → account upgrade (mock OTP)** | P1 | VERIFIED order today | Med‑High | Low | Med | Med | High | High | P1 |
+
+### P2 — Explicitly deferred, and named so in the submission
+
+| # | Feature | Why deferred |
+|---|---|---|
+| 19 | Hacked-account and child-related flows | Same engine as the built flows; not enough demo time to earn their build cost |
+| 20 | Report-suspect flow | Current version already works acceptably; lowest marginal gain |
+| 21 | DigiLocker (mocked, consent-first) | Production integration unverifiable; a sloppy mock is a scoring liability (§14) |
+| 22 | Multi-case list | Only relevant to repeat filers — the rarest user |
+| 23 | Voice input for low-literacy users | Genuinely the right answer for P‑10; too large for 3 days. **Name it in the pitch as the top post-hackathon priority.** |
+| 24 | Real SMS/email delivery | Infrastructure, not product. Simulated copy carries the idea. |
+| 25 | Offline / PWA | High value on poor connections; local-first drafts capture most of the benefit at a fraction of the cost |
+
+### Explicitly rejected — see §34
+Aadhaar integration · PAN collection · any identity-document upload in the reporting flow · AI chatbot · personalised dashboard · volunteer/media/advisory sections.
+
+---
+
+## 12. Authentication Strategy
+
+### 12.1 What NCRP actually does today (verified, not assumed)
+| Action | Auth required today | Source |
+|---|---|---|
+| File a complaint (any category, tracked) | **Yes** — User Name + Mobile + OTP (30-min validity) + a security answer, **before** the form | VERIFIED — Citizen Manual Step 2, FAQ |
+| File an anonymous women/child complaint | **No** | VERIFIED — nav + FAQ |
+| Check complaint status | **Yes** — same credentials, plus selecting a date | VERIFIED — Manual §6 |
+| Search the Suspect Repository | **No** (CAPTCHA only) | OBSERVED |
+| Report a suspect identifier | **No** (CAPTCHA only) | OBSERVED |
+| Cyber Volunteer portal | Yes (separate login) | OBSERVED |
+
+**The portal's own behaviour already contradicts the premise that identity must precede submission.** Report Suspect accepts a State, an identifier, a 5 MB file and a 500-character narrative from a completely anonymous user. The question is therefore not *whether* an Indian government cybercrime service can accept unauthenticated input — it demonstrably does — but *which* inputs warrant verification.
+
+### 12.2 When login is genuinely necessary
+| Purpose | Auth needed? | Why |
+|---|---|---|
+| Recording that an incident happened | **No** | The information has value to the state regardless of who supplied it. Report Suspect proves this. |
+| Triggering a bank-freeze request | **Not before recording.** Verification before *escalation*, not before *capture*. | The freeze depends on transaction identifiers, not on the complainant's identity. Verification can happen in the seconds after capture. |
+| Receiving status updates | **Yes** — a verified contact channel | You cannot send an SMS to nobody. This is the honest, benefit-shaped reason to verify. |
+| Reading case details | **Yes** — possession of the Complaint ID + OTP to the registered number | Case contents are sensitive; the ID alone must not be sufficient. |
+| Adding evidence to an existing case | **Yes** | Prevents third parties polluting someone else's case file. |
+| Withdrawing a complaint | **Yes, strongly** | Destructive and legally consequential. |
+| Checking an identifier | **No** | Zero-stakes lookup. Any friction destroys the use case (P‑6). |
+| Reporting a suspect (non-victim) | **No** | Already no-login today, and correct. |
+
+### 12.3 Our model
+```
+CAPTURE  →  (report exists, has an ID)  →  VERIFY  →  ESCALATE / TRACK
+   ↑                                          ↑
+no auth, no account                    mock OTP, skippable
+```
+
+1. **Anonymous by default.** Every report begins and can end without an account.
+2. **Verification is offered as a benefit, after the fact:** *"Want updates on this complaint?"* — never as a gate.
+3. **The Complaint ID is the primary key the citizen holds.** Not a self-invented "User Name" they will forget (the current portal ships a "Recover Your Username" feature, which is an admission the design fails — VERIFIED §7.1).
+4. **Reading a case = Complaint ID + OTP to the number on file.** Two factors, neither of which is a remembered credential.
+5. **Rate limiting and CAPTCHA carry the abuse load** that login would otherwise carry — the same posture the portal already uses on its no-login forms.
+
+### 12.4 Honest treatment of the risks
+| Risk | Response |
+|---|---|
+| Spam / bulk false reports | CAPTCHA + per-IP and per-device rate limits + an unverified-report queue that is visibly lower-trust. Not solved, mitigated — and we say so. |
+| Malicious reports naming an innocent person | This risk **exists identically today** on the no-login Report Suspect form. Mitigation: the current portal's own honest disclaimer pattern ("I4C does not certify these complaints") plus a published redress path. We keep both. |
+| Someone else knows my Complaint ID | The ID alone reveals nothing; reading the case still requires the OTP. |
+| SIM-swap victim can't receive OTP (P19) | **Unsolved.** We surface the State Grievance Officer route (VERIFIED contacts exist) and say plainly in `/whats-real` that this is a real gap we did not close. |
+| Loss of accountability without identity | Verification still happens — one screen later. The state gets the same identity data from every citizen who wants tracking, which will be most of them. |
+
+### 12.5 What is real vs mocked in the prototype
+- **Mocked:** OTP delivery. A fixed demo code, clearly labelled on screen, with published demo credentials for reviewers (required by the submission rules — VERIFIED).
+- **Real:** the session model, the rate limiting, the ID-based lookup, and the auth *ordering*. The architecture is production-shaped; only the SMS gateway is simulated.
+
+---
+
+## 13. Emergency / No-Login Mode Design
+
+### 13.1 Why it exists
+- **VERIFIED**: reporting financial fraud today requires registration + OTP + a 6-step form before anything is recorded.
+- **REPORTED (High confidence, n=32,000+)**: **51% of UPI-fraud victims filed no complaint at all**, and LocalCircles' own conclusion was that citizens want *"easy/single click fraud complaint reporting that is responsive"* (B3).
+- **REPORTED**: money that is reported fast does get frozen (C1–C3), and 1930's own congestion peaks at night (B2) — exactly when a web path matters most.
+
+The design question is not "should reporting be easy?" but "what is the smallest thing we can capture that still starts the freeze clock?"
+
+### 13.2 The minimum viable report
+Enough to act on, and nothing more. Every field justified against *freeze / route / contact*:
+
+| Field | Why | Required? |
+|---|---|---|
+| What happened (free text) | The narrative; the source of everything else | **Yes** — no minimum length |
+| Amount lost | Determines severity and the freeze request | Yes, if money was lost |
+| When | The freeze window depends on it | Yes (defaults to "just now") |
+| Bank / wallet / UPI handle debited | The 1930 script requires it (VERIFIED) | Yes, if money was lost |
+| Transaction / UPI reference | The single most actionable identifier | **Strongly requested, not blocking** |
+| State + District | Jurisdiction routing (VERIFIED: assignment is by complainant address) | Yes |
+| Mobile number | Follow-up | Yes |
+| Evidence | Helpful, never blocking | **No** |
+| Father/Mother/Spouse name | Fails the justification test | **Never asked** |
+| ID document | Fails the justification test | **Never asked** |
+| Category | The system proposes it | **Never asked of the citizen** |
+
+Target: **≤ 5 required inputs, under 90 seconds.**
+
+### 13.3 Screen design
+- **One question visible at a time.** A panicking person cannot parse a 30-field page.
+- **A real placeholder, not an empty box.** Blank-page paralysis is the failure mode of pure free-text (§7.1); a concrete example sentence removes it.
+- **Progress shown as remaining, not as done** — *"2 more questions"* rather than a 17% bar.
+- **The primary action is thumb-reachable** and never moves.
+- **`tel:1930` is persistently visible** and never scrolls away. If calling is faster for this person, we should lose them to the phone. That is the correct outcome, and saying so is a trust signal.
+- **No red, no sirens, no countdown timer.** Urgency is conveyed by ordering and brevity. A timer would raise panic and worsen input quality. (§19)
+- **Autosave from the first keystroke** — before submission, before identity, before anything.
+
+### 13.4 What happens the moment they submit
+The confirmation screen is a designed artefact, not a receipt:
+1. **Complaint ID**, large, copyable, with download and (mocked) SMS.
+2. **"Do these 3 things in the next hour"** — concrete, ordered, human-written: call your bank's fraud line, don't delete anything, don't talk to anyone who calls claiming to be police about this complaint (which is precisely the risk the portal's own impersonation alert warns about — OBSERVED, and REPORTED in B1).
+3. **"What happens next"** — plain-language, honest, including the timeline and the fact that **this ID is not an FIR** (VERIFIED, currently stated only inside a 91-page PDF).
+4. **"Want updates?"** — the optional verification upgrade (Flow 9).
+
+### 13.5 Abuse mitigation
+CAPTCHA at submission (matching the portal's existing posture on no-login forms), per-IP and per-device rate limits with the remaining quota shown *before* it is hit, an unverified queue flagged as lower-trust for downstream triage, and duplicate detection that thanks rather than rejects. **None of this is presented as complete.** It goes in `/whats-real`.
+
+---
+
+## 14. Identity Strategy
+
+### 14.1 The question, stated precisely
+This is **not** "should we add identity verification to a portal that has none?" NCRP today **mandatorily** requires a National ID document upload *and* Father/Mother/Spouse Name before a complaint can be submitted (**VERIFIED**, Citizen Manual Steps 6a‑ii and 6a‑v, both marked "(Mandatory)"). The incumbent already demands identity. Our question is the harder one:
+
+> **Does any identity mechanism make it faster to freeze the money, faster to route the case, or faster to reach the victim?**
+
+If the answer is no, the field is a liability with no offsetting benefit and it goes. Three candidates were evaluated against that test: **Aadhaar**, **PAN**, **DigiLocker**.
+
+### 14.2 Verified legal findings (referenced below as L1–L9)
+
+Researched and verified 2026‑08‑25. These are the load-bearing facts; the verdicts in §14.3–§14.5 rest on them.
+
+| # | Finding | Tag |
+|---|---|---|
+| **L1** | UIDAI's own **AUA/KUA application form requires the applicant to declare a statutory basis** for seeking Aadhaar authentication: Aadhaar Act **s.7** (a subsidy, benefit or service funded from the Consolidated Fund of India), **s.4(4)(b)(i)** (a use permitted under another Act of Parliament), **s.4(4)(b)(ii)** (a State law), or **s.4(7)**. **A hackathon team satisfies none of these.** There is no "developer" or "prototype" category. | **VERIFIED** — UIDAI application form + Aadhaar (Targeted Delivery of Financial and Other Subsidies, Benefits and Services) Act, 2016 as amended |
+| **L2** | Real onboarding is a **12-step process** requiring a **CERT‑In empanelled audit**, a **bank guarantee**, **India-hosted infrastructure sized for ≥ 1 lakh authentication transactions/month**, and storage of any Aadhaar reference data confined to an **Aadhaar Data Vault**. | **VERIFIED** — UIDAI onboarding documentation |
+| **L3** | A narrower 2025 route exists — the **Aadhaar Authentication for Good Governance (Social Welfare, Innovation, Knowledge) Amendment Rules, 2025** (**PIB PRID 2098223, 31 Jan 2025**) — but it runs **sponsoring government Ministry → UIDAI examination → MeitY approval → Ministry notification**. It is not self-service and there is no path that begins with a private team applying directly. | **VERIFIED** |
+| **L4** | **Old Section 57 of the Aadhaar Act — which permitted "any body corporate or person" to use Aadhaar authentication under a private contract — was omitted entirely by the Aadhaar and Other Laws (Amendment) Act, 2019**, following *Puttaswamy*, on the reasoning that it enabled "commercial exploitation of an individual's biometric and demographic information by private entities." | **VERIFIED** |
+| **L5** | Current law (**s.4(3), s.4(4), s.4(6), s.4(7), s.8A**): Aadhaar use is **voluntary**, requires **informed consent**, is **gated through UIDAI**, and **service may not be denied for refusal**. **Offline-verification-seeking entities are legally barred from storing the Aadhaar number or performing authentication at all (s.8A(4)).** Penalties: up to **3 years' imprisonment and ₹1 lakh** (criminal); up to **₹1 crore plus ₹10 lakh/day** (civil). | **VERIFIED** |
+| **L6** | **There is no "Section 11A" in the Aadhaar Act.** Section 11A belongs to the **Prevention of Money Laundering Act, 2002**, and governs banking KYC. Citing it as Aadhaar law is a common and disqualifying error — **we will not repeat it in the pitch.** | **VERIFIED** |
+| **L7** | DigiLocker partner onboarding entry points are **`partners.dic.gov.in` (API Setu)** and **`entity.digilocker.gov.in`**. Eligibility is genuinely broad — the official SOP lists **"All private Organizations"** and **"All Proprietorship firms"** as eligible Partner Organisations, subject to MCA / MSME / Startup India / Society / Companies Act registration, a functional website, and regulatory authorisation to issue or authenticate the relevant document class. | **VERIFIED** |
+| **L8** | **There is no DigiLocker test sandbox.** The SOP states plainly: *"No requests of temporary access for any testing purpose etc. will be entertained"*, and the FAQ confirms no separate sandbox environment exists. Marketing copy elsewhere claiming a "dedicated sandbox" **conflicts with the SOP and FAQ and should not be trusted over them.** | **VERIFIED** |
+| **L9** | DigiLocker onboarding additionally requires **Aadhaar‑OTP verification of a named Nodal Officer**, CIN/GSTIN/PAN/Udyam checks, a **digital signature**, a submitted use-case, and **CEO-level approval committee sign-off**. | **VERIFIED** |
+
+### 14.3 Aadhaar — **REMOVE** (confirming §7.2 #3, now with the legal basis attached)
+
+§7.2 #3 already rejected Aadhaar on product grounds. The legal research closes the remaining door:
+
+1. **Banned by the event's own rules.** *"Use real Aadhaar numbers, PAN details, passwords, OTPs, payment details…"* is on the hackathon's "What not to do" list (**VERIFIED**, §3.9). This alone is dispositive — it is a rule, not a trade-off.
+2. **Legally unavailable to us regardless.** L1–L3: no statutory basis, no self-service route, and even the 2025 "innovation" rules require a sponsoring Ministry. There is no version of a 3-day build that legitimately touches Aadhaar authentication.
+3. **The post‑2019 legal posture is actively hostile to exactly what a prototype would want to do.** L4/L5: the provision that once let private entities authenticate against Aadhaar was struck out *because* private entities were doing this. An offline-verification-seeking entity may not even store the number (s.8A(4)).
+4. **It solves none of our problems.** Restated from §7.2: knowing the complainant is really Ramesh does not make the money come back faster. The bottlenecks are report *speed* (P1) and bank coordination (B4).
+5. **It harms the personas who need us most.** P‑3 (harassment) and P‑5 (identity theft). Demanding proof of identity from someone whose identity was stolen is a design error dressed as a security control.
+6. **A mock is worse than an omission.** A fake "Verify with Aadhaar" button normalises exactly the prompt that scammers use — and B1 reports fraudsters already calling victims after they report, asking for Aadhaar and card details.
+
+> **Decision: no Aadhaar field, no Aadhaar button, no Aadhaar box on any screen, no "future integration" slide.** We state this as a deliberate product choice in the submission and cite L1–L6 as the reason we could not have done it even if we had wanted to.
+
+### 14.4 PAN — **REMOVE** (confirming §7.2 #4)
+
+Run PAN through the §14.1 test:
+
+| Test | PAN | Verdict |
+|---|---|---|
+| Does it help freeze the money? | No. The freeze depends on the **beneficiary** account/UPI/transaction reference, not on the victim's tax identity (**VERIFIED** from the 1930 script field list, §2.4). | Fails |
+| Does it help route the case? | No. Routing is by **complainant State/District** (**VERIFIED**, FAQ). | Fails |
+| Does it help contact the victim? | No. That is the mobile number. | Fails |
+
+PAN is a permanent, cross-linkable financial identifier whose leak enables downstream fraud. Collecting it creates a high-value liability for **zero** functional gain — a textbook data-minimisation failure and, once Rule 6 of the DPDP Rules is in force (§18.4), a security-safeguard exposure with a ₹250 crore ceiling attached.
+
+> **Decision: PAN is never asked, never stored, and has no column in the data model (§22).** The current portal accepts PAN as one of the acceptable National ID uploads (**VERIFIED**). We are removing an existing field, not declining to add a new one — and that is the more interesting claim to make.
+
+### 14.5 DigiLocker — **MODIFY → architecturally correct, deliberately mocked, still out of the 3-day MVP**
+
+DigiLocker is the only identity idea here with a defensible shape. It is **consent-based**, it is a **document fetch** rather than a number-collection, and the citizen — not us — holds the credential. Critically, **the integrating party never handles a raw Aadhaar number**. If any identity assist belonged in this product, this would be it.
+
+But (L7–L9): eligibility requires an incorporated entity plus **regulatory authorisation to authenticate the relevant document class** — which a cybercrime-reporting prototype does not have — and **L8 is decisive for a 3-day build: there is no sandbox, and the SOP explicitly refuses temporary test access.** There is no honest way to demonstrate a working DigiLocker call before 28 Aug.
+
+> **Decision: design it, label it, do not claim it — and keep it out of the MVP.**
+> - It stays where §7.2 #5 and §11 (P2, #21) put it: **not in the 3-day build.**
+> - If it is ever built, it must be (a) optional, (b) consent-first with a plain-English statement of exactly which document is fetched and why, (c) permanently labelled **"Simulated — not connected to DigiLocker"**, and (d) skippable in one tap.
+> - The mock must match DigiLocker's **real OAuth/consent UX shape** — issuer name, document type, scope, expiry, revoke — because the *shape* is the design contribution. A mock that invents its own consent screen teaches nothing and reads as decoration.
+> - `/whats-real` states L8 verbatim: there is no sandbox, so this could not have been tested, so it is not claimed.
+
+**INFERRED**, and worth saying in the write-up: the fact that a *national cybercrime portal* mandates a photographed government ID upload while a *national document wallet* exists precisely to eliminate photographed government ID uploads is an integration gap in the incumbent, not an idea we invented.
+
+### 14.6 What we actually build instead — profile autofill, owned by the citizen
+
+No external identity system. The autofill mechanism is our own, and it is deliberately boring:
+
+1. **The account is created *after* the report** (§12.3, Flow 9), keyed to **mobile number + mocked OTP** (§12.5). It is never an entry gate.
+2. **The profile stores exactly three things**, and only because the citizen already typed them to file: **name (optional), mobile number, State + District**. Nothing else. No DOB, no parent/spouse name, no ID document, no address line, no PAN.
+3. **On a second report** — a real case: the same person reports a follow-up incident, or helps a family member — those three fields pre-fill, each shown as an editable chip with a *"from your saved details"* label, and each dismissible. Provenance is visible, matching the rule in Flow 10.
+4. **`/profile` allows one-tap deletion of the saved details**, independently of the complaints themselves. That is the erasure right rehearsed as a real control (§18.4).
+
+This is the *entire* autofill benefit that Aadhaar or DigiLocker would have delivered for this product — pre-filling a name and an address — obtained with no legal exposure, no third-party dependency, and no data we did not already need.
+
+**The higher-value autofill is not identity at all.** It is incident-fact extraction from the bank SMS the victim is already holding (Flow 10, §15) — and per §24.2 pattern 2, **Chakshu already ships exactly that pattern in an Indian government service** (*"sender and complaint details will be autofilled from image, if available, and can be edited"*). Identity autofill saves a citizen 15 seconds of typing their own name. Incident autofill saves them from failing to produce a transaction reference at 11:40 PM. We are spending our hours on the second one.
+
+### 14.7 Consent-first UX — the pattern, written out
+
+Every data request in the product carries four things, in this order, on the same screen as the request. This is the DPDP notice shape (Rule 3, in force 13 May 2027 — §18.4) built now, as forward-compliance and as a trust signal.
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│  Your mobile number                                          │
+│  [ +91 __________ ]                                          │
+│                                                              │
+│  WHAT WE DO WITH IT                                          │
+│  Send you the complaint ID, and status updates on this case. │
+│                                                              │
+│  WHO SEES IT                                                 │
+│  The police unit your complaint is routed to. Nobody else.   │
+│                                                              │
+│  IS IT REQUIRED?                                             │
+│  Yes — to send you updates. Skip it and you can still track  │
+│  with your Complaint ID alone.                               │
+│                                                              │
+│  IF YOU'D RATHER NOT                                         │
+│  → File without a number  (you keep the Complaint ID)        │
+│                                                              │
+│  ⓘ Prototype — mock data. Nothing is sent to any real        │
+│    government system. See /whats-real                        │
+└──────────────────────────────────────────────────────────────┘
+```
+
+Rules this encodes:
+- **No field appears without a stated purpose.** If we cannot write the "what we do with it" line, the field does not ship. This is the mechanism that keeps Father/Mother/Spouse Name out — the line cannot be written.
+- **"Is it required?" is answered honestly, including when the answer is yes.**
+- **There is always a stated alternative**, even if the alternative is degraded. Refusal must never be a dead end (which is also the s.4(6) posture — L5).
+- **Consent is per-purpose, recorded, and withdrawable** (`Consent` entity, §22).
+
+The mocked DigiLocker screen, if it is ever built, uses this same frame plus the issuer/scope/expiry fields DigiLocker's real consent screen carries.
+
+### 14.8 Verdict summary
+
+| Mechanism | Verdict | In 3-day MVP? | Primary reason |
+|---|---|---|---|
+| **Aadhaar** | **REMOVE — not collected, not integrated, not mocked, not on a slide** | No | Banned by hackathon rules (§3.9); legally unavailable (L1–L3); post‑2019 law bars the private-entity pattern (L4/L5); solves none of P1–P20 |
+| **PAN** | **REMOVE — never asked, no column in the schema** | No | Fails all three justification tests (§14.4); pure liability |
+| **Any ID-document upload in the reporting flow** | **REMOVE** | No | The incumbent's mandatory upload (VERIFIED) is a hard stop at 11:40 PM for P‑1 and a reason to close the tab for P‑3/P‑5 |
+| **Father / Mother / Spouse Name** | **REMOVE** | No | No purpose line can be written for it (§14.7). Dignity and safety cost is real (P5) |
+| **DigiLocker** | **MODIFY → consent-shaped, permanently labelled mock** | **No — P2** | Architecturally correct (L7) but untestable (L8) and out of scope for 3 days |
+| **Our own profile autofill (name / mobile / State+District)** | **ADD** | **Yes (thin)** | Delivers the whole real autofill benefit with zero external dependency |
+| **Incident-fact extraction from pasted SMS** | **KEEP** (Flow 10) | **Yes** | Proven pattern in an Indian government service (Chakshu, §24.2 #2); highest value per hour in the build |
+
+---
+
+## 15. AI Strategy
+
+### 15.1 The rule that governs this section
+> **AI is an accelerator inside the journey. It is never load-bearing.**
+> Every AI feature has a deterministic floor, a visible reason, and a human confirmation before anything is submitted. If every model call fails, the citizen still completes the report.
+
+This follows Principle 7 (§8.2, "Degrade, don't die") and the hackathon's *"Every feature you demo must work"* (**VERIFIED**, §3.4). A demo that depends on a live inference call over conference Wi‑Fi is a demo that can fail on stage.
+
+### 15.2 The three candidates, evaluated
+
+#### (a) Narrative → category suggestion — **KEEP, with a deterministic floor**
+
+| | |
+|---|---|
+| **The problem it solves** | P2 / P13 / A7. The citizen must currently choose 1 of 8 categories and 1 of 30+ sub-categories in legal-ish vocabulary before the system will listen (**VERIFIED**, Manual Step 3). P‑13's crime is genuinely three categories at once; only one of them is wired to the bank-freeze path (**REPORTED** A7). |
+| **Why not pure rules?** | Rules handle the clear cases well and the ambiguous ones badly — and the ambiguous ones are the entire reason this feature exists. "He said he was from the bank and I shared my screen" contains no keyword that separates vishing from unauthorised access. |
+| **Why not pure LLM?** | Non-determinism on a legally-adjacent classification, latency on a 4G connection, cost, and an unbounded failure surface on stage. |
+| **What we build** | **Both, in that order.** A hand-written keyword/pattern classifier runs first and always produces a category. An LLM call, when available, runs alongside and may *refine* the suggestion and *write the one-line reason*. The UI is identical in both cases: **the category is proposed with its reason and one tap changes it.** |
+| **Verdict** | **KEEP.** Already committed in §7.2 #8 and §11 (P0, #1). |
+
+**The honest engineering read, stated plainly:** for a 3-day build and a filmed demo, **the rules classifier is the more demo-reliable component**, and it carries the flow on its own. The LLM is layered on top as enhancement, not dependency. If we run out of time, we ship rules-only and the journey is unchanged — only the quality of the reason string degrades. **This is the single most important scope-safety decision in §15.**
+
+> **Note the §24.2 #2 precedent.** Chakshu ships **screenshot/SMS extraction with autofill and a manual fallback** — an Indian government department already running the pattern in production. Extraction from a pasted bank SMS is *more provable, more demoable, and less hallucination-prone* than freeform narrative NLP, because every extracted value is a substring of text the citizen supplied and is shown back for confirmation. **If we build one AI-ish thing well, it is extraction, not classification.**
+
+#### (b) Multilingual assistance — **MODIFY → not a runtime AI feature**
+
+Runtime machine translation of legal-adjacent instructions, error messages and status vocabulary is irresponsible: a mistranslated *"do not delete anything"* or *"this is not an FIR"* causes real harm, and there is no human reviewer in the loop at 2 AM.
+
+> **Decision:** translations are **static, human-reviewed string files** (§17). An LLM may be used *at build time* as a drafting aid, with every string read by a human before it ships. **No runtime translation call exists in the product.** Where we cannot review a language properly, we do not ship that language — we say so.
+
+One narrow, defensible runtime exception, **P2 and not in the MVP**: accepting a narrative typed in Hindi/Kannada and producing an English summary *for the police-facing record*, with the citizen's original text preserved verbatim alongside it. That preserves the citizen's own words as the record of truth and treats the translation as a convenience for the reader, not a replacement.
+
+#### (c) FAQ / general assistance chatbot — **REMOVE** (confirming §7.2 #9)
+
+Restated because it will be the most common thing every other submission ships: a hallucinated answer about police procedure, legal rights, or money recovery harms someone in crisis; a 3-question guided flow beats free-form chat for a panicking user; it is the default AI-product cliché; and its failure surface cannot be made demo-safe in 3 days.
+
+**Replaced by** the hand-written `/help/just-happened` checklist (§11 P0 #9), which is correct because a human wrote it.
+
+### 15.3 Model choice — deliberately pluggable, deliberately uncommitted
+
+| Decision | Rationale |
+|---|---|
+| **One interface, one file.** A single `classify(text) → { category, subCategory, reason, confidence, source: "rules" \| "model" }` boundary. | The provider becomes a swap, not a refactor. Protects against a late change in what the hackathon provides. |
+| **The rules implementation is the default export.** The model path is opt-in behind an env flag. | The build runs, demos and deploys with **zero** API keys configured. Nothing on the critical path needs a secret. |
+| **No provider named in this spec.** | See below — this is an open question, not an oversight. |
+| **Never in the browser.** Any model call goes through our own server route; no key ever reaches the client (§18.2). | Non-negotiable. |
+
+> **NEEDS VERIFICATION — and it materially affects this section (§35).** The hackathon is *"presented by Varun Mayya in partnership with OpenAI"* and **Codex is mandatory for the build** (**VERIFIED**, §3.8: *"Is Codex mandatory? Yes, for the prototype submitted to this hackathon"*). What is **not** established anywhere we have read is whether participants are **provided** with, or **expected to use**, an OpenAI **runtime** API for the product itself — as opposed to Codex as a *development* tool. These are different claims and the brief only supports the second. **Re-read the brief and FAQ before locking §15.3.** If runtime access is provided, the model path becomes cheap and we enable it; if not, the rules floor is what ships. Either way the interface does not change — which is why it is designed this way.
+
+### 15.4 Hallucination risk and human-in-the-loop
+
+| Risk | Control |
+|---|---|
+| Wrong category silently assigned → complaint misrouted, freeze window forfeited (the exact harm in A7) | **The category is never applied without an explicit tap.** The review screen shows: *"We think this is **Online Financial Fraud**, because you mentioned money leaving your account and a UPI reference. Is that right?"* → **Yes** / **Change it**. |
+| **Auto-submission** | **Never happens.** There is no path in the product where a model output reaches a submitted complaint without a human confirming it on screen. |
+| Fabricated extracted values (an amount or reference that was never in the text) | Extraction is **span-based**: every chip must correspond to text the citizen actually supplied, is labelled with where it came from, and is editable. A value with no source span is not shown. |
+| Confident-sounding reason for a wrong guess | Confidence is expressed in the UI as hedged language (*"We think…"*), never as a percentage. Low confidence renders *"We're not sure — please pick the closest one"* and defaults to the manual picker open. |
+| Model gives legal or procedural advice | It cannot: the model's only outputs are a category label, a reason string, and extracted spans. **There is no free-text answer surface anywhere in the product.** |
+| Model unavailable / times out | Rules answer, a banner says *"We couldn't auto-detect — please confirm the category"*, flow continues unchanged. Timeout budget: **2.5 s**, then abandon. |
+
+### 15.5 Fallback ladder (this is the whole safety story)
+
+```
+1. LLM available, confident        → suggested category + generated reason      [enhancement]
+2. LLM unavailable / slow / unsure → rules classifier + template reason         [always works]
+3. Rules find nothing              → manual category picker, pre-opened,
+                                     plain-language labels, "I'm not sure" is a
+                                     valid, unembarrassing choice               [always works]
+4. Citizen disagrees at any level  → one tap changes it, at every level         [always]
+```
+
+Level 2 alone completes every flow in §10. Levels 1 and 3 are polish on either side of it.
+
+### 15.6 Cost, latency, feasibility
+
+| | |
+|---|---|
+| **Latency budget** | 2.5 s hard timeout; the UI never blocks on it — the rules answer renders immediately and is *replaced* if the model returns in time. On a degraded 4G connection (P‑12) the citizen sees no delay at all. |
+| **Cost** | One short classification call per report. Negligible at demo volume. Extraction can be regex-first (bank SMS formats are highly regular) with the model as fallback — **cheaper, faster and more reliable than the reverse ordering.** |
+| **Build cost** | Rules classifier + regex extraction: a few hours. Model path behind the same interface: ~1 hour more. |
+| **Cut order if behind schedule** | Model refinement → generated reason strings → LLM extraction. **The rules floor and the confirmation UI are never cut.** |
+
+### 15.7 Verdict summary
+
+| Feature | Verdict | In 3-day MVP? |
+|---|---|---|
+| Rules/keyword category classifier + confirmation UI | **KEEP — the floor, never cut** | **Yes (P0)** |
+| Regex extraction of amount / date / bank / UPI ref from pasted SMS | **KEEP** | **Yes (P1, high value)** |
+| LLM refinement of the category + generated reason string | **KEEP as enhancement behind a flag** | If time |
+| LLM extraction fallback where regex fails | KEEP as enhancement | If time |
+| Runtime machine translation | **REMOVE** — static human-reviewed strings instead (§17) | No |
+| Hindi/Kannada narrative → English summary for the police record | Deferred | No — P2 |
+| General-purpose chatbot / FAQ assistant | **REMOVE** (§7.2 #9) | No |
+
+---
+
+## 16. Accessibility Strategy
+
+### 16.1 Why this is a scoring feature, not a chore
+§2.15 measured the incumbent directly, so our improvement is **objectively demonstrable** rather than asserted — rare in a hackathon. Two of the six judging criteria (*"Usability — is the experience simpler, clearer and more accessible?"* and *"Honesty"*) are directly served by shipping a scoped, truthful conformance statement.
+
+**The concrete anti-pattern we are fixing, stated as the section's north star:**
+
+> **OBSERVED**: the national cybercrime helpline **1930** exists on the homepage **only as `images/fraction-slider/1930.png`**, inside a rotating carousel, with **no `alt`**, **no `title`**, and **zero `tel:` links anywhere on the page.
+>
+> To a screen-reader user, the most time-critical action available to a fraud victim **does not exist**. To a phone user, it cannot be tapped. To a low-vision user, it cannot be enlarged (pinch-zoom is disabled by a second `<meta name="viewport">` with `maximum-scale=1`).
+>
+> **Our fix is one line of HTML in persistent chrome — and it is the most important line in the product.**
+
+### 16.2 Target and honest scope
+**WCAG 2.1 Level AA on the journeys we actually ship** (§25), verified with an automated pass plus a manual keyboard and screen-reader walk. **We will name the exact pages we tested** on `/accessibility` and will not claim conformance for anything we did not walk. Claiming site-wide AA after three days would be the same gesture-accessibility we are criticising.
+
+### 16.3 The commitments, each mapped to an OBSERVED failure
+
+| # | Commitment | Fixes (OBSERVED in §2.15) | WCAG |
+|---|---|---|---|
+| 1 | **`tel:` on every phone number**, and `1930` in persistent, never-scrolling chrome with a real accessible name | 1930 as an un-alt'd PNG; zero `tel:` links | 1.1.1, 1.4.5 |
+| 2 | **`lang` on `<html>`, switched with the language** (`en` / `hi`) | No `lang` attribute at all, on a bilingual site | 3.1.1 (A) |
+| 3 | **One `<meta name="viewport">`, no `maximum-scale`, no `user-scalable=no`** | Two conflicting viewport tags; zoom capped at 1× | 1.4.4 (AA) |
+| 4 | **Semantic HTML**: one `<h1>` per page, correct heading order, `<main>`, labelled `<nav>`, real `<button>`/`<a>` — never a clickable `<div>` | 3× `<h1>`; no `<main>`; no landmarks; no `aria-label` on either `<nav>` | 1.3.1, 2.4.1 |
+| 5 | **Skip-to-content link**, first focusable element | No skip mechanism | 2.4.1 (A) |
+| 6 | **`alt` on every image**; **no text rendered as an image, anywhere** | 29 of 41 images with no `alt`; the helpline as text-in-image | 1.1.1, 1.4.5 |
+| 7 | **Visible `:focus-visible` ring on every interactive element**, never `outline: none` | Not measured on the incumbent; a standing rule for us | 2.4.7 (AA) |
+| 8 | **Keyboard-complete journeys**: tab order follows visual order, Enter/Space activate, Escape closes, focus is moved to the error summary on failure and to the heading on step change | — | 2.1.1, 2.4.3 |
+| 9 | **Contrast ≥ 4.5:1** for body text, ≥ 3:1 for large text and UI boundaries, in both themes | Incumbent ships a High/Normal contrast toggle instead of a compliant default palette | 1.4.3, 1.4.11 |
+| 10 | **Touch targets ≥ 44 × 44 px** with ≥ 8 px spacing; primary action thumb-reachable and fixed | 3-level mega-menu on mobile | 2.5.5 |
+| 11 | **Errors are text, not colour**: inline message + a summary at the top of the form, each linking to its field, each saying **how to fix it** | Not verifiable on the OTP-gated form (NEEDS VERIFICATION) | 3.3.1, 3.3.3 |
+| 12 | **Labels are always visible** — never placeholder-as-label; a real placeholder is an *example*, not a label (§13.3) | — | 3.3.2 |
+| 13 | **`prefers-reduced-motion` respected**: no auto-advancing carousel, no parallax, no motion that cannot be stopped | Auto-rotating homepage carousel occupying the entire fold | 2.2.2, 2.3.3 |
+| 14 | **No time limits.** Nothing expires mid-form; the draft survives (Flow 8) | 30-minute OTP validity; session death mid-form (REPORTED A1) | 2.2.1 |
+| 15 | **Accessible file upload**: a real `<input type="file">` with a label, drag-and-drop as an *addition* only, upload state announced via a live region, **and the flow completes without uploading anything** | Mandatory 5 MB evidence upload — the "if any … (Mandatory)" contradiction | 1.3.1, 4.1.3 |
+| 16 | **`/accessibility` conformance statement** naming exactly what was tested, by whom, on what date, and what is not covered | Website Policies claims no WCAG and no **GIGW** level, while linking an NVDA download | — |
+
+### 16.4 Plain language — the reading-level commitment
+Tied to **P‑10 Lakshmi**, the acceptance test (§8.2 Principle 9).
+
+- Target roughly a **Class 6–8 reading level** in English; short sentences, one idea per sentence, active voice, second person.
+- **No jargon without an inline plain-language gloss.** "Sub-Category of Crime", "Where did the incident occur?", "Reason for delay in reporting" (all **VERIFIED** incumbent strings) are each replaced by a question a person would actually ask.
+- **The highest-value string in the entire product is a plain-language one:** rendering the police-internal status **"Disposed"** as *"Handed to a police unit for investigation. **This does not mean your case is closed.** Keep following up with your bank."* (A8, Flow 2).
+- **No minimum character count on any field, ever.** The incumbent's reported 200-character minimum (A3) converts distress into abandonment; IC3 uses a 3,500-character *maximum* and no minimum (§24.2 #5).
+
+### 16.5 Situational, low-bandwidth and low-literacy accessibility
+
+| Condition | Persona | Design response |
+|---|---|---|
+| Panic, one hand, low light, 11:40 PM | P‑1 | One question per screen; fixed thumb-reachable primary action; no red, no timers (§13.3, §19) |
+| Doesn't know the vocabulary; reads Hindi slowly, English barely | P‑10 | Intent labels not legal categories; plain language; Hindi complete end-to-end (§17) |
+| System font already at maximum; CAPTCHA hard to read | P‑11 | Working zoom; rem-based type that respects OS scaling; no CAPTCHA on the *reading* paths; an accessible challenge where one is needed (Chakshu ships an **audio CAPTCHA** — §24.2 #9) |
+| Budget Android, 720p, patchy 4G | P‑12 | Small JS payload; server-rendered first paint; **the journey completes without JavaScript-dependent widgets**; local-first draft so a dropped connection loses nothing (Flow 8) |
+| Shared device, hostile household | P‑3 | Quick-exit control that clears the screen; neutral document titles; no sensitive text in the tab title |
+| Reporting on someone's behalf | P‑4, P‑8 | First-class, not a "Relationship with the victim" dropdown bolted onto a self-report form |
+
+### 16.6 How it gets verified (not claimed)
+Per §28: automated **axe** and **Lighthouse** passes on every shipped route; a **keyboard-only** walk of the full MVP spine; a screen-reader spot-check of the confirmation screen and the `tel:1930` control; contrast checked at token-definition time, not at the end. **Results, including failures, go on `/accessibility`.**
+
+---
+
+## 17. Multilingual Strategy
+
+### 17.1 The benchmark that sets the floor
+The damning comparison is **not** with the FBI — it is domestic (§24.2 #9):
+
+| Service | Languages | Tag |
+|---|---|---|
+| **NCRP** | **2** (EN/HI); Hindi completeness through the complaint flow **NEEDS VERIFICATION** (A9) | VERIFIED (FAQ) |
+| **DigiLocker** | **12 Indian languages** | OBSERVED |
+| **RBI CMS** | EN + HI + **10 regional languages on the human phone line** | OBSERVED |
+| **Sanchar Saathi / Chakshu** | 2, **plus an audio CAPTCHA** | OBSERVED |
+
+An Indian government identity wallet ships 12 languages; the national cybercrime portal ships 2, for a service where the user is in crisis and may be reading at a Class‑6 level (P‑10). That is the argument.
+
+### 17.2 Scope discipline — stated openly, not hidden
+
+§7.2 #14 and §11 (P1, #13) set the ambition at **three languages complete end-to-end (EN / HI / KN)**, and that remains the target. §11 places it at **P1 — "ship if the P0 set lands early."** So the honest plan, in priority order:
+
+| Tier | Scope | Status |
+|---|---|---|
+| **Floor (P0) — what ships no matter what** | **English + Hindi**, complete through the entire MVP spine: every label, every error message, every status string, the confirmation screen, the next-hour checklist, and `/whats-real`. | Committed |
+| **Stretch (P1) — already scoped in §7.2 #14** | **+ Kannada**, same completeness. By design this is a **translation task, not an engineering task**: the strings are already externalised, so adding a locale is adding one file and one entry to the language list. | If the P0 spine lands early |
+| **Named, not built** | The remaining scheduled languages, and voice input for P‑10 (§11 P2 #23). | Stated as the top post-hackathon priority |
+
+> **This is scope discipline, not a limitation we are hiding.** The claim we make in the pitch is deliberately narrow and fully defensible: *"Every language we ship is complete through the whole journey, including the error messages. We would rather ship two languages that work than twelve that break at the confirmation screen."* A 12-language façade that falls back to English mid-flow is worse than two honest languages — and per §24.4, a broken journey is exactly what the judging criteria punish.
+
+### 17.3 Architecture — built for N, shipped with 2
+
+The design must prove it scales without rework. Concretely:
+
+1. **Zero hardcoded user-facing strings.** Every string lives in `locales/<lang>/*.json`, keyed by meaning (`report.money.amount.label`), never by English text. **A lint/CI check fails the build on a bare user-facing string literal** — this is the one mechanism that actually keeps i18n honest under time pressure.
+2. **Locale in the URL** (`/hi/report/money`), not in a cookie alone. Real URLs per language means a bank or a police officer can send a victim a link *in their language* — the same shareability argument as §9.3.
+3. **Preference persisted** (localStorage + profile if an account exists) and **respected on return**, with the switcher visible in persistent chrome on every screen — including mid-form, without losing the draft.
+4. **`lang` on `<html>` switches with the locale** (§16.3 #2) so screen readers pronounce correctly — the failure the incumbent has today.
+5. **Locale-aware formatting** for dates, times and currency: **₹ with Indian digit grouping (₹1,80,000, not ₹180,000)**. Getting lakh/crore grouping wrong in a fraud-reporting product is an instant credibility loss.
+6. **No string concatenation for sentences.** Interpolation with named placeholders only, so word order can change between languages.
+7. **Length tolerance in the components**: Hindi and Kannada run visibly longer than English. Buttons and labels wrap; nothing is sized to the English string.
+8. **Translations are static and human-reviewed** (§15.2b). No runtime machine translation exists in the product.
+9. **The data model is language-neutral.** Complaints store a category **code**, not a label; status is an **enum**, not a string. Labels are resolved at render time. This is what makes a new language a content change rather than a migration (§22).
+
+### 17.4 What gets translated, in priority order
+1. The MVP spine end-to-end: intake → confirm facts → review → **confirmation, next-hour checklist, "this is not an FIR"** → track → status timeline.
+2. **Every error message and every empty state.** These are what break first in real i18n work and where the incumbent's completeness is unverified (A9).
+3. `/help/just-happened`, `/whats-real`, `/accessibility`, `/privacy`.
+4. Marketing/landing copy — last, because nobody in crisis reads it.
+
+---
+
+## 18. Security & Privacy Strategy
+
+### 18.1 The disclosure this section exists to make
+
+> **This is a prototype. It does not have, does not claim, and cannot claim government-grade security.**
+>
+> It demonstrates the **UX and architecture shape** of what a production system's security and privacy would require. It handles **mock and synthetic data only** (mandatory per §3.8, **VERIFIED**). It performs **no real authentication**, sends **no real SMS**, holds **no real citizen data**, and connects to **no government system** (prohibited per §3.9, **VERIFIED**).
+>
+> This paragraph appears, in substance, on `/whats-real` and in a persistent in-product banner. Saying it plainly is the "Honesty" criterion (**VERIFIED**, §3.4), and it is also simply true.
+
+### 18.2 PROTOTYPE — what we actually build in 3 days
+
+| Control | What we do | Notes |
+|---|---|---|
+| **OTP** | **Mocked.** A fixed on-screen demo code, visibly labelled, with published demo credentials for reviewers (required by the submission rules — **VERIFIED**, §3.5). | Decided in §12.5. The **ordering** (capture → verify) is real; only the gateway is simulated. |
+| **Sessions** | Real: HTTP-only, `Secure`, `SameSite=Lax` cookies; server-side session record; short expiry; explicit logout. | Production-shaped even though the credential behind it is mocked. |
+| **Passwords** | **None exist.** There is no password anywhere in the product. | Nothing to leak, nothing to hash badly. The best security control is the field that doesn't exist. |
+| **Input validation** | **Server-side validation on every route, schema-first (zod), never trusting the client.** Client-side validation is UX only. | Trust-boundary validation is never simplified away. |
+| **Output escaping** | Framework-default escaping; **no `dangerouslySetInnerHTML` on any citizen-supplied string** — including the narrative and extracted chips. | The narrative is attacker-controlled text by definition. |
+| **File upload** | Allow-list of MIME types (`image/jpeg`, `image/png`, `image/webp`, `application/pdf` — PDF because bank statements are PDFs, A4); **magic-byte check, not just the extension**; per-file size cap after **client-side compression**; randomised stored filenames; served from a non-executing path with `Content-Disposition: attachment`; **virus scanning is SIMULATED and labelled as such.** | Compression + PDF acceptance are the two P12 fixes from §7.2 #18. |
+| **Rate limiting** | Per-IP and per-device limits on submit endpoints; **remaining quota shown before it is hit**, never as a surprise wall (§13.5). | Carries the abuse load that login would otherwise carry (§12.3 #5). |
+| **CAPTCHA** | At submission on the no-login paths — matching the incumbent's own posture on Report Suspect (**OBSERVED**). Must have an accessible alternative (§16.5). | |
+| **Secrets** | **No key of any kind in client code.** All model/provider calls go through our own server routes. `.env` is never committed; `.env.example` documents the names only. | Non-negotiable. |
+| **Error messages** | Clean human message to the UI; full detail to server logs. **No stack traces, hostnames, file paths, SQL or service names in any user-facing response.** | The incumbent leaks its internal ASP.NET path into a user-facing URL (`FileNotFound.htm?aspxerrorpath=…`, **OBSERVED** §2.22). We will not reproduce that. |
+| **Transport** | HTTPS only (free with the deploy target, §20); HSTS; a baseline CSP; `X-Content-Type-Options: nosniff`; `Referrer-Policy: strict-origin-when-cross-origin`. | Cheap, and their absence is noticed. |
+| **Audit logging** | Real `AuditLog` writes for: complaint created, status changed, evidence added, consent granted/withdrawn, case read. Actor, action, target, timestamp. **Narrative contents are never written to logs.** | §22. This is the "end-to-end thinking" artefact, and it costs almost nothing. |
+| **Data minimisation** | Enforced structurally: **no Aadhaar column, no PAN column, no parent/spouse-name column, no ID-document table** (§22). | You cannot leak what you never modelled. |
+| **Draft data** | `localStorage` only, **expires and is deleted after 7 days**, stated on screen (Flow 8). | A draft cybercrime report is sensitive and must not linger on a shared device. |
+
+### 18.3 PRODUCTION GOVERNMENT SYSTEM — what would actually be required (designed, not built)
+
+Stated so the gap is explicit rather than implied. **None of the following is in the prototype.**
+
+| Domain | Production requirement |
+|---|---|
+| **Authentication** | Real SMS gateway with per-number rate limiting, OTP replay protection, and a documented recovery path for the SIM-swap victim (P19) — the case we explicitly do **not** solve. |
+| **Data at rest** | Field-level encryption for narrative, contact details, evidence and suspect identifiers; managed key rotation; separate keys per data class. |
+| **Evidence handling** | Real AV/malware scanning, content-hash deduplication, chain-of-custody records (who accessed which evidence file, when) sufficient to survive an evidentiary challenge. |
+| **Access control** | Role-based access for police users, scoped to jurisdiction; every read of a case body audited and reviewable. |
+| **Retention** | A published retention schedule per data class, with automated deletion, aligned to the legal retention duty for complaint records. |
+| **Assurance** | CERT‑In empanelled audit, VAPT, and a GIGW conformance claim — the standard the incumbent's own Website Policies page does not currently claim (**OBSERVED**, §2.15). |
+| **Breach response** | A tested incident-response runbook meeting the Rule 7 notification duty below. |
+| **Integration security** | Signed, mutually-authenticated channels to bank/CFCFRMS nodal systems; idempotent freeze requests; no citizen PII in third-party logs. |
+
+### 18.4 DPDP — precisely dated, and mostly not yet in force
+
+Verified 2026‑08‑25. This matters because it is very easy to overclaim here, and overclaiming is the one thing the "Honesty" criterion punishes.
+
+| Fact | Tag |
+|---|---|
+| The **Digital Personal Data Protection Rules were gazetted 13 Nov 2025 (G.S.R. 846(E))**. | **VERIFIED** |
+| **In force now:** Rules **1, 2, 17–21** only — definitions and the Data Protection Board machinery. | **VERIFIED** |
+| **Rule 4 (Consent Manager)** comes into force **13 Nov 2026**. | **VERIFIED** |
+| **Rules 3, 5–16, 22, 23** — **notice, consent, security safeguards, breach notification, erasure, children's data, grievance redressal, cross-border transfer** — come into force **13 May 2027**. | **VERIFIED** |
+| **Therefore, as of today (25 Aug 2026), none of the substantive Data Fiduciary obligations are yet legally enforceable.** | **VERIFIED** |
+| The **Data Protection Board had no confirmed Chairperson or Members** as of the last verifiable notice. | **VERIFIED** |
+| Penalties **when in force**: up to **₹250 crore** (failure of security safeguards), **₹200 crore** (breach non-notification / children's data), **₹50 crore** (other). | **VERIFIED** |
+
+> **What we will and will not say.** We will **not** say "the current portal violates the DPDP Act" — as of today the substantive obligations are not yet in force, and saying otherwise would be false. What is **OBSERVED** and fair to say is narrower and still damning: the page linked as the portal's "Privacy Policy" is the **Cyber Dost mobile app's** policy, describes collecting **credit card information** and **GPS location**, and **never mentions Aadhaar, PAN or identity documents — despite the complaint form mandatorily collecting a government ID upload** (§2.21, P8).
+
+**Our position: build to the 2027 standard now.** Not because we must, but because (a) it is the right shape, (b) it costs almost nothing at this scale, and (c) *"we built the notice, consent, erasure and breach-notification UX to the standard that becomes binding in May 2027"* is a credible, dated, verifiable claim — which is worth more than a vague "privacy-first" assertion.
+
+| DPDP Rule (date in force) | What we build now | What we simulate |
+|---|---|---|
+| **Rule 3 — Notice** (13 May 2027) | The per-field consent frame in §14.7: what, why, who sees it, is it required, what if I refuse. Real, on every screen that asks for data. | — |
+| **Rule 4 — Consent Manager** (13 Nov 2026) | Nothing. Out of scope. | Named on `/whats-real` as a known gap. |
+| **Rules 5–6 — Purpose limitation & security safeguards** | Structural minimisation (§18.2) — no Aadhaar/PAN/parent-name columns exist. | Encryption at rest, key management. |
+| **Rule 7 — Breach notification** | A written, published notification **template and timeline** on `/privacy`, showing exactly what a citizen would be told and when. | The actual detection and reporting pipeline. |
+| **Rule 8 — Erasure** | A **real, working** "delete my saved details" control on `/profile`, and a stated retention position for complaints and drafts (drafts: 7 days, automatic). | Deletion propagation to downstream police systems (which we do not have). |
+| **Rule 9 — Children's data** | Flow 5 treats reporting-for-a-child as first-class; we collect **nothing** about the child beyond the narrative the adult supplies. | Verifiable parental consent. |
+| **Rules 13–14 — Grievance redressal** | A named route: the incumbent's own **State/UT Nodal and Grievance Officers**, which are real and published (**VERIFIED**, §2.13) — surfaced instead of buried. | — |
+| **Rule 15 — Cross-border transfer** | N/A at prototype scale; the deploy region is stated on `/whats-real`. | — |
+
+### 18.5 `/privacy` — what the page actually says
+Written in plain language, portal-specific (unlike the incumbent's, **OBSERVED**), and short enough to be read by someone in distress:
+1. **What we collect, per journey, and why** — as a table, matching §22 field-for-field.
+2. **What we deliberately do NOT collect** — Aadhaar, PAN, any ID document, parent/spouse name — **and why not**. This is the most persuasive paragraph on the page.
+3. **Who would see it** in a real system, and who sees it now (**nobody — it's a prototype with synthetic data**).
+4. **How long we keep it**, including the 7-day draft expiry.
+5. **How to delete it**, with a working link.
+6. **What we would tell you if we were breached**, and within what time (the Rule 7 template).
+7. **The honest disclosure from §18.1**, verbatim.
+
+---
+
+## 19. UI / Design System Direction
+
+### 19.1 The visual thesis
+The seven qualities in §1 are **Calm → Trustworthy → Simple → Fast → Human → Accessible → Secure**, in that order. The design system exists to serve the first three, and everything below follows from one rule:
+
+> **Urgency is expressed through ordering and brevity, never through decoration.**
+> A panicking person does not need to be told the situation is urgent. They know. Red banners, sirens, pulsing icons and countdown timers raise arousal, degrade reading comprehension and worsen input quality — which costs the exact transaction reference we need (§13.3, Principle 5 in §8.2).
+
+The product should feel like **a calm person at a desk who has done this a hundred times** — not an alarm system, and not a startup landing page.
+
+### 19.2 Colour
+
+| Role | Direction | Reason |
+|---|---|---|
+| **Primary** | A single deep, low-saturation **institutional blue/teal**, used for actions and focus only. | Reads as civic and calm. One accent, applied with discipline (`awwwards-ui-ux` single-accent rule) — the fastest way to look intentional rather than templated. |
+| **Surface** | Warm off-white / near-neutral greys. Full dark-mode token set from day one. | Long-form reading in low light at 11:40 PM (P‑1). |
+| **Red** | **Never a primary, never a background, never an entry point.** Reserved exclusively for **inline validation errors** and **destructive confirmations** (withdraw a complaint). | The whole product is about a bad event. If red means "bad", every screen is red and red means nothing. |
+| **Amber** | Only for the honest-uncertainty state: *"We have no reports for this — that does not mean it is safe"* (Flow 6). | One meaning, used once. |
+| **Green** | Only for a completed step in the status timeline and the confirmation state. Never for "you are safe". | We never tell anyone they are safe. |
+| **Contrast** | ≥ 4.5:1 body, ≥ 3:1 large text and UI boundaries, **in both themes**, checked at token-definition time. | §16.3 #9. |
+
+**Explicitly banned** (these are the AI-generated tells, and on a civic product they also read as untrustworthy):
+- Purple/indigo/violet gradient CTAs
+- Gradient-clipped text (`bg-clip-text`)
+- Glassmorphism, neon glows, mesh gradients, "AI dashboard" aesthetics
+- Full-bleed hero imagery of hooded figures, padlocks, binary rain, or any stock "cyber" iconography
+- Dark-mode-only "hacker" theming
+
+**Why, stated for the write-up:** a citizen deciding whether to trust this with a fraud report reads visual seriousness as institutional seriousness. A gradient CTA on a cybercrime report form is not neutral — it actively signals "someone's side project", which is the one impression that loses the trust argument.
+
+### 19.3 Typography
+- **One family, weight contrast instead of family contrast.** A humanist sans with genuine **Devanagari and Kannada coverage** (the language switch must not change the typeface — §17.3 #7). Noto Sans / Inter-class.
+- **Body 16 px minimum, 17–18 px on the intake screens.** Never below 16 px on mobile — it triggers iOS input zoom and is unreadable for P‑11.
+- **`rem`-based scale that respects OS font settings.** P‑11 has already set his phone to maximum; we must not override him.
+- **Measure 60–75 characters.** The narrative textarea and every explanatory paragraph.
+- **Line height 1.5+** for body, tighter only for large headings.
+- A modest scale — roughly `12 · 14 · 16 · 18 · 20 · 24 · 30 · 36`. **No display-size type anywhere in the reporting flow.** The one place large type is correct is the **Complaint ID on the confirmation screen** — it is the single most important string the citizen will ever copy from this product (§13.4).
+
+### 19.4 Spacing, layout, motion
+- **4 px base scale** (`4 · 8 · 12 · 16 · 24 · 32 · 48 · 64`). No arbitrary values.
+- **Single column, always.** Max content width ~640 px for forms, ~720 px for reading. No multi-column form layouts — they break at every breakpoint and read as a bureaucratic form (which is the thing we are replacing).
+- **One question visible at a time** on intake (§13.3). Generous vertical rhythm; the page should feel unhurried.
+- **Primary action fixed and thumb-reachable on mobile**, never moving between steps.
+- **Motion:** one shared easing token `cubic-bezier(0.16, 1, 0.3, 1)`, ~200–380 ms, applied to step transitions and nothing else. **Content is never gated behind an animation** — a reveal that fails ships a blank section. **`prefers-reduced-motion` disables all of it.** No scroll-jacking, no parallax, no auto-advancing anything (the incumbent's auto-rotating carousel is the anti-pattern, §2.1).
+
+### 19.5 Component inventory (the whole build surface)
+
+| Component | Required states / notes |
+|---|---|
+| **Button** | Primary / secondary / tertiary / destructive · default, hover, **focus-visible**, active, loading, disabled. Loading state is **in-place**, never a full-screen spinner. |
+| **Text input / textarea** | Visible label always · helper text · example placeholder (never label-as-placeholder) · error · **character counter that counts up to a maximum, never a minimum** (§16.4) |
+| **Editable chip** | For extracted facts (Flow 10): value + provenance label (*"from your bank SMS"*) + edit + remove. **The signature component of the product.** |
+| **Card** | Complaint summary, status card, check-result card. Flat, bordered, no drop-shadow theatre. |
+| **Alert / callout** | `info` · `warning` · `error` · `success`. **Icon + text, never colour alone** (§16.3 #11). |
+| **Nav / persistent chrome** | Skip link · logo · language switcher · **`tel:1930` action that never scrolls away** · prototype disclosure banner |
+| **Progress** | *"2 more questions"* — **remaining, not a percentage** (§13.3) |
+| **Status timeline** | Vertical, per step: label · date · **plain-language meaning** · *"what you can do now"*. Carries the "Disposed" translation (A8) — the highest-value string in the product. |
+| **Modal / sheet** | Focus trap, Escape to close, focus returned on close. Used sparingly; **never for anything on the critical path.** |
+| **File upload** | Real labelled `<input type="file">` · drag-drop as an addition only · per-file progress · compression indicator · remove · **"No screenshot? That's fine — report anyway."** |
+| **Loading** | Skeletons that match final layout (no layout shift). The rules-based category renders **immediately**; the model refinement swaps in if it arrives (§15.6). |
+| **Empty state** | Every list has one, each with a next action. |
+| **Error state** | Inline + a summary at the top of the form linking to each field · **says how to fix it** · never a bare "Invalid" (Flow 2) |
+| **Success / confirmation** | Complaint ID large and copyable · copy / download / (mock) SMS · the next-hour checklist · "what happens next" · "this is not an FIR" |
+| **Quick exit** | Flow 4 only. Clears the screen immediately. |
+| **Prototype disclosure** | Persistent, unobtrusive, links to `/whats-real`. Present on every screen (§18.1). |
+
+### 19.6 Explicitly avoided, with reasons
+
+| Avoided | Why |
+|---|---|
+| **Countdown timers / "act within X minutes"** | Raises panic, degrades input quality, and if the citizen misses it the product has told them they failed. §13.3. |
+| **Red as a primary or background colour** | See §19.2. |
+| **Siren, alarm, warning-triangle iconography as decoration** | Performing urgency at someone who is living it. |
+| **Auto-rotating carousels** | The incumbent's single biggest waste of the fold (§2.1), plus a WCAG 2.2.2 failure. |
+| **Blame-adjacent copy** | *"Reason for delay in reporting"* (**VERIFIED** incumbent field) asks a victim to justify their trauma response. Nothing in our product asks the citizen to account for themselves. |
+| **Text rendered as an image** | The 1930 PNG is the origin story of this entire project (§16.1). |
+| **Full-screen blocking spinners** | Every wait is in-place and cancellable; nothing blocks on an AI call (§15.5). |
+| **Gamification, confetti, celebratory micro-delight** | Someone just lost ₹1.8 lakh. Confetti on that confirmation screen would be the single worst decision available to us. |
+| **A chatbot bubble in the corner** | §7.2 #9. |
+
+---
+
+## 20. Tech Stack
+
+### 20.1 The constraint this is optimised for
+Not "what is the best architecture for a national cybercrime portal." The actual constraint: **~3 days, likely 1–2 people (a team of two is the hackathon maximum — VERIFIED §3.6), must deploy to a public URL that opens without requesting access (VERIFIED §3.5), and must demo reliably on stage.**
+
+Under that constraint the dominant risk is **integration surface**, not scalability. Every additional service is another thing that can be misconfigured at 19:00 on 28 August.
+
+### 20.2 The recommendation
+
+| Layer | Choice | Why this, concretely |
+|---|---|---|
+| **Framework** | **Next.js (App Router) + TypeScript** | Frontend, API routes and server rendering in **one deployable unit**. Server components give a small first payload for P‑12's patchy 4G. Real URLs for every action come free — which is the direct fix for the incumbent's `__doPostBack` problem (P9, §9.3). TypeScript because the data model (§22) is the spec and the compiler enforces it for free. |
+| **Styling** | **Tailwind CSS** | Design tokens (§19) expressed as config, so the palette, spacing scale and type scale are enforced rather than remembered. Fastest path from a design system on paper to a consistent build. |
+| **Components** | **shadcn/ui** | Radix primitives underneath, so **keyboard navigation, focus management and ARIA are correct by default** — §16 is a ship gate, and hand-rolling an accessible dialog and file input in 3 days is how a11y silently fails. Copied into the repo, so restyling to §19's tokens is direct. |
+| **Database** | **Managed Postgres — Neon or Supabase** | The data model (§22) is genuinely relational: Complaint → Incident → Evidence → StatusHistory → AuditLog. Postgres also gives real constraints and enums, which is how the "no Aadhaar column" guarantee (§14, §18.2) becomes structural rather than a promise. |
+| **Storage** | Supabase Storage, or Vercel Blob | Evidence files. Whichever ships with the DB choice — do not add a third vendor. |
+| **Deployment** | **Vercel** | Same-day deploy, HTTPS and preview URLs free, zero infrastructure work. §3.5 requires a public link that opens without requesting access; this is the shortest path to it that cannot fail on demo day. |
+| **AI (optional path)** | Behind the single `classify()` interface from §15.3, server-side only | The build runs with **no API key configured**. Nothing on the critical path needs a secret. |
+| **Dev tooling** | **Codex — mandatory** (**VERIFIED**, §3.8) | *"Codex should be meaningfully involved in the build"* and the submission must explain how it contributed. **Keep a running build log from hour one** — it is the content of the video's second minute (§30). |
+
+### 20.3 Alternatives, and why they lose against a 3-day clock
+
+| Alternative | Verdict |
+|---|---|
+| **Separate NestJS / Express backend + separate React frontend** | **Rejected.** Two repos or two deploy targets, CORS, duplicated types, two sets of env vars, two things to keep alive during a demo. Buys architectural purity we do not need and costs integration hours we do not have. Next.js route handlers give the same API design (§23) inside one deployment. |
+| **Firebase / Firestore** | **Rejected.** Fast for auth and simple documents, but weaker for the relational shape we actually have — a Complaint with an Incident, an ordered StatusHistory, many Evidence rows, an AuditLog and a Consent record all needing joins and referential integrity. Modelling that in Firestore means denormalising by hand, which is slower under time pressure and produces a data model we cannot show off in the write-up. "End-to-end thinking" is a judging criterion (**VERIFIED**); a clean relational schema *is* the artefact. |
+| **Plain SQLite / a JSON file** | **Rejected**, though tempting. Serverless deploys have ephemeral filesystems; the demo would lose data between requests. A managed Postgres free tier costs ~10 minutes to provision. |
+| **A no-code / site builder** | **Rejected.** *"A static design is not enough"* and *"Is a Figma design enough? No"* (**VERIFIED**, §3.2/§3.4). The judged artefact is a working journey. |
+| **Native mobile app** | **Rejected by rule.** *"Reviewers will not download a mobile app"* (**VERIFIED**, §3.5). Web only. |
+| **A heavy animation stack (GSAP/Lenis/Three.js)** | **Rejected.** §19.4 wants ~200 ms step transitions and nothing else. This stack would cost payload on P‑12's connection and buy nothing the judges are scoring. |
+
+### 20.4 Status of this recommendation
+> **This is a recommendation, not a lock.** It should be confirmed by the user before implementation begins — together with **team size and skill composition**, which is an open question (§35) and which materially changes §20 and §27. If the team is stronger in another stack, the *architecture* (§21), *data model* (§22) and *API design* (§23) all transfer unchanged; only the framework row moves. **Do not start scaffolding before that confirmation (§37).**
+
+---
+
+## 21. System Architecture
+
+### 21.1 Diagram
+
+```
+┌───────────────────────────────────────────────────────────────────────────────┐
+│  CITIZEN'S DEVICE                                    [ UNTRUSTED ]            │
+│                                                                               │
+│   Browser (mobile-first)                                                      │
+│   ├─ Server-rendered pages + minimal client JS                                │
+│   ├─ localStorage: DRAFT ONLY  ── auto-expires after 7 days ──┐               │
+│   ├─ Client-side image compression (before any upload)        │               │
+│   └─ Locale preference (en | hi)                              │               │
+│                                                               │               │
+└───────────────────────────────┬───────────────────────────────┼───────────────┘
+                                │  HTTPS only                   │
+        ════════════════════════╪═══════════════════════════════╪═══════════════
+          TRUST BOUNDARY 1      │  everything below is server-side; nothing
+          validate everything   │  above it is ever trusted
+        ════════════════════════╪═══════════════════════════════════════════════
+                                │
+┌───────────────────────────────▼───────────────────────────────────────────────┐
+│  APPLICATION  (Next.js — one deployable unit)          [ PROTOTYPE ]          │
+│                                                                               │
+│  ┌── Route handlers (§23) ─────────────────────────────────────────────────┐  │
+│  │  /api/auth/*     /api/complaints/*    /api/evidence/*                   │  │
+│  │  /api/suspects/* /api/track/*         /api/notifications/*              │  │
+│  └─────────────────────────────────────────────────────────────────────────┘  │
+│                                                                               │
+│  ┌── Middleware (every request) ───────────────────────────────────────────┐  │
+│  │  schema validation (zod) · rate limit · session · locale · audit write  │  │
+│  └─────────────────────────────────────────────────────────────────────────┘  │
+│                                                                               │
+│  ┌── Domain services ──────────────────────────────────────────────────────┐  │
+│  │  ComplaintService · EvidenceService · StatusService · ConsentService    │  │
+│  │                                                                         │  │
+│  │  Classifier  ┌──────────────────────────────────────────────────┐       │  │
+│  │              │ 1. RULES (deterministic) ← always runs, always    │       │  │
+│  │              │    sufficient — the journey never depends on 2    │       │  │
+│  │              │ 2. MODEL refinement  ← optional, flagged, 2.5 s   │       │  │
+│  │              │    timeout, degrades silently to (1)              │       │  │
+│  │              └──────────────────────────────────────────────────┘       │  │
+│  │  Extractor: regex-first over pasted SMS → model fallback (optional)     │  │
+│  └─────────────────────────────────────────────────────────────────────────┘  │
+└───────┬───────────────────────────────────────────┬───────────────────────────┘
+        │                                           │
+        ▼                                           ▼
+┌───────────────────────────┐        ╔══════════════════════════════════════════╗
+│  DATA  [ PROTOTYPE ]      │        ║  MOCKED INTEGRATIONS                     ║
+│                           │        ║  ── clearly labelled in the UI ──        ║
+│  Postgres                 │        ║                                          ║
+│   User · Profile          │        ║  ┌────────────────────────────────────┐  ║
+│   Complaint · Incident    │        ║  │ MOCK OTP PROVIDER                  │  ║
+│   ComplaintStatus         │        ║  │ fixed on-screen demo code          │  ║
+│   Evidence · Consent      │        ║  │ (real gateway = production only)   │  ║
+│   SuspectIdentifier       │        ║  └────────────────────────────────────┘  ║
+│   Notification · AuditLog │        ║  ┌────────────────────────────────────┐  ║
+│   Draft (server copy)     │        ║  │ MOCK DIGILOCKER  [NOT IN MVP]      │  ║
+│                           │        ║  │ consent-UX shape only; no API call │  ║
+│  Object storage           │        ║  │ (no sandbox exists — L8, §14.2)    │  ║
+│   evidence files          │        ║  └────────────────────────────────────┘  ║
+│   · random filenames      │        ║  ┌────────────────────────────────────┐  ║
+│   · non-executing path    │        ║  │ SIMULATED SMS / EMAIL              │  ║
+│   · scan = SIMULATED      │        ║  │ exact copy rendered in-UI as a     │  ║
+│                           │        ║  │ phone notification; nothing sent   │  ║
+│  SYNTHETIC DATA ONLY      │        ║  └────────────────────────────────────┘  ║
+└───────────────────────────┘        ║  ┌────────────────────────────────────┐  ║
+                                     ║  │ SYNTHETIC SUSPECT DATASET          │  ║
+                                     ║  │ seeded, fake, labelled on-page     │  ║
+                                     ║  └────────────────────────────────────┘  ║
+                                     ║  ┌────────────────────────────────────┐  ║
+                                     ║  │ SYNTHETIC 1930 ACK LOOKUP  [P1]    │  ║
+                                     ║  └────────────────────────────────────┘  ║
+                                     ╚══════════════════════════════════════════╝
+
+        ════════════════════════════════════════════════════════════════════════
+          TRUST BOUNDARY 2 — DOES NOT EXIST IN THIS PROTOTYPE
+          No connection to any government system. Prohibited by §3.9 (VERIFIED)
+          and stated on /whats-real.
+        ════════════════════════════════════════════════════════════════════════
+
+┌───────────────────────────────────────────────────────────────────────────────┐
+│  PRODUCTION-ONLY — DESIGNED, NOT BUILT           [ NOT IN PROTOTYPE ]         │
+│                                                                               │
+│   Real SMS gateway · CFCFRMS / bank nodal freeze channel · police case-        │
+│   management handoff · jurisdiction routing service · field-level encryption   │
+│   + KMS · real AV scanning + chain of custody · RBAC for police users ·        │
+│   retention/deletion scheduler · CERT-In audit + VAPT · breach-response        │
+│   pipeline (§18.3)                                                            │
+└───────────────────────────────────────────────────────────────────────────────┘
+```
+
+### 21.2 Notes on the boundaries
+- **Trust boundary 1 is the only one that exists**, and everything crossing it is schema-validated server-side. Client-side validation is UX, never a control (§18.2).
+- **The mocked-integration box is drawn separately and on purpose.** Anything inside it is labelled in the running UI, not only in the README. This is the visual form of the "Honesty" criterion.
+- **The classifier's rules path is inside the trust boundary and has no external dependency.** That is what makes the demo safe (§15.5).
+- **Nothing sensitive is stored client-side except the draft**, which expires in 7 days (Flow 8, §18.2).
+- **`localStorage` is never a source of truth for a submitted complaint** — once submitted, the server record is authoritative and the draft is cleared.
+
+---
+
+## 22. Data Model
+
+### 22.1 What we deliberately do NOT store — stated first, because it is the design
+
+| Not stored | Why | Reference |
+|---|---|---|
+| **Aadhaar number** — no column, no table, no encrypted blob | Banned by hackathon rules; legally unavailable; solves nothing | §14.3 |
+| **PAN** | Fails all three justification tests; pure liability | §14.4 |
+| **Father / Mother / Spouse Name** — the incumbent's **mandatory** field (**VERIFIED**, Manual Step 6a‑ii) | No purpose line can be written for it (§14.7). It is the reason P‑3 closes the tab. | §14.8 |
+| **Any identity-document upload** — the incumbent's **mandatory** National ID upload (**VERIFIED**, Step 6a‑v) | A hard stop at 11:40 PM; and asking an identity-theft victim (P‑5) for ID is a design error | §14.8 |
+| **Date of birth, gender, nationality, full postal address, tehsil, pin code** | The incumbent collects all of these (**VERIFIED**, Step 6a). Routing needs **State + District**. Nothing else survives the justification test. | §13.2 |
+| **"Reason for delay in reporting"** (**VERIFIED**, Step 4‑ii) | Asks a victim to account for their trauma response | §19.6 |
+| **Precise geolocation** | Never requested. The incumbent's linked privacy policy describes GPS collection (**OBSERVED**, §2.21) | §18.5 |
+| **Biometrics of any kind** | — | — |
+
+> **You cannot leak what you never modelled.** This table is the security control (§18.2, "data minimisation"), and it is also the most quotable slide in the pitch: *we removed two mandatory fields and one mandatory document upload, and the complaint still routes correctly.*
+
+### 22.2 Entities
+
+Sensitivity: **[S]** = restricted (encrypted at rest in production, access-audited, never logged). Retention is the **stance** we publish; automated enforcement beyond the 7-day draft expiry is production-only (§18.4, Rule 8).
+
+---
+
+**`User`** — an optional account, created **after** a report, never before.
+- **Purpose:** carry a verified contact channel so status updates can be sent and a case can be re-opened. Nothing more.
+- **Key fields:** `id` · `mobile` **[S]** · `mobileVerifiedAt` · `createdAt` · `lastSeenAt` · `locale`
+- **Relationships:** 1—1 `Profile` · 1—* `Complaint` · 1—* `Consent` · 1—* `Notification`
+- **Notes:** **no password column** (none exists in the product, §18.2). Mobile is the identifier; the mocked OTP verifies it.
+- **Retention:** until the user deletes it. Deleting the account **does not** delete filed complaints — a complaint is a record of a reported crime; it is de-linked, not destroyed. Stated plainly on `/privacy`.
+
+**`Profile`** — the *entire* autofill surface (§14.6).
+- **Purpose:** remember the three things a returning citizen would otherwise retype.
+- **Key fields:** `userId` · `displayName` (optional) **[S]** · `state` · `district` · `updatedAt`
+- **Relationships:** 1—1 `User`
+- **Notes:** **this is the whole of our "identity" system.** Every field is optional and independently deletable from `/profile`.
+- **Retention:** user-controlled; one-tap delete, independent of complaints (Rule 8 rehearsal).
+
+**`Complaint`** — the citizen-facing case.
+- **Purpose:** the record the citizen holds an ID for and tracks.
+- **Key fields:** `id` · `publicId` (the human-facing Complaint ID — short, unambiguous character set, no lookalikes) · `userId` (**nullable** — anonymous reports are first-class) · `channel` (`web` | `1930_handoff`) · `isAnonymous` · `categoryCode` · `subCategoryCode` · `categorySource` (`rules` | `model` | `user`) · `categoryConfirmedByUser` (**must be `true` to submit** — §15.4) · `state` · `district` · `contactMobile` **[S]** · `createdAt` · `submittedAt`
+- **Relationships:** 1—1 `Incident` · 1—* `ComplaintStatus` · 1—* `Evidence` · 1—* `SuspectIdentifier` · 1—* `Notification` · *—1 `User` (optional)
+- **Notes:** `categoryCode` is a **code, not a label** — labels resolve at render time, which is what makes a new language a content change (§17.3 #9). `categorySource` + `categoryConfirmedByUser` together are the auditable proof that **no AI output was ever applied without a human tap.**
+- **Retention:** long — it is a crime report. Position published; deletion is a grievance-route action, not a button.
+
+**`Incident`** — what actually happened. Separated from `Complaint` on purpose: the complaint is the *case*, the incident is the *event*.
+- **Purpose:** hold the narrative and the facts the freeze request needs.
+- **Key fields:** `complaintId` · `narrative` **[S]** (free text, **no minimum length**) · `occurredAt` · `amountLost` · `currency` · `debitedInstrument` (bank / wallet / UPI handle) **[S]** · `transactionRef` **[S]** · `channelUsed` (call / SMS / WhatsApp / app / website) · `extractedFields` (JSON: value + **source span** + confirmed flag)
+- **Relationships:** 1—1 `Complaint`
+- **Notes:** `extractedFields` is the provenance record behind the editable chips (Flow 10). **A value with no source span is never displayed** (§15.4). The narrative is attacker-controlled text — escaped on output, never rendered as HTML (§18.2).
+- **Retention:** with the parent complaint.
+
+**`ComplaintStatus`** — append-only status history. **Never a mutable status column on `Complaint`.**
+- **Purpose:** drive the plain-language timeline (Flow 2), which is the emotional centre of the tracking experience.
+- **Key fields:** `complaintId` · `code` (enum: `RECEIVED` · `SENT_TO_BANK` · `WITH_CYBER_CELL` · `UNDER_INVESTIGATION` · `DISPOSED` · `FIR_REGISTERED` · `WITHDRAWN`) · `occurredAt` · `assignedUnit` · `note`
+- **Relationships:** *—1 `Complaint`
+- **Notes:** the enum is the police-internal vocabulary; **the plain-language translation lives in the locale files, not the database.** That is how `DISPOSED` renders as *"Handed to a police unit for investigation. This does not mean your case is closed."* (A8) — and how it renders correctly in Hindi.
+- **Retention:** with the parent complaint. Append-only; nothing is ever edited or deleted.
+
+**`Evidence`**
+- **Purpose:** the victim's screenshots, statements, chat exports.
+- **Key fields:** `complaintId` · `storageKey` (randomised) · `originalFilename` **[S]** · `mimeType` · `sizeBytes` · `sha256` · `uploadedAt` · `scanStatus` (**`SIMULATED_CLEAN`** — labelled, never claimed as real scanning) · `compressedClientSide`
+- **Relationships:** *—1 `Complaint`
+- **Notes:** **always optional** — this fixes the incumbent's *"if any … (Mandatory)"* contradiction (**VERIFIED**). Allow-listed MIME types incl. **PDF** (A4). Files served from a non-executing path with `Content-Disposition: attachment`.
+- **Retention:** with the parent complaint. Chain of custody is production-only (§18.3).
+
+**`SuspectIdentifier`** — used both inside a complaint and by the standalone check/report flows.
+- **Purpose:** the thing that was used against the victim (or that a non-victim is reporting).
+- **Key fields:** `type` (`mobile` | `email` | `upi` | `bank_account` | `url` | `app` | `social` | `sms_header`) · `valueNormalised` **[S]** · `valueHash` (for dedupe and lookup) · `complaintId` (nullable) · `reportCount` · `firstReportedAt` · `isSynthetic`
+- **Relationships:** *—1 `Complaint` (optional — Flow 7 has no complaint)
+- **Notes:** **`isSynthetic` is a first-class column**, not a comment. The check dataset is seeded and fake and the UI says so (Flow 6). Lookups run against `valueHash`. The "not found" result is a designed state, never a bare empty (§19.5).
+- **Retention:** aggregate counts persist; the link to a specific complaint is what carries sensitivity.
+
+**`Notification`** — simulated delivery; the **copy** is the deliverable (§7.2 #17).
+- **Key fields:** `complaintId` · `userId` (nullable) · `channel` (`sms` | `email`) · `templateKey` · `renderedBody` · `createdAt` · `deliveryStatus` (**`SIMULATED`**)
+- **Notes:** rendered in-UI as a phone notification at each status change. **Nothing is sent anywhere.** Zero infrastructure, full demonstration of the idea, honestly labelled.
+
+**`Draft`** — server-side mirror of the local-first draft (Flow 8), only for the "continue on another device" path.
+- **Key fields:** `id` · `payload` **[S]** · `createdAt` · `expiresAt` (**created + 7 days**) · `resumeTokenHash`
+- **Notes:** the **primary** draft store is `localStorage`; this exists only when the citizen asks for a resume link. **Hard expiry at 7 days**, stated on screen. A draft cybercrime report must not linger.
+- **Retention:** **7 days, automatic, enforced.** The one retention rule we actually implement (Rule 8 rehearsal, §18.4).
+
+**`Consent`** — the DPDP-shaped record (§14.7, §18.4 Rule 3).
+- **Key fields:** `userId` or `complaintId` · `purposeKey` (e.g. `status_updates`, `store_profile`, `evidence_retention`) · `noticeVersion` · `grantedAt` · `withdrawnAt` · `method`
+- **Notes:** **consent is per-purpose, versioned against the notice text shown, and withdrawable.** Withdrawal is a real, working control on `/profile`. A single blanket "I Agree" checkbox — which is what the incumbent's flow uses (**VERIFIED**, Step 7) — is exactly what this replaces.
+
+**`AuditLog`** — append-only.
+- **Key fields:** `actorType` (`citizen` | `system` | `police_mock`) · `actorId` · `action` · `targetType` · `targetId` · `occurredAt` · `ipHash` · `metadata`
+- **Notes:** written for complaint created, status changed, evidence added, consent granted/withdrawn, **case read**. **Narrative contents are never written to logs** (§18.2). Cheap to build and it is the concrete artefact behind the "End-to-end thinking" criterion.
+- **Retention:** longest of any entity; append-only, never edited.
+
+### 22.3 Relationship map
+
+```
+User ──1:1── Profile
+  │
+  └──1:*── Complaint ──1:1── Incident
+                │
+                ├──1:*── ComplaintStatus   (append-only)
+                ├──1:*── Evidence
+                ├──1:*── SuspectIdentifier (also standalone, complaintId nullable)
+                └──1:*── Notification      (SIMULATED)
+
+Consent   ──*:1── User  or  Complaint      (per-purpose, versioned, withdrawable)
+Draft     ── standalone, 7-day hard expiry
+AuditLog  ── standalone, append-only, references any entity
+```
+
+**The load-bearing nullability:** `Complaint.userId` is nullable. That single column is the structural expression of §12's entire thesis — **a complaint exists before an identity does.** The incumbent's model cannot represent that for anything except the women/children anonymous path.
+
+---
+
+## 23. API Design
+
+> **These are OUR prototype APIs. None of this is a government API. No claim of official integration is made anywhere in the UI, in the code, in the README, or in the pitch.** No live government system is contacted — prohibited by §3.9 (**VERIFIED**) and stated on `/whats-real`.
+
+### 23.1 Conventions
+- Next.js route handlers under `/api/*` (§20.2) — same design if it ever moves to a standalone service.
+- **Every request is schema-validated server-side (zod) before anything else runs.** Client validation is UX only.
+- Errors return a stable machine `code`, a **plain-language `message` safe to render to a citizen**, and a `fields` map for form errors. **No stack traces, paths, SQL, hostnames or service names in any response** (§18.2).
+- Rate-limited endpoints return remaining quota in headers so the UI can warn *before* the wall (§13.5).
+- Anything that writes emits an `AuditLog` row.
+- Locale-aware: `Accept-Language` / locale path segment selects the message strings.
+
+### 23.2 Endpoints
+
+**Auth (mocked OTP — §12.5)**
+
+| Method | Path | Purpose | Auth | Notes |
+|---|---|---|---|---|
+| `POST` | `/api/auth/otp/request` | Send an OTP to a mobile | None | **Mocked.** Returns the demo code in the response *and* shows it on screen, clearly labelled. Rate-limited per number and per IP. |
+| `POST` | `/api/auth/otp/verify` | Verify and create a session | None | Creates `User` if new; links any `complaintId` passed alongside (Flow 9). |
+| `POST` | `/api/auth/logout` | End the session | Session | |
+| `GET` | `/api/auth/session` | Current session | Optional | Returns `null` cleanly for anonymous — never a 401 on a public page. |
+
+**Profile (§14.6)**
+
+| Method | Path | Purpose | Auth |
+|---|---|---|---|
+| `GET` | `/api/profile` | The three autofill fields | Session |
+| `PATCH` | `/api/profile` | Update name / state / district | Session |
+| `DELETE` | `/api/profile` | **Delete saved details, keep complaints** | Session — Rule 8 rehearsal (§18.4) |
+
+**Complaints**
+
+| Method | Path | Purpose | Auth | Notes |
+|---|---|---|---|---|
+| `POST` | `/api/complaints` | **Create a complaint — no login required** | **None** | The core endpoint. CAPTCHA + rate limit. Rejects submission unless `categoryConfirmedByUser === true` (§15.4). Returns `publicId`. |
+| `GET` | `/api/complaints` | List the session user's complaints | Session | A list, not a dashboard (§7.2 #16). |
+| `GET` | `/api/complaints/:publicId` | Full case detail | **Complaint ID + OTP** | Two factors, neither a remembered credential (§12.3 #4). Audited read. |
+| `PATCH` | `/api/complaints/:publicId` | Amend before/shortly after submit | Session + ownership | |
+| `POST` | `/api/complaints/:publicId/withdraw` | Withdraw | Session + ownership | Destructive → strongest auth (§12.2). Blocked once an FIR exists, matching the incumbent's own rule (**VERIFIED**, §2.7). |
+| `POST` | `/api/complaints/classify` | Narrative → proposed category **+ reason** | None | **Rules always answer**; model refinement optional, 2.5 s timeout (§15.5). Never writes anything. |
+| `POST` | `/api/complaints/extract` | Pasted SMS/text → extracted fields **with source spans** | None | Regex-first, model fallback. Never writes anything. |
+
+**Drafts (Flow 8)**
+
+| Method | Path | Purpose | Auth | Notes |
+|---|---|---|---|---|
+| `POST` | `/api/drafts` | Store a draft for cross-device resume | None | **Only** when the citizen asks for a resume link. `localStorage` remains the primary store. Sets `expiresAt = now + 7d`. |
+| `GET` | `/api/drafts/:id` | Resume | Resume token | |
+| `DELETE` | `/api/drafts/:id` | Discard | Resume token | |
+
+**Evidence**
+
+| Method | Path | Purpose | Auth | Notes |
+|---|---|---|---|---|
+| `POST` | `/api/evidence` | Upload a file against a complaint | Ownership (session or draft token) | MIME allow-list + **magic-byte check**; size cap post-compression; randomised storage key; `scanStatus = SIMULATED_CLEAN`, labelled. **Never required to submit.** |
+| `DELETE` | `/api/evidence/:id` | Remove before submission | Ownership | |
+
+**Suspect check / report (Flows 6 and 7 — both no-login by design)**
+
+| Method | Path | Purpose | Auth | Notes |
+|---|---|---|---|---|
+| `POST` | `/api/suspects/check` | Look up any identifier, auto-detecting type | **None** | Fixes the incumbent's two-page split. Response **always** carries the honesty payload: report count **and** the *"not found does not mean safe"* framing. `isSynthetic` surfaced. |
+| `POST` | `/api/suspects/report` | Report an identifier as a non-victim | **None** | Only the identifier is required — everything else optional (the incumbent requires State + evidence + description, **OBSERVED**). Duplicate → thanks, never a rejection. |
+
+**Tracking (Flow 2)**
+
+| Method | Path | Purpose | Auth | Notes |
+|---|---|---|---|---|
+| `POST` | `/api/track/lookup` | Complaint ID → trigger OTP to the number on file | None | Unknown ID returns a helpful message, never a bare "Invalid" — and **never reveals whether the ID exists** to an unauthenticated caller. |
+| `GET` | `/api/track/:publicId/status` | Status timeline | Complaint ID + OTP | Returns `code` + `occurredAt` + `assignedUnit`; **the plain-language text is resolved client-side from the locale files** (§22.2), so it translates. |
+
+**1930 handoff (Flow 11 — P1)**
+
+| Method | Path | Purpose | Auth | Notes |
+|---|---|---|---|---|
+| `POST` | `/api/handoff/lookup` | Acknowledgement number → prefill payload | None | **Mocked against a synthetic dataset, labelled on screen.** Unknown number falls back to the normal report flow, losing nothing. |
+
+**Notifications (simulated)**
+
+| Method | Path | Purpose | Auth |
+|---|---|---|---|
+| `GET` | `/api/notifications` | The messages that *would* have been sent, with their exact copy | Session or complaint ownership |
+
+**Meta**
+
+| Method | Path | Purpose | Auth |
+|---|---|---|---|
+| `GET` | `/api/health` | Liveness | None |
+| `GET` | `/api/whats-real` | Machine-readable manifest of what is real vs mocked, rendered by `/whats-real` | None |
+
+### 23.3 What is deliberately absent from this API
+
+| Absent | Why |
+|---|---|
+| Any Aadhaar / eKYC / auth-provider endpoint | §14.3 |
+| Any PAN or ID-document endpoint | §14.4, §22.1 |
+| Any live DigiLocker call | §14.5 (L8 — no sandbox exists) |
+| Any real SMS/email delivery endpoint | §7.2 #17 — simulated copy carries the idea |
+| Any government-system integration of any kind | §3.9, **VERIFIED** — prohibited |
+| An admin / investigator portal | §26. *"Reviewers will test the citizen experience, not an admin panel"* (**VERIFIED**, §3.2) |
+| A free-text AI answer endpoint | §15.2c — there is no free-text answer surface anywhere in the product |
+
+---
+
+## 24. Competitive / Benchmark Analysis
+
+*(Placed here in reading order for continuity with the flows above; numbering follows the required structure.)*
+
+Sites that **blocked automated access** — stated up front so nothing is mistaken for first-hand observation: `actionfraud.police.uk` / `reportfraud.police.uk` (403), `cyber.gov.au` (repeated timeouts), `politie.nl` (403), `web.umang.gov.in` (JS-only shell), `irctc.co.in` (404). Findings for those are **REPORTED**, never OBSERVED.
+
+### 24.1 Comparison table
+
+| Service | Entry flow | Login to report | Form length | Evidence | Tracking | Languages | Tag |
+|---|---|---|---|---|---|---|---|
+| **India NCRP** (baseline) | **Category tiles first** | **Mobile+OTP+security answer mandatory**; anon only for women/child | 6 steps, 30+ fields, **min 200-char description** | Yes, **≤5 MB**, mandatory | Yes, but needs User Name+mobile+OTP+date | 2 (EN/HI) | OBSERVED |
+| **USA — IC3.gov** | **"Tell us what happened."** + a situation router | **None** | 7 named steps; 3,500-char **max, no minimum** | **None — attachments refused** | **None** — no status, not even emailed | Not stated | OBSERVED |
+| **UK — Report Fraud** (replaced Action Fraud, Dec 2025) | **Guided questions; the system classifies** | Not verified | Not verified | Not verified | Crime reference no. + email updates | Not verified | REPORTED |
+| **Australia — ReportCyber** | Question-led; publishes *"about 15 minutes"* | **None** — email keys save/resume + status | Not verified | Not verified | **Save/resume + status by email; receipt usable as bank proof** | Not verified | REPORTED |
+| **Singapore — ScamShield** | **First-person doors**: *"I've been scammed"* | None on observed paths | **A 4-step action list, not a form** | Screenshots advised for platforms | n/a | EN | OBSERVED |
+| **Canada — CAFC** | *"Fraud… can happen to anyone, anywhere, at any time"*; anonymous | Portal behind login | Not verified | Not verified | Not verified | EN/FR full parity | OBSERVED (landing) |
+| **Netherlands — politie.nl** | **Situation-as-page-title** in the victim's words | **DigiD mandatory**, else in person | Not verified | Post, sign & return | Has a **withdraw-report** path | NL | REPORTED |
+| **Sanchar Saathi / Chakshu** | **Medium first → 11 plain-language categories**, branching | OTP mandatory | One branching form; **min 30 chars** | **Screenshot with OCR autofill** | Request ID | 2 | OBSERVED |
+| **DigiLocker** | Register→Verify→Fetch→Share | Yes (it's a locker) | n/a | n/a | n/a | **12 Indian languages** | OBSERVED |
+| **Income Tax e-filing** | **Pre-login task tiles + audience segmentation** | Optional for several services | n/a | n/a | n/a | 2 + **published accessibility statement** | OBSERVED |
+| **MyScheme** | **Answer questions about yourself → system matches** | Browse without login | 3-step visual workflow | n/a | n/a | Selector present | OBSERVED |
+| **HDFC / ICICI** | **Phone-first**; web block-card path is **6 clicks deep** | Yes | **Printed, signed form, capitals, black ink** | Scan/email or branch | ODR reference number | — | REPORTED |
+| **RBI CMS** | Video-led help; has an **appeal** path | Not verified | Not verified | Not verified | Track + appeal | **EN+HI+10 regional on the phone line** | OBSERVED (thin) |
+| **Google Safe Browsing / Meta** | **One field / one click, reported in place** | None | 1 field | URL only | Days-scale | Many | Mixed |
+
+### 24.2 The ten patterns we are adopting, and why
+
+1. **"Tell us what happened" as the literal opening.** IC3's homepage says exactly that, and adds *"file a report even if you are unsure of whether your complaint qualifies."* The UK's replacement service *"will guide you through simple questions to identify what has happened."* **MyScheme proves the inverted model already ships in India.** → §7.1, Flow 1.
+2. **Screenshot / SMS paste with automatic extraction.** Chakshu's form says: *"Attach a screenshot (sender and complaint details will be autofilled from image, if available, and can be edited)"* — with a graceful manual fallback when extraction fails. **This is an Indian government department shipping the exact pattern we proposed, which converts it from a speculative idea into a proven one.** → Flow 10, §15.
+3. **Save/resume and status keyed to a contact, not an account.** ReportCyber: *"resume a previously saved cybercrime report with the email used when saving it… check the status… with the email used on submission."* → §12, Flow 8.
+4. **Loss containment before report filing.** ScamShield's step 1 is *"Contact your bank immediately"* with a hotline list and a **Kill Switch**; the police report is step 2. → §13.3, the persistent `tel:1930`.
+5. **A character maximum, never a minimum.** IC3: 3,500 max, no minimum. Chakshu: 30 minimum. NCRP: **200 minimum** (REPORTED A3, independently corroborated). A minimum-length gate converts distress into abandonment. → Flow 1.
+6. **A reference number designed to be handed to a bank.** ReportCyber issues a receipt *"which you can provide to financial institutions or other organisations as proof that a report has been submitted."* → §13.4.
+7. **Honest limits stated in-flow, before submit.** Chakshu: *"Department of Telecommunications does not undertake to act against the reported… sender"* and reports within **7 days** are actionable. IC3: *"I will not be contacted by the IC3."* → `/whats-real`, §13.4.
+8. **Situation-titled pages in the victim's own words, each with a real URL.** Dutch police pages are literally *"Ik heb iets gekocht, maar niets ontvangen"*. People search *"I paid on UPI and didn't get the item"*, never *"Section 66D"*. → §9.2.
+9. **India's own portals set the accessibility and language floor.** DigiLocker ships **12 Indian languages**; RBI CMS staffs **English, Hindi and ten regional languages** on a human line; Income Tax and MyScheme publish **accessibility statements**; Chakshu ships an **audio CAPTCHA**. NCRP offers 2 languages, no conformance statement, and a link to download NVDA. **The benchmark that indicts NCRP hardest is other Indian government services** — which is a far stronger argument than comparing it to the FBI. → §16, §17.
+10. **Show that reporting works, and guarantee confidentiality.** Sanchar Saathi leads with *"58.27 lakh mobiles blocked"*; DigiLocker with *"70+ Crore Registered Users"*; Meta states plainly that *"the scammer will not see who reported them."* NCRP has outcome data and surfaces none of it, and never tells a sextortion victim their report is confidential. → §19, Flow 4.
+
+### 24.3 What we deliberately do **not** copy
+| Anti-pattern | Source | Why not |
+|---|---|---|
+| Refusing attachments | IC3 | Indian financial fraud is an evidence-trail problem; screenshots are the victim's only artefact |
+| No status tracking at all | IC3 | P‑9 exists; opacity is the second-highest-confidence problem we found (A8) |
+| Identity wall as the only online route | Netherlands (DigiD) | Excludes exactly the victims who need it most (§7.2 #3) |
+| JavaScript-mandatory reporting | Berlin Internetwache, UMANG | Fails the brief's "slower connections" requirement outright |
+| Video as the only explanation, shipped broken | RBI CMS | Observed non-rendering `<video>` tags on the primary onboarding content |
+| Printed, signed, capital-letters forms | ICICI/HDFC dispute flow | The clearest "avoid" in the entire benchmark |
+
+### 24.4 Honest caveat
+**The two most directly comparable services — UK Report Fraud and Australia's ReportCyber — are the two we could not read first-hand.** The UK service is brand new (Dec 2025 soft launch, Jan 2026 public launch) and is the closest live, funded answer to "how do you replace a criticised national fraud reporting portal." Everything tagged REPORTED for those two is a **hypothesis, not a spec**, and should be walked manually in a browser before any design decision is locked on it.
+
+---
+
+## 25. Smallest Impressive MVP
+
+### 25.1 The constraint, restated because it governs everything below
+**Submission closes 28 Aug 2026, 20:00 IST. *"There is no grace period after the form closes."*** (**VERIFIED**, §3.3.) From now (2026‑08‑25) that is **~3 days**, and the last of them is a working day that ends at 20:00 — not a full day.
+
+Against that: *"Let us complete the main journey from start to finish"* and *"Every feature you demo must work"* (**VERIFIED**, §3.2/§3.4).
+
+> **The arithmetic is decisive. One journey, finished and polished, beats six journeys half-built — and the judging criteria are written to reward exactly that.**
+
+### 25.2 The MVP is ONE spine
+
+**Flow 1 (financial-fraud emergency report) + Flow 2 (track by Complaint ID), built end-to-end and polished, as a single continuous demo spine.**
+
+```
+  Landing                     two questions, nothing else
+      │                       + permanently visible tel:1930
+      ▼
+  "Money was taken            /report/money  — NO LOGIN
+   from my account"
+      │
+      ▼
+  Tell us what happened       one textarea, real example placeholder,
+      │                       "paste your bank SMS" box, no minimum length
+      ▼
+  Confirm the facts           extracted chips: amount · when · bank/UPI ·
+      │                       transaction ref — each editable, each labelled
+      │                       with where it came from
+      ▼
+  Where + how to reach you    State + District + mobile.  That is all.
+      │                       (No ID. No parent's name. No DOB. No PAN.)
+      ▼
+  Review                      plain sentences, not a form.
+      │                       "We think this is Online Financial Fraud,
+      │                        because…  Is that right?"  [Yes] [Change it]
+      ▼
+  Confirmation                Complaint ID, large and copyable
+      │                       + "Do these 3 things in the next hour"
+      │                       + "What happens next" incl. this is NOT an FIR
+      ▼
+  "Want updates?"             mobile + MOCKED OTP → links the report
+      │                       Skippable, unpunished.
+      ▼
+  /track                      Complaint ID → mock OTP → case page:
+                              plain-language status timeline, and the
+                              "Disposed" translation (A8)
+```
+
+**Target: under 90 seconds from landing to Complaint ID, on a phone, with no account.**
+
+### 25.3 Why this spine and not another
+
+| Reason | Evidence |
+|---|---|
+| **It is the most fully specified thing in this document.** §13 designs it field-by-field; §10 Flow 1 and Flow 2 design it screen-by-screen; §12 designs its auth ordering. There is nothing left to decide — only to build. | §12, §13, §10 |
+| **It is the most evidence-backed.** P1 and P2 are the only two problems rated **Critical** with both VERIFIED and REPORTED support. B3 (n=32,000+, 51% never report) is the strongest citizen-voice signal we found, and its own conclusion asks for *"easy/single click fraud complaint reporting."* | §5, B3 |
+| **It is the only journey where speed is causally linked to outcome.** C1–C3 show fast reports get money frozen. Nothing else in the product has that property. | §4.4 |
+| **It contains every P0 feature.** All ten P0 items in §11 live on this spine — describe-first intake, no-login report, the confirmation that explains what happens next, ID-based tracking, local-first drafts, mobile/WCAG, `tel:1930`, `/whats-real`, `/help/just-happened`, real URLs. **Building the spine builds P0.** | §11 |
+| **It is the most emotionally legible in 2 minutes.** P‑13's story (matrimonial → crypto → three categories at once) defeats a dropdown in one sentence and is solved on camera in 25 seconds. | §6 P‑13, §7.1 |
+| **The before/after is objective, not aesthetic.** 91-page manual → one screen. 8 categories before you can speak → zero. Mandatory ID upload → removed. 1930 as an un-alt'd PNG → a `tel:` link that never scrolls away. | §1, §8.3 |
+
+### 25.4 Included in the MVP — the full, closed list
+
+1. **Landing** — two intents, `tel:1930` in persistent chrome, prototype disclosure banner.
+2. **`/report/money`** — the guided intake, local-first draft from the first keystroke.
+3. **Rules-based category classifier + confirmation UI** (model refinement only if time — §15.7).
+4. **Regex extraction from a pasted bank SMS**, with editable, provenance-labelled chips.
+5. **Optional evidence upload** — client-side compression, PDF accepted, genuinely skippable.
+6. **Review screen** in plain sentences.
+7. **Confirmation** — ID + copy/download + next-hour checklist + "what happens next" + "not an FIR".
+8. **Mocked-OTP account upgrade** (Flow 9) — skippable.
+9. **`/track`** — Complaint ID → mock OTP → plain-language status timeline, including the **"Disposed"** translation.
+10. **A one-complaint list** for a logged-in user (a list, not a dashboard — §7.2 #16).
+11. **`/help/just-happened`** — hand-written, the page that does not exist today.
+12. **`/whats-real`** — real vs mocked vs not-solved. A scoring feature (§3.10).
+13. **`/accessibility`** and **`/privacy`** — honestly scoped.
+14. **EN + HI complete end-to-end**, including error messages and the confirmation screen (§17.2).
+15. **WCAG 2.1 AA on every screen above**, keyboard-complete, mobile-first.
+16. **Seeded synthetic demo data** + published mock credentials for reviewers (**VERIFIED** requirement, §3.5).
+
+### 25.5 Explicitly OUT of MVP scope
+
+| Out | Where it goes |
+|---|---|
+| Suspect checking (`/check`, Flow 6) — **at most a stubbed, clearly-labelled screen; more likely absent** | §11 P1 #11 |
+| Report-a-suspect (Flow 7) | §11 P2 #20 |
+| Hacked-account (Flow 3) and child-related (Flow 5) flows | §11 P2 #19 |
+| Threat/harassment flow (Flow 4) | §11 P1 #16 — **cut reluctantly**; the anonymity explainer is the one thing worth rescuing if a spare hour appears |
+| 1930 handoff (Flow 11) | §11 P1 #12 — the strongest end-to-end story we have, and it still loses to finishing the spine |
+| **Kannada** (third language) | §17.2 stretch tier — one file away, added only if the spine lands early |
+| **Any LLM call** | §15.7 — rules floor ships; the model is enhancement |
+| **DigiLocker, even mocked** | §14.5 |
+| Real SMS/email delivery | §7.2 #17 — simulated copy only |
+| Most of §11 P1 and all of P2 | Named openly in `/whats-real` and §26 |
+
+> **The rule for the next 3 days:** *if it is not on the spine in §25.2, it does not get built until the spine is finished and polished.* Anything cut is **named** in `/whats-real` and in the pitch, not hidden.
+
+---
+
+## 26. Explicitly What NOT To Build
+
+Decisive, and every line is enforced by the 3-day clock, a hackathon rule, or a decision already made above.
+
+| # | Do not build | Why |
+|---|---|---|
+| 1 | **Any real Aadhaar integration, field, button or mock** | Banned by hackathon rules (§3.9, **VERIFIED**); legally unavailable (L1–L6); harms P‑3/P‑5; a fake Aadhaar prompt normalises the exact pattern scammers use. §14.3 |
+| 2 | **Any PAN collection, anywhere** | Fails all three justification tests; pure liability. §14.4 |
+| 3 | **Any identity-document upload in the reporting flow** | The incumbent's mandatory version is a hard stop at 11:40 PM. Removing it is the point. §22.1 |
+| 4 | **Any real DigiLocker API call** | **No sandbox exists and the SOP refuses temporary test access (L8).** Cannot be honestly demonstrated. §14.5 |
+| 5 | **Any real SMS / OTP gateway** | Mocked OTP was decided in §12.5. A gateway is infrastructure, not product, and would eat half a day. |
+| 6 | **Any language beyond EN + HI** for the demo | §17.2. Kannada is a stretch, not a plan. Twelve broken languages lose to two complete ones. |
+| 7 | **A full suspect-repository search** | §25.5. A stubbed, labelled screen at most — and only if the spine is finished. An unfinished search box is a dead button, and *"every feature you demo must work."* |
+| 8 | **An admin / investigator / police-side portal** | *"Reviewers will test the citizen experience, not an admin panel"* (**VERIFIED**, §3.2). Zero judged value. |
+| 9 | **A native mobile app** | *"Reviewers will not download a mobile app"* (**VERIFIED**, §3.5). Web only. |
+| 10 | **Offline mode / PWA / service worker** | §11 P2 #25. Local-first drafts already capture most of the benefit at a fraction of the cost — and a misconfigured service worker serving stale HTML during a demo is a catastrophic failure mode. |
+| 11 | **An AI chatbot or general assistant** | §7.2 #9, §15.2c. Liability, cliché, unbounded failure surface. The **only** AI in the product is the narrow, human-confirmed category suggestion — **and it is the first thing cut if we are behind.** |
+| 12 | **Real government integration of any kind** | Prohibited (§3.9, **VERIFIED**). Not a scope decision — a rule. |
+| 13 | **Volunteer programme, media gallery, advisories, daily digest, RTI notices** | Not part of a citizen's reporting journey. §9.3. |
+| 14 | **A personalised dashboard** | §7.2 #16. Optimises for the rarest user (the repeat filer) with the hours the emergency journey needs. |
+| 15 | **Automated test suites** | §28. Not achievable in 3 days alongside the build; stated openly as a scope tradeoff rather than pretended. |
+| 16 | **Countdown timers, urgency theatre, red hero sections** | §13.3, §19.6. Raises panic and degrades the input quality we need. |
+| 17 | **Any dead button, stubbed link or "coming soon" affordance** | *"Every feature you demo must work"* (**VERIFIED**). **Anything not built is removed from the UI, not disabled in it** (§3.10). |
+
+---
+
+## 27. Implementation Plan
+
+### 27.1 The clock
+| | |
+|---|---|
+| **Now** | 2026‑08‑25 |
+| **Hard deadline** | **2026‑08‑28, 20:00 IST — no grace period** (**VERIFIED**) |
+| **Usable time** | Day 1 (25th), Day 2 (26th), Day 3 (27th), **Day 4 = a half-day ending 20:00 (28th)** |
+| **Planning rule** | **Treat the 28th as buffer, not as build time.** Anything not working by the end of the 27th is cut, not rescued. |
+
+### 27.2 The iteration rule — read this before the phases
+> **Polish and testing are NOT a phase at the end.** Each vertical slice is built, then made accessible, then made responsive, then tested — before the next slice starts. A slice is "done" only when it works on a phone, with a keyboard, in both languages.
+>
+> The failure mode that kills hackathon submissions is a rough end-to-end build plus a planned "polish day" that gets eaten by bugs. **We do not plan a polish day. We finish each slice.**
+
+### 27.3 Day 1 (25 Aug) — foundation + the spine, demoable even if rough
+
+**Goal at end of day: a person can go landing → report → Complaint ID, on a phone. Ugly is acceptable. Broken is not.**
+
+| # | Task | Verify |
+|---|---|---|
+| 1 | Confirm stack (§20) and **team size/skills (§35)** with the user; scaffold Next.js + TS + Tailwind + shadcn/ui; deploy a hello-world to Vercel **on hour one** | A public URL loads on a phone. *Deploying last is how submissions die.* |
+| 2 | Design tokens from §19: palette (both themes), type scale, spacing, the one easing token | A tokens page renders; contrast checked at definition time |
+| 3 | Postgres provisioned; schema from §22 migrated; **verify there is no Aadhaar, PAN or parent-name column** | `\d` output matches §22 exactly |
+| 4 | Persistent chrome: skip link, `lang`, single correct viewport tag, language switcher, **`tel:1930` that never scrolls away**, prototype banner | Tap `1930` on a real phone → the dialler opens. **This is the project's thesis; it ships first.** |
+| 5 | Landing — two intents, nothing else | Renders in one screen on a 360 px viewport |
+| 6 | `/report/money` intake: textarea with a real example placeholder, no minimum length, **local-first draft from the first keystroke** | Type, kill the tab, reopen → *"Continue where you left off?"* |
+| 7 | **Rules classifier + confirmation UI** (§15.5 levels 2–4) | Five hand-written narratives → five sensible categories, each with a reason, each changeable |
+| 8 | Regex extraction from a pasted bank SMS → editable, provenance-labelled chips | Paste three real-shaped SMS formats → correct chips; a garbage paste → manual form, no dead end |
+| 9 | `POST /api/complaints` with server-side zod validation + rate limit; **rejects unless `categoryConfirmedByUser`** | A curl with a bad payload returns a clean citizen-safe error, no stack trace |
+| 10 | Confirmation screen: Complaint ID large + copyable, next-hour checklist, "what happens next", **"this is not an FIR"** | End-to-end run on a phone produces a real ID from a real DB row |
+
+**End-of-Day-1 gate: the spine runs on the deployed URL, on a phone.** If it does not, Day 2 starts by finishing it and something from Day 2 is cut.
+
+### 27.4 Day 2 (26 Aug) — identity, tracking, and the a11y/i18n pass per slice
+
+**Goal at end of day: the full demo spine, in two languages, keyboard-complete.**
+
+| # | Task | Verify |
+|---|---|---|
+| 1 | Mocked-OTP request/verify + session; **Flow 9 upgrade** on the confirmation screen, skippable | Skip → report still filed. Verify → linked. Neither path can lose the report. |
+| 2 | `/track`: Complaint ID → mock OTP → case page | Unknown ID → a helpful message, never a bare "Invalid", and it never reveals whether the ID exists |
+| 3 | **Status timeline** with plain-language meaning + "what you can do now" per step, incl. the **"Disposed"** translation | Seeded complaint shows all states correctly, in both languages |
+| 4 | Evidence upload: MIME allow-list + magic bytes, client-side compression, **PDF accepted**, genuinely optional | 12 MB photo → compressed and accepted; a `.exe` renamed `.png` → rejected; skipping upload → submission still succeeds |
+| 5 | Profile autofill (name / mobile / State+District) + **working delete** (§14.6, Rule 8 rehearsal) | Second report pre-fills; delete empties it and complaints survive |
+| 6 | Simulated notification copy rendered as a phone notification at each status change | Copy reads correctly in both languages |
+| 7 | **i18n pass:** every string externalised, `lang` switches, Hindi complete **including error messages and the confirmation screen**; ₹ grouping correct (₹1,80,000) | A full Hindi run of the spine, start to finish, with a deliberate validation failure |
+| 8 | **Accessibility pass:** keyboard-only walk, focus rings everywhere, error summary with focus movement, ≥44 px targets, axe clean | Complete the entire spine with the mouse unplugged |
+| 9 | `/help/just-happened`, `/whats-real`, `/accessibility`, `/privacy` written | Each is honest, specific, and names something we did **not** solve |
+| 10 | `AuditLog` writes on create / status change / evidence / consent / case read | Rows appear; **no narrative text anywhere in the logs** |
+
+### 27.5 Day 3 (27 Aug) — hardening, demo data, materials. **Feature freeze at 18:00.**
+
+| # | Task | Verify |
+|---|---|---|
+| 1 | **FEATURE FREEZE at 18:00.** After this, bug fixes and copy only. | Committed to in writing, here |
+| 2 | Failure-path testing per §28: missing field, network drop mid-form, refresh mid-form, oversized file, unknown ID, OTP failure, model timeout | Each produces a calm, plain-language state; **nothing loses the citizen's work** |
+| 3 | Seed the **synthetic** demo dataset: 3–4 complaints at different statuses, one with the full timeline through `DISPOSED` | Demo runs without live typing where typing is risky |
+| 4 | Copy pass on every string against §16.4 (plain language, no blame, no jargon) | Read the whole spine aloud; nothing makes the reader feel accused |
+| 5 | Lighthouse + axe on every shipped route; fix what is fixable, **publish what is not on `/accessibility`** | Scores recorded with dates |
+| 6 | README: what it is, what is mocked, **how Codex contributed** (**VERIFIED** requirement, §3.8), mock credentials, how to run | A stranger can run it and knows what is fake |
+| 7 | **Record the ≤2-minute video** (§30) — minute 1 citizen demo, minute 2 how and why | Recorded on Day 3, **not** on Day 4 |
+| 8 | Write the <250-word project summary (§3.5) | Under 250 words, counted |
+| 9 | Final deploy from a clean clone; **open the public URL in a private window on a phone** | *"Every link works without requesting access"* (**VERIFIED**) |
+| 10 | Only now, if hours remain: **`/check` suspect lookup** — the single highest-value P1 add | Only if it can be finished and polished. A half-built one is worse than none. |
+
+### 27.6 Day 4 (28 Aug, until 20:00) — submit early, then stop
+
+| Time | Action |
+|---|---|
+| Morning | Re-verify the live URL from a different network and device. Re-read the brief and FAQ **one final time** against the submission checklist — and resolve the §35 open questions on judging weights and AI tooling. |
+| Midday | **Submit.** Same email at every step (**VERIFIED** requirement). Partner email if a team of two. |
+| **By 16:00** | **Submission complete — four hours before the wall.** |
+| 16:00–20:00 | **Buffer only.** No new features. If nothing broke, use it to re-record the video better or improve the summary. |
+
+> **Do not submit at 19:45.** *"There is no grace period after the form closes"* (**VERIFIED**). A four-hour buffer is not caution, it is the plan.
+
+### 27.7 Cut order, decided in advance so it isn't decided under pressure
+When behind — and one always is — cut in exactly this order:
+
+1. LLM refinement of the category (rules already carry the flow)
+2. LLM extraction fallback (regex already carries it)
+3. The one-complaint list (the case page is what matters)
+4. Simulated notification copy
+5. Profile autofill
+6. Evidence upload → replaced by *"No screenshot? Report anyway"* as the only state
+7. **Hindi** — **cut last, and only if the alternative is an unfinished spine.** Two complete languages is a claim we want to make.
+
+**Never cut:** the no-login report, the confirmation screen, `tel:1930`, `/whats-real`, keyboard access, or the "Disposed" translation. These are the submission.
+
+---
+
+## 28. Testing Strategy
+
+### 28.1 The honest scope statement
+> **There are no automated test suites in this build.** With ~3 days and one demo spine, hours spent on a test harness are hours not spent on the journey being judged. **This is a deliberate scope tradeoff, not an oversight**, and it is stated here, in the README, and on `/whats-real` rather than quietly omitted.
+>
+> What we do instead is a **disciplined manual pass per slice**, run after every vertical slice rather than once at the end (§27.2).
+
+### 28.2 Manual test pass — run per flow, per slice
+
+**Happy path**
+1. Landing → `/report/money` → narrative → confirm facts → location + mobile → review → confirm category → Complaint ID. **Timed — target under 90 s.**
+2. Confirmation → "Want updates?" → mock OTP → linked.
+3. `/track` → Complaint ID → mock OTP → timeline renders, `DISPOSED` reads in plain language.
+
+**Failure paths — at minimum these, per flow**
+
+| # | Failure | Required behaviour |
+|---|---|---|
+| 1 | **Required field missing** | Inline error + error summary at top, focus moved to it, message says **how to fix it**, and **nothing already typed is lost** |
+| 2 | **Network drops mid-form** | *"Reconnecting… nothing is lost"*; the draft is already local; resubmission succeeds without retyping |
+| 3 | **Browser refresh mid-form** | *"Continue where you left off?"* with a timestamp and a clear "Start fresh" — this is the direct fix for A1, if A1 is real |
+| 4 | Oversized / wrong-type file | Compressed if possible; otherwise a clear message **and an offer to submit without it** |
+| 5 | Unknown Complaint ID at `/track` | Helpful message, never a bare "Invalid", and it must not reveal whether the ID exists |
+| 6 | OTP fails / wrong code | *"No problem — save your Complaint ID and you can still check status later."* **The report is never at risk.** |
+| 7 | Classifier returns nothing / times out | Rules answer; banner says *"We couldn't auto-detect — please confirm the category"*; flow completes |
+| 8 | `localStorage` unavailable (private mode) | One honest line: *"We can't save your progress in this browser — try to finish in one go."* |
+| 9 | Duplicate suspect report (if `/check` ships) | Thanks, never a rejection |
+
+### 28.3 Device, viewport and network
+- **Real phone, real network** — not just devtools emulation. A 360 px viewport is the design target; 320 px must not break.
+- **Throttled connection** (Slow 4G) on the full spine — the P‑12 case.
+- **Both themes**, both languages, at 200% browser zoom.
+- **iOS input-zoom check**: no input below 16 px.
+
+### 28.4 Accessibility pass (per §16.6)
+- **Keyboard-only completion of the entire spine, with the mouse unplugged.** This is the gate, not a suggestion.
+- **axe** clean on every shipped route; **Lighthouse** a11y score recorded with its date.
+- Screen-reader spot-check on the confirmation screen and the `tel:1930` control — the two things that matter most.
+- Contrast verified at token-definition time, then re-checked on the shipped screens.
+
+### 28.5 What we do NOT test, said plainly
+Load and performance at scale · security penetration testing · cross-browser beyond current Chrome/Safari/Firefox · real SMS delivery (there is none) · anything behind a mocked integration. **All of this goes on `/whats-real`.**
+
+---
+
+## 29. Risks
+
+| # | Risk | Likelihood | Impact | Mitigation |
+|---|---|---|---|---|
+| **R1** | **Deadline overrun — 28 Aug 20:00, no grace period** | **High** | **Fatal** | Submit by **16:00 on the 28th** (§27.6). Feature freeze **18:00 on the 27th**. Pre-agreed cut order (§27.7) so cutting is mechanical, not a debate at 2 AM. |
+| **R2** | **Aadhaar / DigiLocker temptation creeps back in** — "it would look impressive to have a Verify button" | **Medium** | **High** | It is banned by rules (§3.9), legally impossible (L1–L6), and **§14.8 is the written record of the decision**. If anyone proposes it, the answer is this section. A fake Aadhaar prompt is also an *ethical* failure — it trains citizens toward the exact prompt scammers use (B1). |
+| **R3** | **Scope creep across the 25+ item backlog** | **High** | **High** | §25.5 and §26 are closed lists. The rule: nothing off the spine gets built until the spine is finished **and polished**. Everything cut is named in `/whats-real` — which converts a cut into a scoring asset. |
+| **R4** | **Deployment breaks right before the demo** | Medium | **Fatal** | Deploy on **hour one of Day 1** and keep deploying all the way through; final deploy from a clean clone on the 27th, verified in a private window on a phone on a different network. Never deploy on demo day. |
+| **R5** | **Evidence upload / file handling bugs** — historically where these builds break | Medium | Medium | Evidence is **optional everywhere** (§22.2), so a failure degrades to "submit without it" rather than blocking. Magic-byte checks and post-compression size caps are day-2 work with explicit failure tests (§28.2 #4). Cut order puts upload at #6. |
+| **R6** | **Someone assumes production security exists where it does not** — a teammate, a judge, or a future reader | Medium | **High** | §18.1 as a persistent in-product banner and a `/whats-real` page. Mocked components are boxed separately in the architecture diagram (§21) so it is visible, not buried in prose. |
+| **R7** | **The demo depends on a live model call and it fails on stage** | Medium | High | **Structurally prevented**: the rules classifier always answers and the LLM is behind a 2.5 s timeout that degrades silently (§15.5). The demo runs with **no API key configured**. |
+| **R8** | **We overclaim in the pitch and lose the Honesty criterion** | Medium | **High** | Every claim in this document is tagged. The two most comparable benchmarks (UK, Australia) are **REPORTED, not OBSERVED** (§24.4, §32) and must be re-verified before being said aloud. We do **not** say "NCRP violates DPDP" (§18.4). We do **not** say the portal is slow (§2.1). |
+| **R9** | **Team size / skills unknown** — §20 and §27 are written for 1–2 people and assume the stack is familiar | **High** | Medium | **Open question (§35), and the first thing to resolve with the user (§37).** If the stack is unfamiliar, Day 1 loses hours and the cut order starts earlier. |
+| **R10** | **Codex involvement is not documented well enough** — it is a **mandatory** requirement and the submission must explain how it contributed (**VERIFIED**, §3.8) | Medium | **High** | Keep a build log from hour one. It is the content of the video's second minute (§30) and cannot be reconstructed on the 28th. |
+| **R11** | **Hindi ships incomplete** and breaks mid-flow — the exact failure we criticise in the incumbent (A9) | Medium | Medium | The i18n lint rule fails the build on a bare user-facing string literal (§17.3 #1), and the Day 2 gate is a **full Hindi run including a deliberate validation failure**. If Hindi cannot be completed, ship English only and say so — an honest one is better than a broken two. |
+| **R12** | **A dead button survives to the demo** — *"every feature you demo must work"* | Medium | High | Anything unbuilt is **removed from the UI**, not disabled in it (§26 #17). Final walkthrough on the 27th clicks every visible affordance. |
+
+---
+
+## 30. Demo & Pitch Strategy
+
+### 30.1 The hook — one artefact, and it is already verified
+
+> **On India's national cybercrime portal, the emergency helpline number — 1930 — is a `.png` image inside a rotating carousel. No alt text. No `tel:` link anywhere on the page.**
+>
+> **To a screen reader, the most urgent thing a fraud victim can do does not exist. On a phone, it cannot be tapped.**
+
+That is **OBSERVED**, reproducible in a browser's view-source in ten seconds, and it is the entire thesis in one object: *the system's most time-critical action was rendered as decoration.*
+
+### 30.2 One-line pitch
+> **India's cybercrime portal asks a victim to classify their own crime, name their parents and upload a government ID before it will listen. We built the version that listens first — a complaint filed in under 90 seconds, with no login, on a phone.**
+
+### 30.3 The pitch at four lengths
+
+**10 seconds**
+> Report a cybercrime in under 90 seconds, with no login, on a phone. Today that takes a 91-page manual.
+
+**30 seconds**
+> When money leaves your account, minutes decide whether it can be frozen. India's portal makes you pick from 8 crime categories, register with an OTP, fill 6 steps and upload a government ID before anything is recorded — and its own manual for that is 91 pages. **51% of UPI-fraud victims never file at all.** We inverted it: describe what happened in your own words, we propose the category and you confirm it, and you get a complaint ID in under 90 seconds. Identity comes afterwards, in exchange for tracking — not before, as a gate.
+
+**60 seconds**
+> Add: *"And it doesn't stop at the form. We removed the mandatory Father-or-Spouse-name field and the mandatory ID upload, because neither helps freeze the money, route the case or contact you — and asking an identity-theft victim to prove their identity is a design error, not a security control. We translated the police word 'Disposed' — which citizens read as 'case closed' and which practitioners call the costliest misreading in the system — into plain language on the status screen. And the helpline that exists today only as an untagged image is a `tel:` link that never scrolls off the screen. It's mock data end-to-end, and there's a page in the product that tells you exactly what's real, what's simulated, and the three things we could not solve."*
+
+**3 minutes** — structure:
+1. **The artefact** (§30.1) — 20 s. Show the view-source.
+2. **The cost** — 25 s. 91 pages; 8 categories before you can speak; mandatory parent name and ID upload; **51% never report (n=32,000+)**; fast reports demonstrably recover money.
+3. **The live demo** (§30.4) — 90 s.
+4. **The choices we defended** — 30 s. No Aadhaar, no PAN, no ID upload — **and the legal reason we could not have integrated Aadhaar even if we had wanted to** (L1–L6). Rules classifier under the AI so the journey never depends on a model call.
+5. **What we did not solve** — 15 s. FIR conversion. Police follow-up. 1930 capacity. SIM-swap victims who cannot receive an OTP. **Naming these is the pitch, not a caveat to it.**
+
+### 30.4 Demo script (the video's minute 1 — follows §25.2 exactly)
+
+| t | Action | Line |
+|---|---|---|
+| 0:00 | Phone-shaped viewport. Landing. | *"Two questions. And the helpline is a link you can tap — it never scrolls away."* |
+| 0:08 | Tap **"Money was taken from my account."** | *"No login. Nothing has been asked of me yet."* |
+| 0:12 | Type a narrative in ordinary words. | *"I don't pick a category. I don't know the categories. I just say what happened."* |
+| 0:25 | Paste the bank SMS → chips appear. | *"Amount, time, bank, UPI reference — pulled from the message I already had, each one labelled with where it came from, each one editable."* |
+| 0:38 | State + District + mobile. | *"That's everything we ask. No parents' names. No ID upload. No PAN."* |
+| 0:48 | Review. *"We think this is Online Financial Fraud, because…"* → tap **Yes**. | *"The system does the classification and shows its reasoning. I confirm it. It is never applied silently — and if the model is down, a rules engine answers instead and the journey is identical."* |
+| 0:58 | **Complaint ID.** | *"Under 90 seconds."* |
+| 1:02 | Scroll: three things to do in the next hour · what happens next · **this is not an FIR**. | *"The portal tells you this in a 91-page PDF. We tell you at the moment it matters."* |
+| 1:12 | *"Want updates?"* → mock OTP → linked. | *"Verification still happens — one screen later, in exchange for something. That ordering is the whole difference."* |
+| 1:22 | `/track` → ID → OTP → timeline → **Disposed** in plain language. | *"'Disposed' does not mean closed. Practitioners call misreading it the costliest error a victim makes. So we say what it means."* |
+| 1:35 | `/whats-real`. | *"Everything mocked, listed. And three problems we could not solve, named."* |
+
+### 30.5 Differentiation — grounded, not asserted
+Not *"we redesigned a government website."* The sharper claim:
+
+> **We read the government's own documents until we found where complaints silently die — and we designed for that seam.**
+
+Concretely, each half **VERIFIED or OBSERVED**:
+
+| Before (verified) | After (built) |
+|---|---|
+| A **91-page manual** to file one complaint | One screen, no manual |
+| **8 categories + 30+ sub-categories** before you can describe anything | **Zero** decisions before the narrative |
+| **Father/Mother/Spouse Name — mandatory** | **Removed** — no purpose line could be written for it |
+| **National ID document upload — mandatory** | **Removed** — and we can cite the law explaining why Aadhaar was never available anyway |
+| *"Reason for delay in reporting"* | **Never asked.** Nobody accounts for their trauma to us |
+| Evidence *"if any … (Mandatory)"* | **Genuinely optional**, with compression and PDFs accepted |
+| **1930 as an un-alt'd `.png`, zero `tel:` links** | A `tel:` link in persistent chrome, on every screen |
+| Tracking needs a **self-invented User Name** + mobile + OTP + security answer + a **date** | **Complaint ID + OTP.** Two factors, neither remembered |
+| **"Disposed"** with no explanation | *"Handed to a police unit. This does not mean your case is closed."* |
+| Register → OTP → **then** report | Report → ID → **then** verify, for tracking |
+| A privacy policy that belongs to **a different product** | A portal-specific, per-purpose, DPDP‑2027-shaped notice with a working delete |
+
+And the differentiator no other submission will have: **an in-product `/whats-real` page listing what is mocked and the three problems we explicitly could not solve** — FIR conversion, police follow-up, and 1930 capacity.
+
+---
+
+## 31. Implementation Status
+
+**Phase A (research and planning) complete — 2026‑08‑25.**
+
+- **No implementation started.** No code written, no scaffolding run, no dependencies installed, no database provisioned.
+- **`PROJECT_SPEC.md` sections 1–37 complete.** Sections 1–13 and 24 were written in a first agent run; sections 14–23 and 25–37 in a second, after a connection failure interrupted the first.
+- **Files changed to date:** `PROJECT_SPEC.md` only.
+- **Gate:** implementation does not begin until the user validates the plan (§37).
+
+---
+
+## 32. Known Bugs / Known Limitations
+
+**Known bugs: none — implementation has not started.**
+
+**Known limitations of the plan itself**, listed because they are real and because naming them is cheaper now than being caught by them later:
+
+| # | Limitation | Reference |
+|---|---|---|
+| 1 | **DigiLocker cannot be live-tested.** There is no sandbox and the official SOP explicitly refuses temporary test access (L8). Any DigiLocker element is a labelled mock or it does not exist. | §14.5 |
+| 2 | **Aadhaar is excluded by both law and hackathon rules.** Not a design preference — a rule (§3.9) plus an unavailable statutory basis (L1–L3) plus a post‑2019 legal posture that removed the private-entity route (L4/L5). | §14.3 |
+| 3 | **DPDP obligations are not yet legally binding** — Rules 3, 5–16, 22, 23 come into force **13 May 2027**; Rule 4 on **13 Nov 2026**. We design to them anyway, as forward-compliance. **We must not claim the incumbent "violates" DPDP today.** | §18.4 |
+| 4 | **UK Report Fraud and Australia ReportCyber are REPORTED, not OBSERVED** — both blocked automated access. They are the two most directly comparable services in the entire benchmark. **Re-verify manually in a browser before any pitch claim rests on them.** | §24, §24.4 |
+| 5 | **Class A (UX) evidence is thin.** The strongest UX signal, A1 (session death, 8 attempts), is a single first-person account. Reddit, X reply threads and Quora bodies were all inaccessible. **A1 must not be asserted as fact** — we build the fix (local-first drafts) either way. | §4.1, §4.2 |
+| 6 | **Several incumbent behaviours could not be verified** because the complaint form is OTP-gated: inline vs on-submit validation, whether data survives a validation failure, live enforcement of the mandatory evidence upload, per-file vs total 5 MB, accepted MIME types, and whether the Hindi flow is complete end-to-end (A9). | §2.18, §2.19, §2.14 |
+| 7 | **No automated tests will exist.** A deliberate 3-day tradeoff, stated openly rather than hidden. | §28.1 |
+| 8 | **The prototype has no production security and cannot claim any.** Mocked OTP, simulated virus scanning, no encryption at rest, no real access control. | §18.1 |
+| 9 | **Three problems are named as unsolved and stay unsolved:** FIR conversion (2.2%), police follow-up quality, and 1930 capacity/language routing. Plus the SIM-swap victim who cannot receive an OTP (P19). | §5.1, §12.4 |
+
+---
+
+## 33. Important Decisions
+
+Running log. Each decision, one line of rationale, and where it is argued in full.
+
+| # | Decision | Rationale | Argued in |
+|---|---|---|---|
+| **D1** | **Reject Aadhaar entirely — not collected, not integrated, not mocked, not on a slide** | Banned by hackathon rules; legally unavailable to a hackathon team (no statutory basis, no self-service route); post‑2019 law removed the private-entity pattern; and it solves none of P1–P20 | §7.2 #3, §14.3 |
+| **D2** | **Reject PAN entirely — never asked, no column in the schema** | Fails all three justification tests (freeze / route / contact); pure liability | §7.2 #4, §14.4 |
+| **D3** | **Remove the mandatory ID-document upload and the Father/Mother/Spouse Name field** | Neither survives "does this help freeze the money, route the case, or contact this person?"; both are hard stops for the personas who need us most | §14.8, §22.1 |
+| **D4** | **DigiLocker: mock the consent-UX shape rather than skip it conceptually — but keep it out of the 3-day MVP** | Architecturally correct (consent-based, no raw Aadhaar) but **untestable — no sandbox exists (L8)**, and a sloppy mock is a scoring liability | §7.2 #5, §14.5 |
+| **D5** | **OTP is mocked with an on-screen demo code — no real SMS gateway** | Mock data is mandatory; the *ordering* is the design contribution, not the gateway | §12.5 |
+| **D6** | **Capture before verify.** Login is never an entry gate; identity is exchanged for tracking, afterwards | The incumbent's own no-login Report Suspect form proves unauthenticated capture works at national scale; the auth wall is where the 51% are lost | §12.3, Flow 9 |
+| **D7** | **Narration first, classification second, confirmation always** | Removes the taxonomy from the citizen without removing it from the system; solves P‑13 without inventing anything | §7.1 |
+| **D8** | **A deterministic rules classifier is the floor; the LLM is enhancement, never a dependency** | Demo reliability, latency, and *"every feature you demo must work"*. The journey completes with zero API keys configured | §15.1, §15.5 |
+| **D9** | **No AI chatbot or general assistant** | Liability of hallucinated legal/procedural advice, cliché, unbounded failure surface. Replaced by a hand-written checklist | §7.2 #9, §15.2c |
+| **D10** | **No auto-submission of any AI output, ever** | `categoryConfirmedByUser` must be true to submit — a schema-level guarantee, not a UI convention | §15.4, §22.2 |
+| **D11** | **MVP is ONE fully-polished journey** (financial-fraud emergency + tracking), not many shallow ones | 3 days; *"let us complete the main journey from start to finish"*; the spine contains all ten P0 features | §25 |
+| **D12** | **Ship EN + HI complete end-to-end; Kannada is a stretch, not a plan** | Two complete languages beat twelve that break at the confirmation screen; architecture supports N so adding a locale is a content change | §17.2 |
+| **D13** | **No red as a primary colour, no countdown timers, no urgency theatre** | Raises panic and degrades input quality — which costs the transaction reference we actually need | §13.3, §19.2, §19.6 |
+| **D14** | **Next.js + TypeScript + Tailwind + shadcn/ui + managed Postgres + Vercel** — one deployable unit | Integration surface, not scalability, is the dominant 3-day risk; Radix primitives make §16's a11y correct by default | §20.2 |
+| **D15** | **Postgres, not Firebase** | The model is genuinely relational and the schema is itself the "end-to-end thinking" artefact | §20.3 |
+| **D16** | **Local-first drafts from the first keystroke, with a 7-day hard expiry** | A dropped connection must not be a failure state; a cybercrime draft must not linger on a shared device | Flow 8, §22.2 |
+| **D17** | **Track by Complaint ID + OTP — never by a remembered User Name** | The incumbent ships a "Recover Your Username" feature, which is an admission that the design fails | §12.3 |
+| **D18** | **Translate "Disposed" in plain language** | Practitioners call misreading it the costliest error a victim makes; possibly the single most valuable string in the product | Flow 2, A8 |
+| **D19** | **Ship `/whats-real` as a product feature** | "Honesty" is a judging criterion; naming a limit you cannot fix is a design decision, not a failure | §8.2 #8, §3.10 |
+| **D20** | **Simulate notifications by rendering the exact copy in-UI** | The message *wording* is the deliverable; delivery is infrastructure | §7.2 #17 |
+| **D21** | **Evidence is genuinely optional, compressed client-side, and accepts PDFs** | Fixes the incumbent's *"if any … (Mandatory)"* contradiction and the 5 MB wall against PDF bank statements | §7.2 #18 |
+| **D22** | **Build DPDP-grade notice / consent / erasure / breach UX now, as forward-compliance** | Not legally required until 13 May 2027, but cheap at this scale and a dated, verifiable credibility claim | §18.4 |
+| **D23** | **Consent is per-purpose, versioned and withdrawable — not one blanket "I Agree"** | The incumbent uses a single tick-box; per-purpose consent is the Rule 3 shape | §14.7, §22.2 |
+| **D24** | **Deploy on hour one and keep deploying; feature freeze 18:00 on the 27th; submit by 16:00 on the 28th** | *"There is no grace period."* A four-hour buffer is the plan, not caution | §27 |
+| **D25** | **Anything unbuilt is removed from the UI, not disabled in it** | *"Every feature you demo must work"* — a dead button is a scored failure | §26 #17 |
+| **D26** | **Our own profile (name / mobile / State+District) is the entire autofill identity surface** | Delivers the whole real benefit of an identity integration with zero legal exposure and no third-party dependency | §14.6 |
+
+---
+
+## 34. Rejected Ideas
+
+| Idea | Verdict | Why |
+|---|---|---|
+| **Aadhaar collection / authentication / eKYC** | **REMOVE — completely** | Banned by hackathon rules (§3.9); no statutory basis available to a hackathon team (L1–L3); s.57 omitted in 2019 precisely to stop private-entity use (L4/L5); solves none of P1–P20; actively harms P‑3 and P‑5 |
+| **A mocked "Verify with Aadhaar" button** | **REMOVE** | Worse than omitting it — it normalises the exact prompt scammers use on victims after they report (B1) |
+| **PAN collection** | **REMOVE** | Fails freeze / route / contact; high-value identifier, zero functional gain |
+| **Any ID-document upload in the reporting flow** | **REMOVE** | A hard stop at 11:40 PM (P‑1); the reason P‑3 closes the tab; and an insult to P‑5 |
+| **Father / Mother / Spouse Name** | **REMOVE** | No purpose line can be written for it (§14.7) |
+| **"Reason for delay in reporting"** | **REMOVE** | Asks a victim to justify their trauma response |
+| **Live DigiLocker integration** | **REMOVE from the MVP** | No sandbox; SOP explicitly refuses test access (L8). Kept as a labelled mock design only |
+| **General-purpose AI chatbot / FAQ assistant** | **REMOVE** | Hallucination liability on legal and procedural questions; cliché; unbounded failure surface. **Replaced by** the narrow, human-confirmed category suggestion + a hand-written checklist |
+| **Runtime machine translation** | **REMOVE** | Mistranslating *"do not delete anything"* or *"this is not an FIR"* causes real harm with no reviewer in the loop |
+| **Pure free-text intake with no structure** | **REMOVE** | Blank-page paralysis (P‑10); loses the specific fields the freeze path requires; demos a model rather than a service |
+| **Keeping category-first and merely improving the labels** | **REMOVE** | Optimises a step that should not exist; helps neither P‑10 nor P‑13 |
+| **Full suspect-repository build** | **REMOVE from MVP** — a stubbed, labelled screen at most | Not on the spine. §11 P1; genuinely valuable, genuinely second |
+| **Personalised dashboard** | **REMOVE** | Optimises for the repeat filer, the rarest user. Replaced by a case page reachable by Complaint ID |
+| **Admin / investigator portal** | **REMOVE** | *"Reviewers will test the citizen experience, not an admin panel"* |
+| **Native mobile app** | **REMOVE** | *"Reviewers will not download a mobile app"* |
+| **Offline mode / PWA / service worker** | **REMOVE** | Local-first drafts capture most of the benefit; a stale-HTML service worker during a demo is catastrophic |
+| **Countdown-timer urgency UI** | **REMOVE** | Raises panic, degrades input quality, and tells a victim who misses it that they failed (§13.3) |
+| **Red-dominant "alert" visual language** | **REMOVE** | If red means "bad", every screen is red and red stops meaning anything |
+| **Gamification / confetti on the confirmation screen** | **REMOVE** | Someone just lost ₹1.8 lakh |
+| **Automated test suites** | **REMOVE** | Deliberate 3-day tradeoff, stated openly (§28.1) |
+| **Volunteer programme, media gallery, advisories, RTI notices** | **REMOVE** | Not part of a citizen's reporting journey |
+| **Separate backend service (NestJS/Express) + separate frontend** | **REMOVE** | Integration surface is the dominant 3-day risk |
+
+---
+
+## 35. Open Questions
+
+Genuinely unresolved. Each names who can answer it and what it changes.
+
+| # | Question | Status | What it changes | Who resolves it |
+|---|---|---|---|---|
+| **Q1** | **Team size and skill composition.** §20 and §27 are written for 1–2 people already comfortable with Next.js/TS. A team of two is the hackathon maximum (**VERIFIED**). | **Unresolved — ask the user directly** | **Materially changes §20 (stack) and §27 (day plan).** If the stack is unfamiliar, Day 1 loses hours and the §27.7 cut order starts earlier | **The user. This is the first question in §37.** |
+| **Q2** | **Exact judging-criteria weighting.** Six criteria are published; **weights are not** (**VERIFIED**, §3.4). | **NEEDS VERIFICATION** | Whether to spend the last free hours on polish (Usability) vs the architecture write-up (End-to-end thinking) | Re-read the brief and FAQ closer to submission (§27.6) |
+| **Q3** | **Is any AI tooling or runtime API access provided or expected?** Codex is **mandatory for the build** (**VERIFIED**). Whether an OpenAI **runtime** model is provided/expected for the *product* is **not established anywhere we have read** — the "in partnership with OpenAI" branding is not evidence of it. | **NEEDS VERIFICATION** | Whether §15's model path is enabled or the rules floor is all that ships. **The `classify()` interface is designed so this does not change the architecture either way** | Re-read the brief and FAQ before locking §15.3 |
+| **Q4** | **UK Report Fraud and Australia ReportCyber specifics** — the two most comparable services, both **REPORTED only** (403 / timeouts). | **REPORTED, needs first-hand verification** | Any pitch claim resting on them, and possibly the save/resume and receipt-as-bank-proof patterns (§24.2 #3, #6) | Walk both manually in a browser before the pitch |
+| **Q5** | **Current NCRP average complaint-processing timeline.** | **NEEDS VERIFICATION — do not fabricate** | If unfindable, the "what happens next" screen must give a **range with a stated source**, or say honestly that timelines vary by State/UT and are not published. **We will not invent a number** | Search official/parliamentary sources; **omit if unfindable** |
+| **Q6** | **Whether the live NCRP form actually enforces the mandatory evidence upload** as the manual states, and whether the 5 MB cap is per-file or total. | **NEEDS VERIFICATION** (OTP-gated) | The strength of the P12/P5 claims in the pitch | Attempt a live filing, or soften the claim to what the manual states |
+| **Q7** | **Whether the Hindi version covers the complaint flow end-to-end** or only static pages (A9). | **Insufficient evidence** | Whether "NCRP has 2 languages" can be sharpened to "and one of them may not survive the flow" | Direct testing |
+| **Q8** | **Registration open/close dates and entry fee** for the hackathon. | **NEEDS VERIFICATION** — never published | Nothing in the build; relevant only to submission logistics | Official site |
+| **Q9** | **Whether a public GitHub repo is expected** — it is **not** a listed submission requirement, but finalists may be asked for code later. | **NEEDS VERIFICATION** | Whether the repo needs a public-facing README polish pass on Day 3 | Official site |
+
+---
+
+## 36. Session Handoff
+
+**What was done this session (2026‑08‑25)**
+- Repository cloned at `/home/rushi/Projects/cybercrime-portal-redesign`.
+- `PROJECT_SPEC.md` created and fully populated across **two agent runs**: the first produced §1–13 and §24 before a connection failure interrupted it; **this run completed §14–23 and §25–37**, matching the established evidence-tagging convention and voice.
+- Section 14 and Section 18 incorporate a completed legal verification pass on **Aadhaar licensing (L1–L3), the 2019 Amendment / Puttaswamy position (L4–L6), DigiLocker partner onboarding and the absence of any sandbox (L7–L9), and the precise DPDP Rules commencement dates**.
+
+**What was NOT done**
+- **No code written. No scaffolding. No dependencies installed. No database provisioned. No deployment.**
+
+**Files changed**
+- `PROJECT_SPEC.md` — only. Nothing else in the repository was touched.
+
+**Next step**
+- **Present the plan to the user for validation** before any implementation begins — this is the plan-validation gate, and §37 states the single action.
+
+---
+
+## 37. NEXT ACTION
+
+> **Present this completed plan to the user — in particular the MVP scope (§25), the Aadhaar / PAN / DigiLocker decision (§14), the tech stack recommendation (§20), and the 3-day implementation plan (§27) — for explicit validation or adjustment before writing any code.**
+>
+> **Do not begin implementation until the user confirms scope — especially team size and skills (Q1, §35) and the tech stack choice (§20.4).**
+
+Exactly one action. Everything else waits on it.
