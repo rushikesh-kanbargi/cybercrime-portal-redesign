@@ -83,6 +83,13 @@ export const auditActorTypeEnum = pgEnum("audit_actor_type", [
   "police_mock",
 ]);
 
+// §12.5/§18.2 gap: the spec calls for "a real session model" and mocked OTP
+// verification, but §22.2 never lists the tables that hold them. Added here,
+// additively, so the auth (§12) and tracking (Flow 2) spine has somewhere to
+// persist the two things it actually needs: an OTP challenge to check
+// against, and a server-side session record behind the session cookie.
+export const otpPurposeEnum = pgEnum("otp_purpose", ["login", "track"]);
+
 // ---------------------------------------------------------------------------
 // User — optional account, created AFTER a report, never before (§12).
 // ---------------------------------------------------------------------------
@@ -301,6 +308,46 @@ export const consents = pgTable("consents", {
 });
 
 // ---------------------------------------------------------------------------
+// OtpChallenge — the mocked-OTP verification record (§12.5). Never stores
+// the plaintext code, only a hash — same posture as if the gateway were
+// real, even though it isn't. `purpose` distinguishes an account
+// login/upgrade (Flow 9) from a Complaint ID + OTP case read (Flow 2/§23.2).
+// ---------------------------------------------------------------------------
+
+export const otpChallenges = pgTable("otp_challenges", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  purpose: otpPurposeEnum("purpose").notNull(),
+  mobile: text("mobile").notNull(), // [S] — the number the mock code was "sent" to
+  codeHash: text("code_hash").notNull(),
+  complaintId: uuid("complaint_id").references(() => complaints.id, {
+    onDelete: "cascade",
+  }),
+  attempts: integer("attempts").notNull().default(0),
+  consumedAt: timestamp("consumed_at", { withTimezone: true }),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+// ---------------------------------------------------------------------------
+// Session — real server-side session record behind the httpOnly cookie
+// (§18.2: "Sessions: Real ... server-side session record"). The credential
+// that creates one is mocked; the session mechanics are production-shaped.
+// ---------------------------------------------------------------------------
+
+export const sessions = pgTable("sessions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+// ---------------------------------------------------------------------------
 // AuditLog — append-only. Narrative contents are never written here (§18.2).
 // ---------------------------------------------------------------------------
 
@@ -330,6 +377,18 @@ export const usersRelations = relations(users, ({ one, many }) => ({
   complaints: many(complaints),
   consents: many(consents),
   notifications: many(notifications),
+  sessions: many(sessions),
+}));
+
+export const sessionsRelations = relations(sessions, ({ one }) => ({
+  user: one(users, { fields: [sessions.userId], references: [users.id] }),
+}));
+
+export const otpChallengesRelations = relations(otpChallenges, ({ one }) => ({
+  complaint: one(complaints, {
+    fields: [otpChallenges.complaintId],
+    references: [complaints.id],
+  }),
 }));
 
 export const profilesRelations = relations(profiles, ({ one }) => ({

@@ -16,6 +16,8 @@ import type {
   drafts,
   consents,
   auditLogs,
+  otpChallenges,
+  sessions,
 } from "@/lib/db/schema";
 
 // ---------------------------------------------------------------------------
@@ -33,6 +35,8 @@ export type Notification = typeof notifications.$inferSelect;
 export type Draft = typeof drafts.$inferSelect;
 export type Consent = typeof consents.$inferSelect;
 export type AuditLog = typeof auditLogs.$inferSelect;
+export type OtpChallenge = typeof otpChallenges.$inferSelect;
+export type Session = typeof sessions.$inferSelect;
 
 export const COMPLAINT_STATUS_CODES = [
   "RECEIVED",
@@ -128,6 +132,43 @@ export const consentInputSchema = z.object({
   noticeVersion: z.string().min(1),
   method: z.enum(["checkbox", "toggle", "implicit_flow_step"]),
 });
+
+// ---------------------------------------------------------------------------
+// Auth / tracking input schemas (§12, Flow 2, Flow 9) — mocked-OTP account
+// upgrade and Complaint ID + OTP case lookup. Same mobile shape already used
+// by complaintCreateSchema.contactMobile, pulled out so it isn't duplicated.
+// ---------------------------------------------------------------------------
+
+export const mobileInputSchema = z
+  .string()
+  .trim()
+  .regex(/^[0-9+ ]{7,15}$/, "Enter a valid mobile number.");
+
+export const otpRequestSchema = z.object({
+  mobile: mobileInputSchema,
+  // Present when this is Flow 9 (link the OTP-verified account to a
+  // just-filed complaint) rather than a plain returning-user login.
+  complaintId: z.string().uuid().optional(),
+});
+
+export const otpVerifySchema = z.object({
+  mobile: mobileInputSchema,
+  code: z.string().trim().regex(/^[0-9]{6}$/, "Enter the 6-digit code."),
+  complaintId: z.string().uuid().optional(),
+});
+
+export const trackLookupSchema = z.object({
+  publicId: z.string().trim().min(4).max(40),
+});
+
+export const trackVerifySchema = z.object({
+  code: z.string().trim().regex(/^[0-9]{6}$/, "Enter the 6-digit code."),
+});
+
+export type OtpRequestInput = z.infer<typeof otpRequestSchema>;
+export type OtpVerifyInput = z.infer<typeof otpVerifySchema>;
+export type TrackLookupInput = z.infer<typeof trackLookupSchema>;
+export type TrackVerifyInput = z.infer<typeof trackVerifySchema>;
 
 export type ProfileInput = z.infer<typeof profileInputSchema>;
 export type IncidentInput = z.infer<typeof incidentInputSchema>;
