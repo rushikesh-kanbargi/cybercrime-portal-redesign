@@ -162,6 +162,19 @@ export async function confirmUpdatesOptIn(
       await tx.update(users).set({ mobileVerifiedAt: new Date(), lastSeenAt: new Date() }).where(eq(users.id, user.id));
     }
 
+    const [existing] = await tx
+      .select({ userId: complaints.userId })
+      .from(complaints)
+      .where(eq(complaints.id, parsed.complaintId))
+      .limit(1);
+
+    if (!existing) {
+      throw new Error("Complaint not found.");
+    }
+    if (existing.userId !== null && existing.userId !== user.id) {
+      throw new Error("This complaint is already linked to a different account.");
+    }
+
     await tx
       .update(complaints)
       .set({ userId: user.id })
