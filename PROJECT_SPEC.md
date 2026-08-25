@@ -2307,37 +2307,37 @@ Decisive, and every line is enforced by the 3-day clock, a hackathon rule, or a 
 
 **Goal at end of day: a person can go landing → report → Complaint ID, on a phone. Ugly is acceptable. Broken is not.**
 
-| # | Task | Verify |
-|---|---|---|
-| 1 | Confirm stack (§20) and **team size/skills (§35)** with the user; scaffold Next.js + TS + Tailwind + shadcn/ui; deploy a hello-world to Vercel **on hour one** | A public URL loads on a phone. *Deploying last is how submissions die.* |
-| 2 | Design tokens from §19: palette (both themes), type scale, spacing, the one easing token | A tokens page renders; contrast checked at definition time |
-| 3 | Postgres provisioned; schema from §22 migrated; **verify there is no Aadhaar, PAN or parent-name column** | `\d` output matches §22 exactly |
-| 4 | Persistent chrome: skip link, `lang`, single correct viewport tag, language switcher, **`tel:1930` that never scrolls away**, prototype banner | Tap `1930` on a real phone → the dialler opens. **This is the project's thesis; it ships first.** |
-| 5 | Landing — two intents, nothing else | Renders in one screen on a 360 px viewport |
-| 6 | `/report/money` intake: textarea with a real example placeholder, no minimum length, **local-first draft from the first keystroke** | Type, kill the tab, reopen → *"Continue where you left off?"* |
-| 7 | **Rules classifier + confirmation UI** (§15.5 levels 2–4) | Five hand-written narratives → five sensible categories, each with a reason, each changeable |
-| 8 | Regex extraction from a pasted bank SMS → editable, provenance-labelled chips | Paste three real-shaped SMS formats → correct chips; a garbage paste → manual form, no dead end |
-| 9 | `POST /api/complaints` with server-side zod validation + rate limit; **rejects unless `categoryConfirmedByUser`** | A curl with a bad payload returns a clean citizen-safe error, no stack trace |
-| 10 | Confirmation screen: Complaint ID large + copyable, next-hour checklist, "what happens next", **"this is not an FIR"** | End-to-end run on a phone produces a real ID from a real DB row |
+| # | Task | Verify | Status |
+|---|---|---|---|
+| 1 | Confirm stack (§20) and **team size/skills (§35)** with the user; scaffold Next.js + TS + Tailwind + shadcn/ui; deploy a hello-world to Vercel **on hour one** | A public URL loads on a phone. *Deploying last is how submissions die.* | [x] Stack confirmed + scaffolded (`7653e08`). **[ ] Not yet deployed to Vercel — still local-only. This is a real gap against the plan's own "deploy on hour one" rule, named here rather than hidden.** |
+| 2 | Design tokens from §19: palette (both themes), type scale, spacing, the one easing token | A tokens page renders; contrast checked at definition time | [x] `7653e08` |
+| 3 | Postgres provisioned; schema from §22 migrated; **verify there is no Aadhaar, PAN or parent-name column** | `\d` output matches §22 exactly | [x] `7653e08`, verified via `psql \dt` |
+| 4 | Persistent chrome: skip link, `lang`, single correct viewport tag, language switcher, **`tel:1930` that never scrolls away**, prototype banner | Tap `1930` on a real phone → the dialler opens. **This is the project's thesis; it ships first.** | [x] Chrome/`tel:1930`/skip-link/banner in `7653e08`; language switcher landing with i18n (in progress, §31) |
+| 5 | Landing — two intents, nothing else | Renders in one screen on a 360 px viewport | [x] `e29fccd` |
+| 6 | `/report/money` intake: textarea with a real example placeholder, no minimum length, **local-first draft from the first keystroke** | Type, kill the tab, reopen → *"Continue where you left off?"* | [x] `e29fccd` (D16, D31) |
+| 7 | **Rules classifier + confirmation UI** (§15.5 levels 2–4) | Five hand-written narratives → five sensible categories, each with a reason, each changeable | [x] `e29fccd` |
+| 8 | Regex extraction from a pasted bank SMS → editable, provenance-labelled chips | Paste three real-shaped SMS formats → correct chips; a garbage paste → manual form, no dead end | [x] `e29fccd` |
+| 9 | `POST /api/complaints` with server-side zod validation + rate limit; **rejects unless `categoryConfirmedByUser`** | A curl with a bad payload returns a clean citizen-safe error, no stack trace | [x] **Built as a Next.js Server Action (`submitMoneyReport`), not a REST route** — same server-side zod validation and `categoryConfirmedByUser: z.literal(true)` guarantee, no separate `POST /api/complaints` endpoint exists. Functionally equivalent; noting the shape deviation from this table's literal wording. |
+| 10 | Confirmation screen: Complaint ID large + copyable, next-hour checklist, "what happens next", **"this is not an FIR"** | End-to-end run on a phone produces a real ID from a real DB row | [x] `e29fccd` |
 
-**End-of-Day-1 gate: the spine runs on the deployed URL, on a phone.** If it does not, Day 2 starts by finishing it and something from Day 2 is cut.
+**End-of-Day-1 gate: the spine runs on the deployed URL, on a phone.** Not fully met — the spine runs end-to-end but **only on localhost, not on a deployed URL yet.** This is the single biggest open risk against the plan and should be resolved before Day 2 work goes much further.
 
 ### 27.4 Day 2 (26 Aug) — identity, tracking, and the a11y/i18n pass per slice
 
 **Goal at end of day: the full demo spine, in two languages, keyboard-complete.**
 
-| # | Task | Verify |
-|---|---|---|
-| 1 | Mocked-OTP request/verify + session; **Flow 9 upgrade** on the confirmation screen, skippable | Skip → report still filed. Verify → linked. Neither path can lose the report. |
-| 2 | `/track`: Complaint ID → mock OTP → case page | Unknown ID → a helpful message, never a bare "Invalid", and it never reveals whether the ID exists |
-| 3 | **Status timeline** with plain-language meaning + "what you can do now" per step, incl. the **"Disposed"** translation | Seeded complaint shows all states correctly, in both languages |
-| 4 | Evidence upload: MIME allow-list + magic bytes, client-side compression, **PDF accepted**, genuinely optional | 12 MB photo → compressed and accepted; a `.exe` renamed `.png` → rejected; skipping upload → submission still succeeds |
-| 5 | Profile autofill (name / mobile / State+District) + **working delete** (§14.6, Rule 8 rehearsal) | Second report pre-fills; delete empties it and complaints survive |
-| 6 | Simulated notification copy rendered as a phone notification at each status change | Copy reads correctly in both languages |
-| 7 | **i18n pass:** every string externalised, `lang` switches, Hindi complete **including error messages and the confirmation screen**; ₹ grouping correct (₹1,80,000) | A full Hindi run of the spine, start to finish, with a deliberate validation failure |
-| 8 | **Accessibility pass:** keyboard-only walk, focus rings everywhere, error summary with focus movement, ≥44 px targets, axe clean | Complete the entire spine with the mouse unplugged |
-| 9 | `/help/just-happened`, `/whats-real`, `/accessibility`, `/privacy` written | Each is honest, specific, and names something we did **not** solve |
-| 10 | `AuditLog` writes on create / status change / evidence / consent / case read | Rows appear; **no narrative text anywhere in the logs** |
+| # | Task | Verify | Status |
+|---|---|---|---|
+| 1 | Mocked-OTP request/verify + session; **Flow 9 upgrade** on the confirmation screen, skippable | Skip → report still filed. Verify → linked. Neither path can lose the report. | [x] `e29fccd` (report-flow upgrade) + `14b6125` (real hashed-challenge OTP/session system, D33–D35); IDOR fixed `ba15f37`, backdoor constant removed `574c477` |
+| 2 | `/track`: Complaint ID → mock OTP → case page | Unknown ID → a helpful message, never a bare "Invalid", and it never reveals whether the ID exists | [x] `14b6125`; enumeration-safe response verified live via curl |
+| 3 | **Status timeline** with plain-language meaning + "what you can do now" per step, incl. the **"Disposed"** translation | Seeded complaint shows all states correctly, in both languages | [x] English done `14b6125`; Hindi translation of status copy in progress (§31 i18n phase) |
+| 4 | Evidence upload: MIME allow-list + magic bytes, client-side compression, **PDF accepted**, genuinely optional | 12 MB photo → compressed and accepted; a `.exe` renamed `.png` → rejected; skipping upload → submission still succeeds | [x] `0c72f23` |
+| 5 | Profile autofill (name / mobile / State+District) + **working delete** (§14.6, Rule 8 rehearsal) | Second report pre-fills; delete empties it and complaints survive | [ ] **Not built.** No autofill-on-return and no delete control exist yet — `/privacy` currently *describes* a deletion right without a working control behind it. Real gap. |
+| 6 | Simulated notification copy rendered as a phone notification at each status change | Copy reads correctly in both languages | [x] English `e29fccd`/D20; Hindi copy pending the i18n pass |
+| 7 | **i18n pass:** every string externalised, `lang` switches, Hindi complete **including error messages and the confirmation screen**; ₹ grouping correct (₹1,80,000) | A full Hindi run of the spine, start to finish, with a deliberate validation failure | [ ] **In progress** — foundation + full-spine translation running now |
+| 8 | **Accessibility pass:** keyboard-only walk, focus rings everywhere, error summary with focus movement, ≥44 px targets, axe clean | Complete the entire spine with the mouse unplugged | [ ] **Not yet run** — queued immediately after item 7, same files |
+| 9 | `/help/just-happened`, `/whats-real`, `/accessibility`, `/privacy` written | Each is honest, specific, and names something we did **not** solve | [x] `8836795` |
+| 10 | `AuditLog` writes on create / status change / evidence / consent / case read | Rows appear; **no narrative text anywhere in the logs** | [x] Verified present: `complaint_created`, `evidence_added`, `updates_opt_in_confirmed` (`app/report/money/actions.ts`), plus tracking/auth audit calls (`lib/actions/tracking.ts`, `lib/actions/auth.ts` via `lib/audit.ts`) |
 
 ### 27.5 Day 3 (27 Aug) — hardening, demo data, materials. **Feature freeze at 18:00.**
 
