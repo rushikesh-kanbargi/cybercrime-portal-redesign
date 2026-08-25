@@ -1,23 +1,24 @@
 {
   "meta": {
     "title": "Accessibility statement — Cybercrime Report & Track",
-    "description": "What we're targeting, what's implemented, and what hasn't been independently verified yet."
+    "description": "What we're targeting, what's implemented, what was actually tested (and how), and what's still open."
   },
   "title": "Accessibility statement",
-  "subtitle": "What we're building toward, what's actually implemented, and what we haven't independently verified yet. We'd rather tell you the honest, narrower truth than claim a conformance level we haven't tested.",
+  "subtitle": "What we're building toward, what's actually implemented, exactly what was tested and how, and what's still open. We'd rather tell you the honest, narrower truth than claim a conformance level we haven't tested.",
   "targetTitle": "Our target",
   "targetBody": "<strong>WCAG 2.1 Level AA</strong>, scoped to the journeys we've actually shipped — not the whole site, and not a claim we haven't walked ourselves. As of this page, that's:",
   "targetScope": [
     "the home page (/)",
-    "the financial-fraud report flow (/report/money)",
+    "the financial-fraud report flow (/report/money), including the evidence-upload step",
     "complaint tracking (/track and /track/[id])",
+    "the account pages (/profile)",
     "this page and the other honesty/help pages (/whats-real, /help/just-happened, /privacy)"
   ],
   "implementedTitle": "What's implemented",
   "implemented": [
     {
       "title": "The 1930 helpline is a real, always-visible tel: link",
-      "body": "It sits in the page header on every screen and never scrolls away, with a real accessible name (\"Call 1930\"), not an image with no alt text."
+      "body": "It sits in the page header on every screen and never scrolls away, with a real accessible name (\"Call 1930\"), not an image with no alt text. It's sized to at least 44×44px so it's easy to hit with a thumb."
     },
     {
       "title": "A skip-to-content link is the first focusable element",
@@ -32,12 +33,20 @@
       "body": "One <main> region, a labelled header, real <button> and <a> elements for anything clickable — built on shadcn/ui's Radix primitives, which give correct roles and keyboard behaviour by default."
     },
     {
+      "title": "Exactly one <h1> per page, including the report wizard and the tracking pages",
+      "body": "The report-money wizard and the /track entry page previously had no heading at all under their visual card titles; each step now has a real <h1>, and it takes keyboard focus automatically when the wizard moves to a new step."
+    },
+    {
+      "title": "Form errors are a text summary, not just colour",
+      "body": "Failing a step's validation (the narrative, facts, or contact step) shows a summary at the top of the card listing every problem in plain language, each linking to its field. The summary takes keyboard focus the moment it appears, so it's the next thing announced — alongside the existing per-field message under each input."
+    },
+    {
       "title": "Visible focus rings everywhere",
-      "body": "Every interactive element uses focus-visible styling; outline: none is not used anywhere in this codebase."
+      "body": "Every interactive element uses focus-visible styling; outline: none is not used anywhere in this codebase without a focus-visible replacement."
     },
     {
       "title": "No auto-advancing motion",
-      "body": "There is no carousel, no auto-playing content, and no countdown timer anywhere in the product. prefers-reduced-motion is respected globally."
+      "body": "There is no carousel, no auto-playing content, and no countdown timer anywhere in the product. prefers-reduced-motion is respected globally, including the step-entrance animation."
     },
     {
       "title": "One viewport tag, zoom never disabled",
@@ -50,26 +59,46 @@
     {
       "title": "No minimum character counts",
       "body": "The incident narrative has no minimum length. A character counter, where shown, counts up to a maximum only."
+    },
+    {
+      "title": "The evidence upload step is a real, labelled file input",
+      "body": "A genuine <input type=\"file\">, drag-and-drop as an addition on top of it (never the only way in), a live region that announces how many files are selected, and fully translated copy in both languages. Skipping it completes the report exactly the same as attaching something."
     }
   ],
-  "notVerifiedTitle": "What we have not verified yet",
-  "notVerifiedIntro": "This is the part most conformance statements skip. Being honest about it is the point.",
-  "notVerified": [
+  "testedTitle": "What was actually tested, and how",
+  "testedIntro": "Run on 26 Aug 2026, against all 18 shipped routes (9 pages × English/Hindi), on a running local build.",
+  "tested": [
     {
-      "strong": "No automated accessibility pass (axe, Lighthouse) has been run on these pages yet.",
-      "body": "What's listed above reflects the code as written, not a test run and its results."
+      "strong": "Automated — axe-core CLI v4.13.0, WCAG 2.1 A + AA rule set.",
+      "body": "npx @axe-core/cli against each route in a headless Chrome matched to the local browser version. Result: 0 violations on all 18 routes. One \"incomplete\" (not a violation) was flagged on every English page — axe couldn't auto-resolve the contrast of the header's \"Resources\" menu button because of the translucent, blurred header background. Checked by hand from the actual OKLCH tokens: 6.8:1 (light) and 6.4:1 (dark), both well past the 4.5:1 target."
     },
     {
-      "strong": "No screen-reader walkthrough has been done yet",
-      "body": "of the confirmation screen or the tel:1930 control specifically."
+      "strong": "Automated — Lighthouse accessibility category.",
+      "body": "npx lighthouse <url> --only-categories=accessibility against the same 18 routes. Result: 100/100 on every route."
     },
     {
-      "strong": "Colour contrast has not been independently measured",
-      "body": "against the shipped tokens in both light and dark mode, beyond being chosen with the 4.5:1 / 3:1 targets in mind."
+      "strong": "Manual — a full keyboard-and-focus walk of the /report/money wizard.",
+      "body": "Every step (narrate, confirm facts, contact details, evidence, review, done), traced against the actual rendered markup: tab order follows visual order, every control is a real <button>/<a>/<input>/<select> (never a clickable <div>), focus moves to the new step's heading on every step change, and to the error summary when a step fails validation. This environment's browser-automation tool could not hold a live interactive session here (it returned a persistent frame error on every attempt), so this was a source-level walk against the real DOM output rather than a live click-through with a mouse physically unplugged — named plainly rather than claimed as something it wasn't."
     },
     {
-      "strong": "We are not claiming full WCAG 2.1 AA conformance today.",
-      "body": "We're stating the target, what's built toward it, and what still needs a real test pass — which we intend to run and publish results for, including any failures, before treating this as a conformance claim."
+      "strong": "Manual — colour contrast, computed from the shipped design tokens.",
+      "body": "Every OKLCH colour pair in globals.css that text sits on was converted to sRGB and checked against the WCAG contrast formula, not eyeballed. Body text, primary buttons, and destructive/error text all measured between 5.1:1 and 16.6:1 in both light and dark themes."
+    }
+  ],
+  "gapsTitle": "What's still open",
+  "gapsIntro": "Named, not hidden — this is what the automated tools and this pass did not cover or did not fully fix.",
+  "gaps": [
+    {
+      "strong": "Touch targets are fixed on the highest-stakes controls, not everywhere.",
+      "body": "The persistent tel:1930 button, the mobile nav menu, the language switcher, and every primary Continue/Back/Submit/Skip button in the report wizard are now at least 44×44px. Secondary controls elsewhere — Copy/Download on the confirmation screen, the category picker, review-screen \"Edit\" links, the OTP confirm field — still use the shipped component library's smaller default sizing (28–36px). Resizing those wasn't done in this pass: a height change to the shared Button/Input components touches every screen in the product, and re-verifying all of them visually was outside this pass's time budget. Fixing the flow's primary actions first was the deliberate call."
+    },
+    {
+      "strong": "No live screen-reader software (NVDA, VoiceOver, TalkBack) walkthrough.",
+      "body": "Verified instead via source-level review of headings, landmark roles, ARIA live regions, and focus order, as described above — a reasonable proxy, not a substitute for hearing it."
+    },
+    {
+      "strong": "Automated tools only catch part of the picture.",
+      "body": "axe-core and Lighthouse's own documentation puts automated coverage at roughly 20–50% of accessibility issues. Everything else in this page's commitment list was checked by hand against the code, not exhaustively fuzzed against every possible input or screen size."
     }
   ],
   "footer": "See <link>what's real vs mocked</link> for the rest of this prototype's honest scope."

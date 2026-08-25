@@ -16,6 +16,12 @@ export interface FileUploadProps {
   files: File[];
   onFilesChange: (files: File[]) => void;
   className?: string;
+  /** §16.3 #12/#15 — real, translated copy; no hardcoded English inside a shared primitive. */
+  dragPrompt: string;
+  chooseFilesLabel: string;
+  removeFileLabel: (name: string) => string;
+  /** Announced in a live region whenever the selection changes (§16.3 #15). */
+  filesSelectedAnnouncement: (count: number) => string;
 }
 
 export function FileUpload({
@@ -27,6 +33,10 @@ export function FileUpload({
   files,
   onFilesChange,
   className,
+  dragPrompt,
+  chooseFilesLabel,
+  removeFileLabel,
+  filesSelectedAnnouncement,
 }: FileUploadProps) {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = React.useState(false);
@@ -68,13 +78,13 @@ export function FileUpload({
       >
         <Upload className="size-5 text-muted-foreground" aria-hidden="true" />
         <p className="text-sm text-muted-foreground">
-          Drag files here, or
+          {dragPrompt}
           <button
             type="button"
             onClick={() => inputRef.current?.click()}
-            className="ml-1 font-medium text-primary underline underline-offset-2"
+            className="ml-1 font-medium text-primary underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           >
-            choose files
+            {chooseFilesLabel}
           </button>
         </p>
         <input
@@ -87,6 +97,10 @@ export function FileUpload({
           className="sr-only"
         />
       </div>
+
+      <p role="status" aria-live="polite" className="sr-only">
+        {filesSelectedAnnouncement(files.length)}
+      </p>
 
       {files.length > 0 ? (
         <ul className="flex flex-col gap-2">
@@ -102,7 +116,7 @@ export function FileUpload({
               <button
                 type="button"
                 onClick={() => removeFile(index)}
-                aria-label={`Remove ${file.name}`}
+                aria-label={removeFileLabel(file.name)}
                 className="shrink-0 rounded-sm p-1 text-muted-foreground hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
               >
                 <X className="size-4" aria-hidden="true" />

@@ -79,7 +79,11 @@
     "back": "Back",
     "skip": "Skip",
     "continue": "Continue",
-    "preparing": "Preparing…"
+    "preparing": "Preparing…",
+    "dragPrompt": "Drag files here, or",
+    "chooseFiles": "choose files",
+    "removeFile": "Remove {name}",
+    "filesSelectedCount": "{count, plural, =0 {No files selected} one {# file selected} other {# files selected}}"
   },
   "review": {
     "title": "Review",

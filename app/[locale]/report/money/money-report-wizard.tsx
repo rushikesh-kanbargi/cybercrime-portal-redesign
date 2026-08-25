@@ -130,6 +130,26 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
     }
   });
   const [errors, setErrors] = React.useState<Record<string, string>>({});
+  // §16.3 #8 — focus moves to the step heading on step change, and to the
+  // error summary when validation fails, instead of leaving focus stranded
+  // on a button that just disappeared.
+  const stepHeadingRef = React.useRef<HTMLHeadingElement>(null);
+  const errorSummaryRef = React.useRef<HTMLDivElement>(null);
+  const isFirstStepRender = React.useRef(true);
+  React.useEffect(() => {
+    // Skip the initial mount — the narrate step's textarea owns autoFocus
+    // there; this effect only needs to move focus on later step *changes*.
+    if (isFirstStepRender.current) {
+      isFirstStepRender.current = false;
+      return;
+    }
+    stepHeadingRef.current?.focus();
+  }, [step]);
+  React.useEffect(() => {
+    if (Object.keys(errors).length > 0) {
+      errorSummaryRef.current?.focus();
+    }
+  }, [errors]);
   const [submitting, setSubmitting] = React.useState(false);
   const [submitError, setSubmitError] = React.useState<string | null>(null);
   const [result, setResult] = React.useState<{ publicId: string; complaintId: string; smsPreview: string } | null>(null);
@@ -463,10 +483,18 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
       {step === "narrate" && (
         <Card className="animate-enter">
           <CardHeader>
-            <CardTitle>{t("narrate.title")}</CardTitle>
+            <CardTitle as="h1" ref={stepHeadingRef} tabIndex={-1} className="outline-none focus-visible:ring-3 focus-visible:ring-ring/50 rounded-sm">
+              {t("narrate.title")}
+            </CardTitle>
             <CardDescription>{t("narrate.description")}</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-5">
+            <ErrorSummary
+              errors={errors}
+              fieldIds={{ narrative: "narrative" }}
+              title={tCommon("errorSummaryTitle")}
+              summaryRef={errorSummaryRef}
+            />
             <div className="flex flex-col gap-2">
               <Label htmlFor="narrative">{t("narrate.narrativeLabel")}</Label>
               <Textarea
@@ -513,7 +541,7 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
                 <Phone className="size-3.5" aria-hidden="true" />
                 {t("narrate.callPrompt")}
               </a>
-              <Button onClick={goToFacts}>{t("narrate.continue")}</Button>
+              <Button className="min-h-11" onClick={goToFacts}>{t("narrate.continue")}</Button>
             </div>
           </CardContent>
         </Card>
@@ -522,10 +550,18 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
       {step === "facts" && (
         <Card className="animate-enter">
           <CardHeader>
-            <CardTitle>{t("facts.title")}</CardTitle>
+            <CardTitle as="h1" ref={stepHeadingRef} tabIndex={-1} className="outline-none focus-visible:ring-3 focus-visible:ring-ring/50 rounded-sm">
+              {t("facts.title")}
+            </CardTitle>
             <CardDescription>{t("facts.description")}</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-5">
+            <ErrorSummary
+              errors={errors}
+              fieldIds={{ amountLost: "amount", category: "category-block" }}
+              title={tCommon("errorSummaryTitle")}
+              summaryRef={errorSummaryRef}
+            />
             <div className="flex flex-col gap-2">
               <Label htmlFor="amount">{t("facts.amountLabel")}</Label>
               <Input
@@ -578,7 +614,11 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
               ) : null}
             </div>
 
-            <div className="flex flex-col gap-3 rounded-lg border border-border p-4">
+            <div
+              id="category-block"
+              tabIndex={-1}
+              className="flex flex-col gap-3 rounded-lg border border-border p-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+            >
               {!isCategoryConfirmed ? (
                 <>
                   <p className="text-sm">
@@ -615,10 +655,10 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
             </div>
 
             <div className="flex items-center justify-between gap-3">
-              <Button variant="outline" onClick={() => setStep("narrate")}>
+              <Button variant="outline" className="min-h-11" onClick={() => setStep("narrate")}>
                 {t("facts.back")}
               </Button>
-              <Button onClick={goToContact}>{t("facts.continue")}</Button>
+              <Button className="min-h-11" onClick={goToContact}>{t("facts.continue")}</Button>
             </div>
           </CardContent>
         </Card>
@@ -627,10 +667,18 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
       {step === "contact" && (
         <Card className="animate-enter">
           <CardHeader>
-            <CardTitle>{t("contact.title")}</CardTitle>
+            <CardTitle as="h1" ref={stepHeadingRef} tabIndex={-1} className="outline-none focus-visible:ring-3 focus-visible:ring-ring/50 rounded-sm">
+              {t("contact.title")}
+            </CardTitle>
             <CardDescription>{t("contact.description")}</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-5">
+            <ErrorSummary
+              errors={errors}
+              fieldIds={{ state: "state", district: "district", mobile: "mobile" }}
+              title={tCommon("errorSummaryTitle")}
+              summaryRef={errorSummaryRef}
+            />
             {autofillFromProfile && (
               <Alert>
                 <Info />
@@ -691,10 +739,10 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
             </div>
 
             <div className="flex items-center justify-between gap-3">
-              <Button variant="outline" onClick={() => setStep("facts")}>
+              <Button variant="outline" className="min-h-11" onClick={() => setStep("facts")}>
                 {t("contact.back")}
               </Button>
-              <Button onClick={goToEvidence}>{t("contact.continue")}</Button>
+              <Button className="min-h-11" onClick={goToEvidence}>{t("contact.continue")}</Button>
             </div>
           </CardContent>
         </Card>
@@ -703,7 +751,9 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
       {step === "evidence" && (
         <Card className="animate-enter">
           <CardHeader>
-            <CardTitle>{t("evidence.title")}</CardTitle>
+            <CardTitle as="h1" ref={stepHeadingRef} tabIndex={-1} className="outline-none focus-visible:ring-3 focus-visible:ring-ring/50 rounded-sm">
+              {t("evidence.title")}
+            </CardTitle>
             <CardDescription>{t("evidence.description")}</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-5">
@@ -717,6 +767,10 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
               accept={EVIDENCE_ACCEPT}
               files={evidenceFiles}
               onFilesChange={handleEvidenceFilesChange}
+              dragPrompt={t("evidence.dragPrompt")}
+              chooseFilesLabel={t("evidence.chooseFiles")}
+              removeFileLabel={(name) => t("evidence.removeFile", { name })}
+              filesSelectedAnnouncement={(count) => t("evidence.filesSelectedCount", { count })}
             />
             {evidenceError && <p className="text-sm text-destructive">{evidenceError}</p>}
 
@@ -727,14 +781,14 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
             </Alert>
 
             <div className="flex items-center justify-between gap-3">
-              <Button variant="outline" onClick={() => setStep("contact")}>
+              <Button variant="outline" className="min-h-11" onClick={() => setStep("contact")}>
                 {t("evidence.back")}
               </Button>
               <div className="flex gap-2">
-                <Button variant="ghost" onClick={skipEvidence}>
+                <Button variant="ghost" className="min-h-11" onClick={skipEvidence}>
                   {t("evidence.skip")}
                 </Button>
-                <Button onClick={goToReview} disabled={evidencePreparing}>
+                <Button className="min-h-11" onClick={goToReview} disabled={evidencePreparing}>
                   {evidencePreparing ? t("evidence.preparing") : t("evidence.continue")}
                 </Button>
               </div>
@@ -746,7 +800,9 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
       {step === "review" && (
         <Card className="animate-enter">
           <CardHeader>
-            <CardTitle>{t("review.title")}</CardTitle>
+            <CardTitle as="h1" ref={stepHeadingRef} tabIndex={-1} className="outline-none focus-visible:ring-3 focus-visible:ring-ring/50 rounded-sm">
+              {t("review.title")}
+            </CardTitle>
             <CardDescription>{t("review.description")}</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
@@ -782,10 +838,10 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
             )}
 
             <div className="flex items-center justify-between gap-3">
-              <Button variant="outline" onClick={() => setStep("evidence")} disabled={submitting}>
+              <Button variant="outline" className="min-h-11" onClick={() => setStep("evidence")} disabled={submitting}>
                 {t("review.back")}
               </Button>
-              <Button onClick={handleSubmit} disabled={submitting}>
+              <Button className="min-h-11" onClick={handleSubmit} disabled={submitting}>
                 {submitting ? t("review.submitting") : t("review.submit")}
               </Button>
             </div>
@@ -797,7 +853,9 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
         <div className="animate-enter flex flex-col gap-6">
           <Card>
             <CardHeader>
-              <CardTitle>{t("done.idCardTitle")}</CardTitle>
+              <CardTitle as="h1" ref={stepHeadingRef} tabIndex={-1} className="outline-none focus-visible:ring-3 focus-visible:ring-ring/50 rounded-sm">
+                {t("done.idCardTitle")}
+              </CardTitle>
               <CardDescription>{t("done.idCardDescription")}</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
@@ -906,7 +964,7 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
             </CardContent>
           </Card>
 
-          <Button variant="outline" onClick={() => router.push("/")}>
+          <Button variant="outline" className="min-h-11" onClick={() => router.push("/")}>
             {t("done.backHome")}
           </Button>
         </div>
@@ -921,6 +979,58 @@ function FieldProvenance({ text }: { text: string }) {
     <p className="text-xs text-muted-foreground">
       {t("provenance", { text })}
     </p>
+  );
+}
+
+// §16.3 #11 — errors are text, not colour: an inline message per field plus
+// a summary at the top of the step, each entry linking to (and focusing)
+// its field. §16.3 #8 — the summary itself takes focus so a screen-reader
+// or keyboard user lands on it immediately after a failed "Continue".
+function ErrorSummary({
+  errors,
+  fieldIds,
+  title,
+  summaryRef,
+}: {
+  errors: Record<string, string>;
+  fieldIds: Record<string, string>;
+  title: string;
+  summaryRef: React.RefObject<HTMLDivElement | null>;
+}) {
+  const entries = Object.entries(errors);
+  if (entries.length === 0) return null;
+  return (
+    <div
+      ref={summaryRef}
+      tabIndex={-1}
+      role="alert"
+      className="rounded-lg border border-destructive/40 bg-destructive/5 p-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+    >
+      <p className="text-sm font-semibold text-destructive">{title}</p>
+      <ul className="mt-2 flex flex-col gap-1">
+        {entries.map(([field, message]) => {
+          const id = fieldIds[field];
+          return (
+            <li key={field} className="text-sm">
+              {id ? (
+                <a
+                  href={`#${id}`}
+                  className="text-destructive underline underline-offset-2"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById(id)?.focus();
+                  }}
+                >
+                  {message}
+                </a>
+              ) : (
+                <span className="text-destructive">{message}</span>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </div>
   );
 }
 

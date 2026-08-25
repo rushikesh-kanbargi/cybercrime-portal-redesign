@@ -13,7 +13,8 @@ export default async function AccessibilityPage() {
   const t = await getTranslations("accessibility");
   const targetScope = t.raw("targetScope") as string[];
   const implemented = t.raw("implemented") as Array<{ title: string; body: string }>;
-  const notVerified = t.raw("notVerified") as Array<{ strong: string; body: string }>;
+  const tested = t.raw("tested") as Array<{ strong: string; body: string }>;
+  const gaps = t.raw("gaps") as Array<{ strong: string; body: string }>;
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 px-4 py-12">
@@ -55,10 +56,24 @@ export default async function AccessibilityPage() {
       <Separator />
 
       <div className="flex flex-col gap-3">
-        <h2 className="text-xl font-semibold tracking-tight text-foreground">{t("notVerifiedTitle")}</h2>
-        <p className="text-sm text-muted-foreground">{t("notVerifiedIntro")}</p>
+        <h2 className="text-xl font-semibold tracking-tight text-foreground">{t("testedTitle")}</h2>
+        <p className="text-sm text-muted-foreground">{t("testedIntro")}</p>
         <ul className="flex flex-col gap-3 text-sm text-muted-foreground">
-          {notVerified.map((item) => (
+          {tested.map((item) => (
+            <li key={item.strong}>
+              <strong className="text-foreground">{item.strong}</strong> {item.body}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <Separator />
+
+      <div className="flex flex-col gap-3">
+        <h2 className="text-xl font-semibold tracking-tight text-foreground">{t("gapsTitle")}</h2>
+        <p className="text-sm text-muted-foreground">{t("gapsIntro")}</p>
+        <ul className="flex flex-col gap-3 text-sm text-muted-foreground">
+          {gaps.map((item) => (
             <li key={item.strong}>
               <strong className="text-foreground">{item.strong}</strong> {item.body}
             </li>

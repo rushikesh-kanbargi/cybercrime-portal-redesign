@@ -47,5 +47,6 @@
     "download": "Download",
     "change": "Change"
   },
+  "errorSummaryTitle": "Please fix the following before continuing:",
   "notAnFir": "Your Complaint ID is a record that you reported this. It is not an FIR (First Information Report). An FIR is a separate, later step that a police officer registers if the case warrants it."
 }

@@ -79,7 +79,11 @@
     "back": "पीछे",
     "skip": "छोड़ें",
     "continue": "आगे बढ़ें",
-    "preparing": "तैयार हो रहा है…"
+    "preparing": "तैयार हो रहा है…",
+    "dragPrompt": "फाइलें यहां खींचें, या",
+    "chooseFiles": "फाइलें चुनें",
+    "removeFile": "{name} हटाएं",
+    "filesSelectedCount": "{count, plural, =0 {कोई फाइल चयनित नहीं} other {# फाइलें चयनित}}"
   },
   "review": {
     "title": "समीक्षा करें",

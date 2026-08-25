@@ -25,7 +25,7 @@ export function LanguageSwitcher() {
           const nextLocale = e.target.value as (typeof routing.locales)[number];
           router.replace(pathname, { locale: nextLocale });
         }}
-        className="h-8 rounded-md border border-input bg-transparent px-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+        className="h-8 min-h-11 rounded-md border border-input bg-transparent px-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
       >
         {routing.locales.map((l) => (
           <option key={l} value={l}>

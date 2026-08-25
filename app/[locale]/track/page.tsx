@@ -33,7 +33,7 @@ export default function TrackEntryPage() {
     <div className="mx-auto flex w-full max-w-xl flex-1 flex-col gap-6 px-4 py-10">
       <Card className="animate-enter">
         <CardHeader>
-          <CardTitle>{t("title")}</CardTitle>
+          <CardTitle as="h1">{t("title")}</CardTitle>
           <CardDescription>{t("description")}</CardDescription>
         </CardHeader>
         <CardContent>

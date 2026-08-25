@@ -103,7 +103,7 @@ export async function SiteHeader() {
               <button
                 type="button"
                 aria-label={t("nav.label")}
-                className="inline-flex size-8 items-center justify-center rounded-md text-foreground transition-colors hover:bg-muted md:hidden"
+                className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-foreground transition-colors hover:bg-muted md:hidden"
               >
                 <Menu className="size-4.5" aria-hidden="true" />
               </button>
@@ -140,7 +140,7 @@ export async function SiteHeader() {
           <LanguageSwitcher />
           <a
             href="tel:1930"
-            className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            className="inline-flex min-h-11 items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           >
             <Phone className="size-4" aria-hidden="true" />
             {t("header.call1930")}
