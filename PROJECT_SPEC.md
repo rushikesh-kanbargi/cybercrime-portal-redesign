@@ -2239,7 +2239,7 @@ Checked off as each item actually ships (verified — build/lint/run, not claime
 - [x] 11. **`/help/just-happened`** — hand-written, the page that does not exist today. *(`8836795`)*
 - [x] 12. **`/whats-real`** — real vs mocked vs not-solved. A scoring feature (§3.10). *(`8836795`)*
 - [x] 13. **`/accessibility`** and **`/privacy`** — honestly scoped. *(`8836795`)*
-- [ ] 14. **EN + HI complete end-to-end**, including error messages and the confirmation screen (§17.2). **In progress** — i18n foundation + full-spine translation underway.
+- [x] 14. **EN + HI complete end-to-end**, including error messages and the confirmation screen (§17.2). *(`2a62f3b`)*
 - [ ] 15. **WCAG 2.1 AA on every screen above**, keyboard-complete, mobile-first. **Not yet run** — queued immediately after item 14 lands (same files, sequenced to avoid collision).
 - [ ] 16. **Seeded synthetic demo data** + published mock credentials for reviewers (**VERIFIED** requirement, §3.5). **Not yet built.**
 
