@@ -9,12 +9,20 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { Info, Phone, Copy, Download, Check } from "lucide-react";
+import { Info, Phone, Copy, Download, Check, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { extractFacts, type ExtractedField } from "@/lib/extract";
 import { classifyFraud, FRAUD_SUBCATEGORIES, type FraudSubCategoryCode } from "@/lib/classify";
 import { INDIAN_STATES } from "@/lib/india-states";
-import { submitMoneyReport, confirmUpdatesOptIn } from "./actions";
+import { submitMoneyReport, confirmUpdatesOptIn, uploadEvidence } from "./actions";
+import { FileUpload } from "@/components/ui/file-upload";
+import { compressImageFile } from "@/lib/compress-image";
+import {
+  EVIDENCE_ACCEPT,
+  EVIDENCE_MAX_FILES,
+  EVIDENCE_MAX_RAW_INPUT_BYTES,
+  formatBytes,
+} from "@/lib/evidence-limits";
 
 const DRAFT_KEY = "cc-money-draft-v1";
 const DEMO_OTP_CODE = "123456";
@@ -22,7 +30,7 @@ const DEMO_OTP_CODE = "123456";
 const selectClassName =
   "h-8 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm dark:bg-input/30";
 
-type Step = "narrate" | "facts" | "contact" | "review" | "done";
+type Step = "narrate" | "facts" | "contact" | "evidence" | "review" | "done";
 
 interface DraftState {
   narrative: string;
@@ -90,6 +98,17 @@ export function MoneyReportWizard() {
   const [submitError, setSubmitError] = React.useState<string | null>(null);
   const [result, setResult] = React.useState<{ publicId: string; complaintId: string; smsPreview: string } | null>(null);
   const [copied, setCopied] = React.useState(false);
+
+  // Evidence — optional, added between "where + how to reach you" and
+  // "review" (D21). Kept in-memory only: File objects can't go into the
+  // localStorage draft, so a refresh loses a selected-but-not-yet-submitted
+  // attachment. Acceptable — the report text itself is never lost (D16).
+  const [evidenceFiles, setEvidenceFiles] = React.useState<File[]>([]);
+  const [evidenceError, setEvidenceError] = React.useState<string | null>(null);
+  const [evidencePreparing, setEvidencePreparing] = React.useState(false);
+  const [evidenceUploadStatus, setEvidenceUploadStatus] = React.useState<
+    "idle" | "uploading" | "done" | "partial" | "error"
+  >("idle");
 
   // Want-updates sub-state
   const [wantMobile, setWantMobile] = React.useState("");
@@ -191,7 +210,7 @@ export function MoneyReportWizard() {
     setStep("contact");
   }
 
-  function goToReview() {
+  function goToEvidence() {
     const newErrors: Record<string, string> = {};
     if (!draft.state) newErrors.state = "Select your state.";
     if (!draft.district.trim()) newErrors.district = "Enter your district.";
@@ -202,6 +221,39 @@ export function MoneyReportWizard() {
     }
     setErrors({});
     setWantMobile(draft.mobile.trim());
+    setStep("evidence");
+  }
+
+  function handleEvidenceFilesChange(files: File[]) {
+    setEvidenceError(null);
+    if (files.length > EVIDENCE_MAX_FILES) {
+      setEvidenceError(`You can attach up to ${EVIDENCE_MAX_FILES} files.`);
+      files = files.slice(0, EVIDENCE_MAX_FILES);
+    }
+    const oversized = files.find((f) => f.size > EVIDENCE_MAX_RAW_INPUT_BYTES);
+    if (oversized) {
+      setEvidenceError(`"${oversized.name}" is too large (max ${formatBytes(EVIDENCE_MAX_RAW_INPUT_BYTES)} per file).`);
+      files = files.filter((f) => f.size <= EVIDENCE_MAX_RAW_INPUT_BYTES);
+    }
+    setEvidenceFiles(files);
+  }
+
+  async function goToReview() {
+    if (evidenceFiles.length > 0) {
+      setEvidencePreparing(true);
+      try {
+        const compressed = await Promise.all(evidenceFiles.map(compressImageFile));
+        setEvidenceFiles(compressed);
+      } finally {
+        setEvidencePreparing(false);
+      }
+    }
+    setStep("review");
+  }
+
+  function skipEvidence() {
+    setEvidenceFiles([]);
+    setEvidenceError(null);
     setStep("review");
   }
 
@@ -240,6 +292,27 @@ export function MoneyReportWizard() {
         // ignore
       }
       void meta;
+
+      // Evidence is a follow-up upload, never part of the submit
+      // transaction — a slow/failing attachment must not block or unwind a
+      // complaint that already exists (R5).
+      if (evidenceFiles.length > 0) {
+        setEvidenceUploadStatus("uploading");
+        try {
+          const formData = new FormData();
+          for (const file of evidenceFiles) formData.append("files", file);
+          const uploadRes = await uploadEvidence(res.complaintId, res.publicId, formData);
+          setEvidenceUploadStatus(
+            uploadRes.ok && uploadRes.skipped === 0
+              ? "done"
+              : uploadRes.ok && uploadRes.savedCount > 0
+                ? "partial"
+                : "error",
+          );
+        } catch {
+          setEvidenceUploadStatus("error");
+        }
+      }
     } catch (err) {
       setSubmitError(
         err instanceof Error ? err.message : "Something went wrong submitting your report. Please try again.",
@@ -300,7 +373,7 @@ export function MoneyReportWizard() {
     }
   }
 
-  const stepOrder: Step[] = ["narrate", "facts", "contact", "review"];
+  const stepOrder: Step[] = ["narrate", "facts", "contact", "evidence", "review"];
   const stepIndex = stepOrder.indexOf(step);
   const remaining = step === "done" ? 0 : stepOrder.length - 1 - stepIndex;
 
@@ -552,7 +625,54 @@ export function MoneyReportWizard() {
               <Button variant="outline" onClick={() => setStep("facts")}>
                 Back
               </Button>
-              <Button onClick={goToReview}>Continue</Button>
+              <Button onClick={goToEvidence}>Continue</Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {step === "evidence" && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Add evidence</CardTitle>
+            <CardDescription>
+              Completely optional — your report is already valid without it. Screenshots, bank statements (PDF is
+              fine), call logs, chat exports — whatever you have.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-5">
+            <FileUpload
+              id="evidence"
+              label="Files"
+              helperText={`Images and PDFs, up to ${formatBytes(EVIDENCE_MAX_RAW_INPUT_BYTES)} each, up to ${EVIDENCE_MAX_FILES} files. Images are compressed on your device before upload.`}
+              accept={EVIDENCE_ACCEPT}
+              files={evidenceFiles}
+              onFilesChange={handleEvidenceFilesChange}
+            />
+            {evidenceError && <p className="text-sm text-destructive">{evidenceError}</p>}
+
+            <Alert>
+              <ShieldCheck />
+              <AlertTitle>About the files you attach</AlertTitle>
+              <AlertDescription>
+                This is a hackathon prototype — files are checked and marked{" "}
+                <span className="font-medium text-foreground">&ldquo;simulated clean&rdquo;</span>, not scanned by a
+                real anti-malware engine. Don&apos;t attach anything you wouldn&apos;t want stored on a demo system.
+              </AlertDescription>
+            </Alert>
+
+            <div className="flex items-center justify-between gap-3">
+              <Button variant="outline" onClick={() => setStep("contact")}>
+                Back
+              </Button>
+              <div className="flex gap-2">
+                <Button variant="ghost" onClick={skipEvidence}>
+                  Skip
+                </Button>
+                <Button onClick={goToReview} disabled={evidencePreparing}>
+                  {evidencePreparing ? "Preparing…" : "Continue"}
+                </Button>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -582,6 +702,13 @@ export function MoneyReportWizard() {
             <ReviewLine onEdit={() => setStep("contact")}>
               You&apos;re in {draft.district}, {draft.state}. We&apos;ll reach you at {draft.mobile}.
             </ReviewLine>
+            <ReviewLine onEdit={() => setStep("evidence")}>
+              {evidenceFiles.length === 0
+                ? "No evidence attached. That's fine — it's optional."
+                : `${evidenceFiles.length} file${evidenceFiles.length === 1 ? "" : "s"} attached: ${evidenceFiles
+                    .map((f) => f.name)
+                    .join(", ")}`}
+            </ReviewLine>
 
             {submitError && (
               <Alert variant="destructive">
@@ -591,7 +718,7 @@ export function MoneyReportWizard() {
             )}
 
             <div className="flex items-center justify-between gap-3">
-              <Button variant="outline" onClick={() => setStep("contact")} disabled={submitting}>
+              <Button variant="outline" onClick={() => setStep("evidence")} disabled={submitting}>
                 Back
               </Button>
               <Button onClick={handleSubmit} disabled={submitting}>
@@ -627,6 +754,17 @@ export function MoneyReportWizard() {
                 <p className="mb-1 text-xs font-medium text-muted-foreground">Here&apos;s the SMS we&apos;d send you (simulated — nothing is actually sent)</p>
                 <p className="text-sm">{result.smsPreview}</p>
               </div>
+              {evidenceUploadStatus !== "idle" && (
+                <p className="text-xs text-muted-foreground" aria-live="polite">
+                  {evidenceUploadStatus === "uploading" && "Uploading your evidence…"}
+                  {evidenceUploadStatus === "done" &&
+                    `Evidence attached and marked "simulated clean" — not a real virus scan.`}
+                  {evidenceUploadStatus === "partial" &&
+                    "Some evidence files were attached; others couldn't be saved (unsupported type or too large). Your report itself was still filed."}
+                  {evidenceUploadStatus === "error" &&
+                    "Evidence couldn't be attached, but your report was still filed successfully."}
+                </p>
+              )}
             </CardContent>
           </Card>
 

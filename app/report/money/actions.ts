@@ -1,6 +1,6 @@
 "use server";
 
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { db } from "@/lib/db";
 import {
   complaints,
@@ -11,10 +11,19 @@ import {
   users,
   profiles,
   consents,
+  evidence,
 } from "@/lib/db/schema";
 import { generatePublicComplaintId } from "@/lib/complaint-id";
 import { z } from "zod";
 import { extractedFieldSchema } from "@/lib/types";
+import crypto from "node:crypto";
+import { mkdir, writeFile } from "node:fs/promises";
+import path from "node:path";
+import {
+  EVIDENCE_MAX_FILES,
+  EVIDENCE_MAX_FILE_BYTES,
+  EVIDENCE_MIME_EXTENSIONS,
+} from "@/lib/evidence-limits";
 
 // Submit schema for this flow only — §13.2's minimum viable report.
 // categoryConfirmedByUser must be true (D10): the citizen tapped Yes/Change,
@@ -198,4 +207,151 @@ export async function confirmUpdatesOptIn(
   });
 
   return { ok: true };
+}
+
+// ---------------------------------------------------------------------------
+// Evidence upload (D21, §22 `evidence` table) — a follow-up action called
+// after submitMoneyReport succeeds, so a slow/failing upload never blocks
+// or unwinds the complaint that already exists. Genuinely optional: the
+// wizard calls this only if the citizen attached something.
+//
+// Storage (decision, undocumented in §20/§23): local filesystem under
+// `.data/evidence/` for this prototype. §19 lists Supabase Storage or
+// Vercel Blob for production — neither is wired to credentials in this
+// environment, and faking a cloud upload would violate D20's "simulate the
+// UX copy, never fake the integration" rule. This one writes real bytes to
+// a real (local) disk; swap the two functions below for a Blob/Storage
+// client when deploying.
+// ponytail: local disk, not S3/Blob — swap writeEvidenceFile when a real
+// storage credential exists.
+// ---------------------------------------------------------------------------
+
+const EVIDENCE_DIR = path.join(process.cwd(), ".data", "evidence");
+
+async function writeEvidenceFile(storageKey: string, bytes: Buffer): Promise<void> {
+  await mkdir(EVIDENCE_DIR, { recursive: true });
+  await writeFile(path.join(EVIDENCE_DIR, storageKey), bytes);
+}
+
+// Magic-byte sniff — the server never trusts the client-supplied MIME type
+// (§18.2 trust-boundary rule; this is exactly the class of bug a
+// hardcoded-bypass or unchecked-input review would flag).
+function sniffMime(bytes: Buffer): string | null {
+  if (bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff) {
+    return "image/jpeg";
+  }
+  if (
+    bytes.length >= 8 &&
+    bytes[0] === 0x89 &&
+    bytes[1] === 0x50 &&
+    bytes[2] === 0x4e &&
+    bytes[3] === 0x47
+  ) {
+    return "image/png";
+  }
+  if (
+    bytes.length >= 12 &&
+    bytes.toString("ascii", 0, 4) === "RIFF" &&
+    bytes.toString("ascii", 8, 12) === "WEBP"
+  ) {
+    return "image/webp";
+  }
+  if (bytes.length >= 4 && bytes.toString("ascii", 0, 4) === "%PDF") {
+    return "application/pdf";
+  }
+  return null;
+}
+
+export interface UploadEvidenceResult {
+  ok: boolean;
+  savedCount: number;
+  skipped: number;
+  error?: string;
+}
+
+// complaintId + publicId together act as the ownership token (no session
+// exists at this point in the anonymous report flow — publicId is shown
+// only to the citizen who just filed, on the confirmation screen). A caller
+// who doesn't have both the UUID and the exact public Complaint ID cannot
+// attach evidence to someone else's report. This is deliberately checked
+// server-side against the DB row, not inferred from client input alone.
+export async function uploadEvidence(
+  complaintId: string,
+  publicId: string,
+  formData: FormData,
+): Promise<UploadEvidenceResult> {
+  const idsParsed = z
+    .object({ complaintId: z.string().uuid(), publicId: z.string().min(1).max(40) })
+    .safeParse({ complaintId, publicId });
+  if (!idsParsed.success) {
+    return { ok: false, savedCount: 0, skipped: 0, error: "Invalid report reference." };
+  }
+
+  const [complaint] = await db
+    .select({ id: complaints.id, publicId: complaints.publicId })
+    .from(complaints)
+    .where(and(eq(complaints.id, complaintId), eq(complaints.publicId, publicId)))
+    .limit(1);
+
+  if (!complaint) {
+    return { ok: false, savedCount: 0, skipped: 0, error: "Report not found." };
+  }
+
+  const files = formData.getAll("files").filter((f): f is File => f instanceof File);
+  if (files.length === 0) {
+    return { ok: true, savedCount: 0, skipped: 0 };
+  }
+
+  const accepted = files.slice(0, EVIDENCE_MAX_FILES);
+  const rows: (typeof evidence.$inferInsert)[] = [];
+  let skipped = files.length - accepted.length;
+
+  for (const file of accepted) {
+    if (file.size === 0 || file.size > EVIDENCE_MAX_FILE_BYTES) {
+      skipped++;
+      continue;
+    }
+    const bytes = Buffer.from(await file.arrayBuffer());
+    const sniffed = sniffMime(bytes);
+    if (!sniffed || !(sniffed in EVIDENCE_MIME_EXTENSIONS)) {
+      skipped++; // real content doesn't match an accepted type — silently dropped, upload stays optional
+      continue;
+    }
+
+    const storageKey = `${crypto.randomUUID()}.${EVIDENCE_MIME_EXTENSIONS[sniffed]}`;
+    try {
+      await writeEvidenceFile(storageKey, bytes);
+    } catch {
+      skipped++;
+      continue;
+    }
+
+    rows.push({
+      complaintId: complaint.id,
+      storageKey,
+      originalFilename: file.name.slice(0, 255),
+      mimeType: sniffed,
+      sizeBytes: bytes.length,
+      sha256: crypto.createHash("sha256").update(bytes).digest("hex"),
+      // D21 — no real scanner exists in this prototype (D20's rule: simulate
+      // the UX copy, never fake the integration). Labelled, never claimed real.
+      scanStatus: "SIMULATED_CLEAN",
+      compressedClientSide: sniffed !== "application/pdf",
+    });
+  }
+
+  if (rows.length > 0) {
+    await db.transaction(async (tx) => {
+      await tx.insert(evidence).values(rows);
+      await tx.insert(auditLogs).values({
+        actorType: "citizen",
+        action: "evidence_added",
+        targetType: "complaint",
+        targetId: complaint.id,
+        metadata: { count: rows.length }, // filenames/content never logged (§18.2)
+      });
+    });
+  }
+
+  return { ok: true, savedCount: rows.length, skipped };
 }

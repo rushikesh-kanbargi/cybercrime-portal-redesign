@@ -13,6 +13,9 @@
 # testing
 /coverage
 
+# local evidence-upload storage (dev only — see app/report/money/actions.ts)
+/.data
+
 # next.js
 /.next/
 /out/
