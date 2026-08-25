@@ -42,8 +42,19 @@ export function checkRateLimit(
 }
 
 export function getClientIp(request: Request): string {
+  // Vercel's edge appends the true client IP as the LAST hop and exposes it
+  // directly via x-vercel-forwarded-for; x-forwarded-for's leftmost entry is
+  // client-supplied and trivially spoofable (send your own XFF header to
+  // land in someone else's rate-limit bucket). Prefer the Vercel-specific
+  // header; fall back to the rightmost XFF hop, never the leftmost.
+  const vercelIp = request.headers.get("x-vercel-forwarded-for");
+  if (vercelIp) return vercelIp.split(",")[0].trim();
+
   const forwarded = request.headers.get("x-forwarded-for");
-  if (forwarded) return forwarded.split(",")[0].trim();
+  if (forwarded) {
+    const hops = forwarded.split(",").map((h) => h.trim());
+    return hops[hops.length - 1];
+  }
   return "unknown";
 }
 
