@@ -147,6 +147,27 @@
   }
 }
 
+/* AyzZ entrance combo (§19.4's one shared easing token, applied sparingly —
+   one signature moment per page/step, never blanket per-element). Content
+   is laid out normally underneath; this only animates opacity/transform/blur
+   on top of it, so a failed/skipped animation never hides content. */
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+.animate-enter {
+  animation: enter 380ms var(--ease-standard) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

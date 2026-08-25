@@ -433,7 +433,7 @@ export function MoneyReportWizard() {
       )}
 
       {step === "narrate" && (
-        <Card>
+        <Card className="animate-enter">
           <CardHeader>
             <CardTitle>{t("narrate.title")}</CardTitle>
             <CardDescription>{t("narrate.description")}</CardDescription>
@@ -492,7 +492,7 @@ export function MoneyReportWizard() {
       )}
 
       {step === "facts" && (
-        <Card>
+        <Card className="animate-enter">
           <CardHeader>
             <CardTitle>{t("facts.title")}</CardTitle>
             <CardDescription>{t("facts.description")}</CardDescription>
@@ -597,7 +597,7 @@ export function MoneyReportWizard() {
       )}
 
       {step === "contact" && (
-        <Card>
+        <Card className="animate-enter">
           <CardHeader>
             <CardTitle>{t("contact.title")}</CardTitle>
             <CardDescription>{t("contact.description")}</CardDescription>
@@ -659,7 +659,7 @@ export function MoneyReportWizard() {
       )}
 
       {step === "evidence" && (
-        <Card>
+        <Card className="animate-enter">
           <CardHeader>
             <CardTitle>{t("evidence.title")}</CardTitle>
             <CardDescription>{t("evidence.description")}</CardDescription>
@@ -702,7 +702,7 @@ export function MoneyReportWizard() {
       )}
 
       {step === "review" && (
-        <Card>
+        <Card className="animate-enter">
           <CardHeader>
             <CardTitle>{t("review.title")}</CardTitle>
             <CardDescription>{t("review.description")}</CardDescription>
@@ -752,7 +752,7 @@ export function MoneyReportWizard() {
       )}
 
       {step === "done" && result && (
-        <div className="flex flex-col gap-6">
+        <div className="animate-enter flex flex-col gap-6">
           <Card>
             <CardHeader>
               <CardTitle>{t("done.idCardTitle")}</CardTitle>

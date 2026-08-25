@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 import { SkipLink } from "@/components/chrome/skip-link";
 import { PrototypeBanner } from "@/components/chrome/prototype-banner";
 import { SiteHeader } from "@/components/chrome/site-header";
+import { SiteFooter } from "@/components/chrome/site-footer";
 import { Toaster } from "@/components/ui/sonner";
 import { routing } from "@/i18n/routing";
 import "./globals.css";
@@ -65,6 +66,7 @@ export default async function RootLayout({
           <main id="main-content" className="flex-1 flex flex-col">
             {children}
           </main>
+          <SiteFooter />
           <Toaster />
         </NextIntlClientProvider>
       </body>

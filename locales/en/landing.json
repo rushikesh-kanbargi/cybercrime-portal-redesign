@@ -1,7 +1,13 @@
 {
   "title": "Something happened to you online.",
   "subtitle": "Tell us what happened, in your own words. No account, no ID upload, no forms — just a calm way to get it reported.",
+  "trust": [
+    { "label": "No login needed to start" },
+    { "label": "Report in under 90 seconds" },
+    { "label": "Nothing you submit is sold or shared" }
+  ],
   "moneyCard": {
+    "eyebrow": "The one journey this prototype builds end-to-end",
     "title": "Money was taken from my account",
     "body": "Report it in under 90 seconds. We'll ask for the essentials only.",
     "cta": "Start now"

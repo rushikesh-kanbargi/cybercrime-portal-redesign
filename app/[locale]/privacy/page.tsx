@@ -22,7 +22,7 @@ export default async function PrivacyPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-10 px-4 py-12">
-      <div className="flex flex-col gap-3">
+      <div className="animate-enter flex flex-col gap-3">
         <h1 className="text-3xl font-semibold tracking-tight text-foreground">{t("title")}</h1>
         <p className="text-lg text-muted-foreground">{t("subtitle")}</p>
       </div>
