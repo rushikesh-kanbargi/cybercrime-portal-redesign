@@ -91,14 +91,32 @@ function formatInr(amount: number): string {
   }).format(amount);
 }
 
-export function MoneyReportWizard() {
+interface SavedProfile {
+  state: string | null;
+  district: string | null;
+}
+
+export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfile | null }) {
   const t = useTranslations("reportMoney");
   const tCommon = useTranslations("common");
   const locale = useLocale() as AppLocale;
   const dateLocale = locale === "hi" ? "hi-IN" : "en-IN";
   const router = useRouter();
   const [step, setStep] = React.useState<Step>("narrate");
-  const [draft, setDraft] = React.useState<DraftState>(emptyDraft);
+  // §14.6 point 3 — a second report pre-fills state/district from the
+  // citizen's own saved profile, shown as a dismissible "from your saved
+  // details" chip (same provenance pattern as the extracted-fact chips
+  // below). Only applied when there's no in-progress localStorage draft to
+  // resume — resumeDraft() below fully overwrites this either way.
+  const [draft, setDraft] = React.useState<DraftState>(() => {
+    const base = emptyDraft();
+    if (savedProfile?.state) base.state = savedProfile.state;
+    if (savedProfile?.district) base.district = savedProfile.district;
+    return base;
+  });
+  const [autofillFromProfile, setAutofillFromProfile] = React.useState(
+    () => !!(savedProfile?.state || savedProfile?.district),
+  );
   const [factsInitialized, setFactsInitialized] = React.useState(false);
   const [showResumeBanner, setShowResumeBanner] = React.useState(() => {
     if (typeof window === "undefined") return false;
@@ -155,6 +173,7 @@ export function MoneyReportWizard() {
         const parsed: DraftState = JSON.parse(raw);
         setDraft(parsed);
         setFactsInitialized(true);
+        setAutofillFromProfile(false);
       }
     } catch {
       // ignore
@@ -168,9 +187,18 @@ export function MoneyReportWizard() {
     } catch {
       // ignore
     }
-    setDraft(emptyDraft());
+    const base = emptyDraft();
+    if (savedProfile?.state) base.state = savedProfile.state;
+    if (savedProfile?.district) base.district = savedProfile.district;
+    setDraft(base);
+    setAutofillFromProfile(!!(savedProfile?.state || savedProfile?.district));
     setFactsInitialized(false);
     setShowResumeBanner(false);
+  }
+
+  function dismissProfileAutofill() {
+    setDraft((d) => ({ ...d, state: "", district: "" }));
+    setAutofillFromProfile(false);
   }
 
   const combinedText = `${draft.narrative}\n${draft.smsPaste}`;
@@ -603,6 +631,20 @@ export function MoneyReportWizard() {
             <CardDescription>{t("contact.description")}</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-5">
+            {autofillFromProfile && (
+              <Alert>
+                <Info />
+                <AlertTitle>{t("contact.savedFromProfileTitle")}</AlertTitle>
+                <AlertDescription>
+                  <div className="flex items-center justify-between gap-3">
+                    <span>{t("contact.savedFromProfileBody")}</span>
+                    <Button size="sm" variant="ghost" onClick={dismissProfileAutofill}>
+                      {t("contact.savedFromProfileDismiss")}
+                    </Button>
+                  </div>
+                </AlertDescription>
+              </Alert>
+            )}
             <div className="flex flex-col gap-2">
               <Label htmlFor="state">{t("contact.stateLabel")}</Label>
               <select

@@ -62,7 +62,10 @@
     "mobilePlaceholder": "जैसे 98765 43210",
     "mobileError": "एक सही मोबाइल नंबर दर्ज करें।",
     "back": "पीछे",
-    "continue": "आगे बढ़ें"
+    "continue": "आगे बढ़ें",
+    "savedFromProfileTitle": "आपके सुरक्षित विवरण से",
+    "savedFromProfileBody": "हमने आपकी पिछली रिपोर्ट से राज्य और जिला भर दिया है। आप इसे बदल सकते हैं।",
+    "savedFromProfileDismiss": "हटाएं"
   },
   "evidence": {
     "title": "सबूत जोड़ें",

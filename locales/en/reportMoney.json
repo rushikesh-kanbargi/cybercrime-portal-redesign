@@ -62,7 +62,10 @@
     "mobilePlaceholder": "e.g. 98765 43210",
     "mobileError": "Enter a valid mobile number.",
     "back": "Back",
-    "continue": "Continue"
+    "continue": "Continue",
+    "savedFromProfileTitle": "From your saved details",
+    "savedFromProfileBody": "We've filled in the state and district from your last report. You can change them.",
+    "savedFromProfileDismiss": "Clear"
   },
   "evidence": {
     "title": "Add evidence",

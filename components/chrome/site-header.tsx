@@ -8,6 +8,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
+import { getSessionUser } from "@/lib/session";
 
 // §13.3 / §19.5 — the tel:1930 action is persistent chrome and must never
 // scroll away. `sticky top-0` keeps it pinned through every screen in the
@@ -22,6 +23,10 @@ import {
 // actually exist in this build.
 export async function SiteHeader() {
   const t = await getTranslations("common");
+  // §7.2 #16 — "My complaints" only appears once there's a session to show
+  // a list for (the mocked-OTP account upgrade on the report confirmation
+  // screen creates it). Anonymous visitors never see a dead link.
+  const user = await getSessionUser();
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3">
@@ -57,6 +62,14 @@ export async function SiteHeader() {
           >
             {t("nav.track")}
           </Link>
+          {user ? (
+            <Link
+              href="/profile"
+              className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              {t("nav.myComplaints")}
+            </Link>
+          ) : null}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
@@ -105,6 +118,11 @@ export async function SiteHeader() {
               <DropdownMenuItem asChild>
                 <Link href="/track">{t("nav.track")}</Link>
               </DropdownMenuItem>
+              {user ? (
+                <DropdownMenuItem asChild>
+                  <Link href="/profile">{t("nav.myComplaints")}</Link>
+                </DropdownMenuItem>
+              ) : null}
               <DropdownMenuItem asChild>
                 <Link href="/help/just-happened">{t("nav.resourcesItems.help")}</Link>
               </DropdownMenuItem>

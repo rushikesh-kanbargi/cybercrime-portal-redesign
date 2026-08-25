@@ -17,6 +17,7 @@ import { generatePublicComplaintId } from "@/lib/complaint-id";
 import { z } from "zod";
 import { extractedFieldSchema } from "@/lib/types";
 import { getTranslations } from "next-intl/server";
+import { createSession } from "@/lib/session";
 import { routing } from "@/i18n/routing";
 import crypto from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
@@ -158,7 +159,7 @@ export async function confirmUpdatesOptIn(
     return { ok: false, error: tErrors("OTP_MISMATCH") };
   }
 
-  await db.transaction(async (tx) => {
+  const linkedUserId = await db.transaction(async (tx) => {
     let [user] = await tx
       .select({ id: users.id })
       .from(users)
@@ -212,7 +213,15 @@ export async function confirmUpdatesOptIn(
       targetType: "complaint",
       targetId: parsed.complaintId,
     });
+
+    return user.id;
   });
+
+  // Real, server-side session (§18.2) behind the mocked OTP — without this
+  // the account upgrade above created a User + Profile but left the citizen
+  // with no way to prove it's them on a later visit, which is what
+  // /profile and the complaint list (§7.2 #16) need.
+  await createSession(linkedUserId);
 
   return { ok: true };
 }

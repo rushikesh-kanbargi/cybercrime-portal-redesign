@@ -16,6 +16,7 @@ const NAMESPACES = [
   "accessibility",
   "privacy",
   "errors",
+  "profile",
 ] as const;
 
 export default getRequestConfig(async ({ requestLocale }) => {

@@ -1,0 +1,28 @@
+{
+  "meta": {
+    "title": "My complaints — Cybercrime Report & Track",
+    "description": "The complaints linked to your account, and your saved details."
+  },
+  "heading": "My complaints",
+  "signedOutTitle": "You're not signed in",
+  "signedOutBody": "Complaints linked to an account show up here. File a report, then choose \"Want updates on this complaint?\" and verify your mobile number to link it — or track any complaint directly with its Complaint ID.",
+  "complaints": {
+    "title": "Your complaints",
+    "description": "Complaints linked to your mobile number.",
+    "row": "{category} · {status} · filed {date}",
+    "empty": "No complaints are linked to your account yet."
+  },
+  "saved": {
+    "title": "Your saved details",
+    "description": "State and district, saved so your next report can pre-fill them. Nothing else is stored here.",
+    "current": "State: {state} · District: {district}",
+    "none": "not set",
+    "empty": "You haven't saved any details yet.",
+    "deleteButton": "Delete my saved details",
+    "deleteConfirm": "This removes your saved state and district. Your filed complaints are not affected and stay exactly as they are.",
+    "deleteConfirmButton": "Yes, delete",
+    "deleting": "Deleting…",
+    "cancel": "Cancel",
+    "deleted": "Your saved details have been deleted."
+  }
+}
