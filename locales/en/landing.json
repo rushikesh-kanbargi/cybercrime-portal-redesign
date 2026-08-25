@@ -1,0 +1,14 @@
+{
+  "title": "Something happened to you online.",
+  "subtitle": "Tell us what happened, in your own words. No account, no ID upload, no forms — just a calm way to get it reported.",
+  "moneyCard": {
+    "title": "Money was taken from my account",
+    "body": "Report it in under 90 seconds. We'll ask for the essentials only.",
+    "cta": "Start now"
+  },
+  "emergency": {
+    "text": "In immediate danger, or this is still happening?",
+    "call": "Call 1930",
+    "suffix": "— it's faster than any form."
+  }
+}

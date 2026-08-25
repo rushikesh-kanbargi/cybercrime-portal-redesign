@@ -1,0 +1,22 @@
+{
+  "INVALID_INPUT": "Check what you entered and try again.",
+  "RATE_LIMITED": "Too many attempts. Wait a few minutes and try again.",
+  "VERIFICATION_REQUIRED": "Verify your Complaint ID to view this case.",
+  "NOT_FOUND": "We couldn't find that Complaint ID.",
+  "TRACK_LOOKUP_INVALID": "Enter your Complaint ID.",
+  "TRACK_LOOKUP_RATE_LIMITED": "Too many lookups. Wait a few minutes and try again.",
+  "TRACK_LOOKUP_NOT_FOUND": "We couldn't find that. Check for a typo, or look in the SMS we sent you.",
+  "TRACK_LOOKUP_NO_CONTACT": "This complaint has no mobile number on file, so we can't send a verification code for it.",
+  "TRACK_VERIFY_INVALID": "Enter the 6-digit code.",
+  "TRACK_VERIFY_RATE_LIMITED": "Too many attempts. Wait a few minutes.",
+  "OTP_REQUEST_INVALID": "Enter a valid mobile number.",
+  "OTP_REQUEST_RATE_LIMITED": "Too many code requests. Wait a few minutes and try again.",
+  "OTP_VERIFY_INVALID": "Check the code and try again.",
+  "OTP_VERIFY_RATE_LIMITED": "Too many attempts. Wait a few minutes.",
+  "OTP_MISMATCH": "That code doesn't match. Check the demo code and try again.",
+  "OTP_EXPIRED": "That code has expired. Send a new one.",
+  "OTP_TOO_MANY_ATTEMPTS": "Too many attempts. Send a new code.",
+  "COMPLAINT_NOT_FOUND": "Report not found.",
+  "COMPLAINT_ALREADY_LINKED": "This complaint is already linked to a different account.",
+  "generic": "Something went wrong. Please try again."
+}

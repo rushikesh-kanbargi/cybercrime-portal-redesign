@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,6 +25,8 @@ export function AccountUpgradeForm({
   onSkip?: () => void;
   onLinked?: (mobile: string) => void;
 }) {
+  const t = useTranslations("auth.upgrade");
+  const tErrors = useTranslations("errors");
   const [mobile, setMobile] = useState("");
   const [otp, setOtp] = useState("");
   const [step, setStep] = useState<"mobile" | "otp" | "linked">("mobile");
@@ -42,7 +46,7 @@ export function AccountUpgradeForm({
       });
       const data = await res.json();
       if (!res.ok || !data.ok) {
-        setError(data.message ?? "Couldn't send a code. Try again.");
+        setError(data.code ? tErrors(data.code) : tErrors("generic"));
         return;
       }
       setDemoCode(data.demoCode);
@@ -64,7 +68,7 @@ export function AccountUpgradeForm({
       });
       const data = await res.json();
       if (!data.ok) {
-        setError(data.message ?? "No problem — save your Complaint ID and check status later.");
+        setError(data.code ? tErrors(data.code) : tErrors("generic"));
         return;
       }
       setStep("linked");
@@ -78,10 +82,8 @@ export function AccountUpgradeForm({
     return (
       <Alert>
         <Info />
-        <AlertTitle>Tracking enabled</AlertTitle>
-        <AlertDescription>
-          You can now check this complaint&apos;s status any time at /track.
-        </AlertDescription>
+        <AlertTitle>{t("linkedTitle")}</AlertTitle>
+        <AlertDescription>{t("linkedBody")}</AlertDescription>
       </Alert>
     );
   }
@@ -91,12 +93,12 @@ export function AccountUpgradeForm({
       {step === "mobile" ? (
         <form onSubmit={requestOtp} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="upgrade-mobile">Mobile number</Label>
+            <Label htmlFor="upgrade-mobile">{t("mobileLabel")}</Label>
             <Input
               id="upgrade-mobile"
               type="tel"
               autoComplete="tel"
-              placeholder="98765 43210"
+              placeholder={t("mobilePlaceholder")}
               value={mobile}
               onChange={(e) => setMobile(e.target.value)}
               required
@@ -109,11 +111,11 @@ export function AccountUpgradeForm({
           ) : null}
           <div className="flex gap-3">
             <Button type="submit" disabled={busy || !mobile.trim()}>
-              Send code
+              {t("sendCode")}
             </Button>
             {onSkip ? (
               <Button type="button" variant="ghost" onClick={onSkip}>
-                Skip — I&apos;ll just save my Complaint ID
+                {t("skipSaveOnly")}
               </Button>
             ) : null}
           </div>
@@ -123,13 +125,12 @@ export function AccountUpgradeForm({
           {demoCode ? (
             <Alert>
               <Info />
-              <AlertTitle>Prototype: OTP is mocked, not a real SMS</AlertTitle>
+              <AlertTitle>{t("mockedOtpTitle")}</AlertTitle>
               <AlertDescription>
-                Demo code:{" "}
-                <span className="font-mono font-semibold text-foreground">
-                  {demoCode}
-                </span>
-                . See <a href="/whats-real">what&apos;s real vs mocked</a>.
+                {t.rich("mockedOtpBody", {
+                  code: demoCode ?? "",
+                  link: (chunks) => <Link href="/whats-real">{chunks}</Link>,
+                })}
               </AlertDescription>
             </Alert>
           ) : null}
@@ -141,11 +142,11 @@ export function AccountUpgradeForm({
           ) : null}
           <div className="flex gap-3">
             <Button type="submit" disabled={busy || otp.length !== 6}>
-              Verify
+              {t("verify")}
             </Button>
             {onSkip ? (
               <Button type="button" variant="ghost" onClick={onSkip}>
-                Skip
+                {t("skip")}
               </Button>
             ) : null}
           </div>

@@ -1,0 +1,30 @@
+{
+  "siteName": "Cybercrime Report & Track",
+  "prototypeBanner": {
+    "text": "Hackathon prototype, not an official government service.",
+    "link": "What's real vs mocked"
+  },
+  "skipLink": "Skip to main content",
+  "header": {
+    "call1930": "Call 1930"
+  },
+  "languageSwitcher": {
+    "label": "Language",
+    "en": "English",
+    "hi": "हिन्दी"
+  },
+  "actions": {
+    "back": "Back",
+    "continue": "Continue",
+    "submit": "Submit",
+    "skip": "Skip",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "confirm": "Confirm",
+    "copy": "Copy",
+    "copied": "Copied",
+    "download": "Download",
+    "change": "Change"
+  },
+  "notAnFir": "Your Complaint ID is a record that you reported this. It is not an FIR (First Information Report). An FIR is a separate, later step that a police officer registers if the case warrants it."
+}

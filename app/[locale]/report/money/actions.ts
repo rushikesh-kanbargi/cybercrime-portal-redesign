@@ -16,6 +16,8 @@ import {
 import { generatePublicComplaintId } from "@/lib/complaint-id";
 import { z } from "zod";
 import { extractedFieldSchema } from "@/lib/types";
+import { getTranslations } from "next-intl/server";
+import { routing } from "@/i18n/routing";
 import crypto from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
@@ -46,6 +48,11 @@ const submitMoneyReportSchema = z.object({
     .string()
     .trim()
     .regex(/^[0-9+ ]{7,15}$/, "Enter a valid mobile number."),
+  // §17 — which locale to render the (simulated) SMS confirmation copy in.
+  // Not part of the stored complaint record: the data model stays
+  // language-neutral (§17.3.9), this only picks which template renders the
+  // user-facing confirmation text.
+  locale: z.enum(routing.locales).optional().default(routing.defaultLocale),
 });
 
 export type SubmitMoneyReportInput = z.infer<typeof submitMoneyReportSchema>;
@@ -62,9 +69,8 @@ export async function submitMoneyReport(
   const parsed = submitMoneyReportSchema.parse(input);
   const publicId = generatePublicComplaintId();
 
-  const smsPreview =
-    `Your cybercrime report is filed. Complaint ID: ${publicId}. ` +
-    `This is NOT an FIR. Save this ID — you will need it for any follow-up.`;
+  const t = await getTranslations({ locale: parsed.locale, namespace: "reportMoney" });
+  const smsPreview = t("smsTemplate", { publicId });
 
   const complaintId = await db.transaction(async (tx) => {
     const [complaint] = await tx
@@ -135,6 +141,7 @@ const confirmUpdatesSchema = z.object({
   code: z.string(),
   state: z.string().trim().max(80).optional(),
   district: z.string().trim().max(80).optional(),
+  locale: z.enum(routing.locales).optional().default(routing.defaultLocale),
 });
 
 export interface ConfirmUpdatesResult {
@@ -146,8 +153,9 @@ export async function confirmUpdatesOptIn(
   input: z.infer<typeof confirmUpdatesSchema>,
 ): Promise<ConfirmUpdatesResult> {
   const parsed = confirmUpdatesSchema.parse(input);
+  const tErrors = await getTranslations({ locale: parsed.locale, namespace: "errors" });
   if (parsed.code !== DEMO_OTP_CODE) {
-    return { ok: false, error: "That code doesn't match. Check the demo code and try again." };
+    return { ok: false, error: tErrors("OTP_MISMATCH") };
   }
 
   await db.transaction(async (tx) => {

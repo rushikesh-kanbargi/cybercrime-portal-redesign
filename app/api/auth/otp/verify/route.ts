@@ -33,7 +33,7 @@ export async function POST(request: Request) {
   );
 
   if (!result.ok) {
-    return NextResponse.json({ ok: false, message: result.message }, { status: 200 });
+    return NextResponse.json({ ok: false, message: result.message, code: result.code }, { status: 200 });
   }
   return NextResponse.json({ ok: true, mobile: result.mobile });
 }

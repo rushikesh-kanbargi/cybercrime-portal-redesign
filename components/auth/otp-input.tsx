@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -21,9 +22,10 @@ export function OtpInput({
   disabled?: boolean;
   autoFocus?: boolean;
 }) {
+  const t = useTranslations("auth.otpInput");
   return (
     <div className="flex flex-col gap-1.5">
-      <Label htmlFor={id}>6-digit code</Label>
+      <Label htmlFor={id}>{t("label")}</Label>
       <Input
         id={id}
         name="otp"
@@ -40,7 +42,7 @@ export function OtpInput({
         onChange={(e) => onChange(e.target.value.replace(/\D/g, "").slice(0, 6))}
       />
       <p id={`${id}-help`} className="text-sm text-muted-foreground">
-        Enter the code shown on screen.
+        {t("help")}
       </p>
     </div>
   );

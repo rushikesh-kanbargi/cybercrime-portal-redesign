@@ -32,7 +32,10 @@ export async function verifyLoginOtp(
   ipHash: string | null,
 ): Promise<
   | { ok: true; userId: string; mobile: string }
-  | { ok: false; message: string }
+  // `code` — stable discriminator for the client to pick a translated string
+  // from locales/<lang>/errors.json (§17.3.1); `message` stays English, for
+  // logs only.
+  | { ok: false; message: string; code: "OTP_EXPIRED" | "OTP_TOO_MANY_ATTEMPTS" | "OTP_MISMATCH" }
 > {
   const challenge = await db.query.otpChallenges.findFirst({
     where: and(
@@ -47,12 +50,14 @@ export async function verifyLoginOtp(
     return {
       ok: false,
       message: "That code has expired. Request a new one.",
+      code: "OTP_EXPIRED",
     };
   }
   if (challenge.attempts >= MAX_VERIFY_ATTEMPTS) {
     return {
       ok: false,
       message: "Too many attempts. Request a new code.",
+      code: "OTP_TOO_MANY_ATTEMPTS",
     };
   }
   if (!otpMatches(code, challenge.codeHash)) {
@@ -60,7 +65,7 @@ export async function verifyLoginOtp(
       .update(otpChallenges)
       .set({ attempts: challenge.attempts + 1 })
       .where(eq(otpChallenges.id, challenge.id));
-    return { ok: false, message: "That code didn't match. Try again." };
+    return { ok: false, message: "That code didn't match. Try again.", code: "OTP_MISMATCH" };
   }
 
   await db

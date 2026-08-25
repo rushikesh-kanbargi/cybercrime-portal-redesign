@@ -1,7 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { useRouter } from "next/navigation";
+import { useTranslations, useLocale } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
+import type { AppLocale } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -77,7 +79,23 @@ function emptyDraft(): DraftState {
   };
 }
 
+// §17.3.5 — ₹ with Indian digit grouping (₹1,80,000, not ₹180,000).
+// `en-IN` is about digit grouping, not translation, so it's correct even on
+// the Hindi page (verified: Intl.NumberFormat('en-IN', ...) produces the
+// lakh/crore grouping regardless of UI language).
+function formatInr(amount: number): string {
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
+
 export function MoneyReportWizard() {
+  const t = useTranslations("reportMoney");
+  const tCommon = useTranslations("common");
+  const locale = useLocale() as AppLocale;
+  const dateLocale = locale === "hi" ? "hi-IN" : "en-IN";
   const router = useRouter();
   const [step, setStep] = React.useState<Step>("narrate");
   const [draft, setDraft] = React.useState<DraftState>(emptyDraft);
@@ -118,7 +136,9 @@ export function MoneyReportWizard() {
   const [otpSubmitting, setOtpSubmitting] = React.useState(false);
 
   // Local-first draft, from the first keystroke (D16). Restore-on-load offer
-  // is computed via lazy useState above (SSR-safe, no effect needed).
+  // is computed via lazy useState above (SSR-safe, no effect needed). The
+  // key is not locale-scoped, so switching language mid-form (§17.3.3) keeps
+  // the draft intact.
   React.useEffect(() => {
     if (step === "done") return;
     try {
@@ -161,7 +181,7 @@ export function MoneyReportWizard() {
   function goToFacts() {
     const trimmed = draft.narrative.trim();
     if (trimmed.length === 0) {
-      setErrors({ narrative: "Tell us what happened — even a rough description helps." });
+      setErrors({ narrative: t("narrate.narrativeError") });
       return;
     }
     setErrors({});
@@ -200,8 +220,8 @@ export function MoneyReportWizard() {
 
   function goToContact() {
     const newErrors: Record<string, string> = {};
-    if (!draft.amountLost || Number(draft.amountLost) <= 0) newErrors.amountLost = "Enter the amount that was taken.";
-    if (!isCategoryConfirmed) newErrors.category = "Please confirm or change the category above.";
+    if (!draft.amountLost || Number(draft.amountLost) <= 0) newErrors.amountLost = t("facts.amountError");
+    if (!isCategoryConfirmed) newErrors.category = t("facts.categoryError");
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
@@ -212,9 +232,9 @@ export function MoneyReportWizard() {
 
   function goToEvidence() {
     const newErrors: Record<string, string> = {};
-    if (!draft.state) newErrors.state = "Select your state.";
-    if (!draft.district.trim()) newErrors.district = "Enter your district.";
-    if (!/^[0-9+ ]{7,15}$/.test(draft.mobile.trim())) newErrors.mobile = "Enter a valid mobile number.";
+    if (!draft.state) newErrors.state = t("contact.stateError");
+    if (!draft.district.trim()) newErrors.district = t("contact.districtError");
+    if (!/^[0-9+ ]{7,15}$/.test(draft.mobile.trim())) newErrors.mobile = t("contact.mobileError");
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
@@ -227,12 +247,14 @@ export function MoneyReportWizard() {
   function handleEvidenceFilesChange(files: File[]) {
     setEvidenceError(null);
     if (files.length > EVIDENCE_MAX_FILES) {
-      setEvidenceError(`You can attach up to ${EVIDENCE_MAX_FILES} files.`);
+      setEvidenceError(t("evidence.tooManyFiles", { maxFiles: EVIDENCE_MAX_FILES }));
       files = files.slice(0, EVIDENCE_MAX_FILES);
     }
     const oversized = files.find((f) => f.size > EVIDENCE_MAX_RAW_INPUT_BYTES);
     if (oversized) {
-      setEvidenceError(`"${oversized.name}" is too large (max ${formatBytes(EVIDENCE_MAX_RAW_INPUT_BYTES)} per file).`);
+      setEvidenceError(
+        t("evidence.fileTooLarge", { name: oversized.name, maxSize: formatBytes(EVIDENCE_MAX_RAW_INPUT_BYTES) }),
+      );
       files = files.filter((f) => f.size <= EVIDENCE_MAX_RAW_INPUT_BYTES);
     }
     setEvidenceFiles(files);
@@ -261,7 +283,6 @@ export function MoneyReportWizard() {
     setSubmitting(true);
     setSubmitError(null);
     try {
-      const meta = FRAUD_SUBCATEGORIES.find((s) => s.code === draft.subCategoryCode)!;
       const res = await submitMoneyReport({
         narrative: draft.narrative.trim(),
         occurredAt: new Date(draft.occurredAt),
@@ -283,6 +304,7 @@ export function MoneyReportWizard() {
         state: draft.state,
         district: draft.district.trim(),
         contactMobile: draft.mobile.trim(),
+        locale,
       });
       setResult(res);
       setStep("done");
@@ -291,7 +313,6 @@ export function MoneyReportWizard() {
       } catch {
         // ignore
       }
-      void meta;
 
       // Evidence is a follow-up upload, never part of the submit
       // transaction — a slow/failing attachment must not block or unwind a
@@ -314,9 +335,7 @@ export function MoneyReportWizard() {
         }
       }
     } catch (err) {
-      setSubmitError(
-        err instanceof Error ? err.message : "Something went wrong submitting your report. Please try again.",
-      );
+      setSubmitError(err instanceof Error ? err.message : t("genericSubmitError"));
     } finally {
       setSubmitting(false);
     }
@@ -335,16 +354,11 @@ export function MoneyReportWizard() {
 
   function handleDownloadId() {
     if (!result) return;
-    const blob = new Blob(
-      [
-        `Cybercrime Report — Confirmation\n\nComplaint ID: ${result.publicId}\n\nThis is NOT an FIR.\nKeep this ID safe — you will need it for any follow-up.\n`,
-      ],
-      { type: "text/plain" },
-    );
+    const blob = new Blob([t("done.downloadFileBody", { publicId: result.publicId })], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `complaint-${result.publicId}.txt`;
+    a.download = t("done.downloadFilename", { publicId: result.publicId });
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -360,14 +374,15 @@ export function MoneyReportWizard() {
         code: otpCode.trim(),
         state: draft.state,
         district: draft.district.trim(),
+        locale,
       });
       if (res.ok) {
         setOtpStage("confirmed");
       } else {
-        setOtpError(res.error ?? "That code didn't match.");
+        setOtpError(res.error ?? t("done.otpMismatch"));
       }
     } catch {
-      setOtpError("Something went wrong confirming that code. Please try again.");
+      setOtpError(t("done.otpGenericError"));
     } finally {
       setOtpSubmitting(false);
     }
@@ -377,21 +392,33 @@ export function MoneyReportWizard() {
   const stepIndex = stepOrder.indexOf(step);
   const remaining = step === "done" ? 0 : stepOrder.length - 1 - stepIndex;
 
+  const categoryLabel = (code: FraudSubCategoryCode) => t(`category.labels.${code}`);
+  const reviewMoneyLine = () => {
+    const amount = formatInr(Number(draft.amountLost || 0));
+    const date = new Date(draft.occurredAt).toLocaleString(dateLocale);
+    const instrument = draft.debitedInstrument;
+    const ref = draft.transactionRef;
+    if (instrument && ref) return t("review.moneyLineInstrumentRef", { amount, date, instrument, ref });
+    if (instrument) return t("review.moneyLineInstrument", { amount, date, instrument });
+    if (ref) return t("review.moneyLineRef", { amount, date, ref });
+    return t("review.moneyLine", { amount, date });
+  };
+
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-4 py-8">
       {showResumeBanner && step === "narrate" && (
         <Alert>
           <Info />
-          <AlertTitle>Continue where you left off?</AlertTitle>
+          <AlertTitle>{t("resumeBanner.title")}</AlertTitle>
           <AlertDescription>
             <div className="flex flex-col gap-3">
-              <p>We saved a draft of a report you started earlier.</p>
+              <p>{t("resumeBanner.body")}</p>
               <div className="flex gap-2">
                 <Button size="sm" onClick={resumeDraft}>
-                  Continue
+                  {t("resumeBanner.continue")}
                 </Button>
                 <Button size="sm" variant="outline" onClick={startOver}>
-                  Start over
+                  {t("resumeBanner.startOver")}
                 </Button>
               </div>
             </div>
@@ -401,27 +428,25 @@ export function MoneyReportWizard() {
 
       {step !== "done" && (
         <p className="text-sm text-muted-foreground" aria-live="polite">
-          {remaining === 0 ? "Last question" : `${remaining} more question${remaining === 1 ? "" : "s"}`}
+          {remaining === 0 ? t("progress.lastQuestion") : t("progress.moreQuestions", { count: remaining })}
         </p>
       )}
 
       {step === "narrate" && (
         <Card>
           <CardHeader>
-            <CardTitle>Tell us what happened</CardTitle>
-            <CardDescription>
-              Write it in your own words — there&apos;s no right way to say it, and no minimum length.
-            </CardDescription>
+            <CardTitle>{t("narrate.title")}</CardTitle>
+            <CardDescription>{t("narrate.description")}</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-5">
             <div className="flex flex-col gap-2">
-              <Label htmlFor="narrative">What happened</Label>
+              <Label htmlFor="narrative">{t("narrate.narrativeLabel")}</Label>
               <Textarea
                 id="narrative"
                 autoFocus
                 rows={6}
                 maxLength={5000}
-                placeholder="I got a call saying my KYC expired. They sent a link. ₹18,000 left my account."
+                placeholder={t("narrate.narrativePlaceholder")}
                 value={draft.narrative}
                 onChange={(e) => setDraft((d) => ({ ...d, narrative: e.target.value }))}
                 aria-invalid={!!errors.narrative}
@@ -434,24 +459,22 @@ export function MoneyReportWizard() {
                   <span />
                 )}
                 <p id="narrative-count" className="text-xs text-muted-foreground">
-                  {draft.narrative.length} / 5000
+                  {t("narrate.narrativeCount", { count: draft.narrative.length, max: 5000 })}
                 </p>
               </div>
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="sms-paste">Paste your bank SMS (optional)</Label>
+              <Label htmlFor="sms-paste">{t("narrate.smsLabel")}</Label>
               <Textarea
                 id="sms-paste"
                 rows={3}
                 maxLength={2000}
-                placeholder="Rs 18,000 debited from A/c XX1234 on 24-08-26. UPI Ref No 512345678901."
+                placeholder={t("narrate.smsPlaceholder")}
                 value={draft.smsPaste}
                 onChange={(e) => setDraft((d) => ({ ...d, smsPaste: e.target.value }))}
               />
-              <p className="text-xs text-muted-foreground">
-                This helps us find the amount and transaction reference automatically. Fully optional.
-              </p>
+              <p className="text-xs text-muted-foreground">{t("narrate.smsHelp")}</p>
             </div>
 
             <div className="flex items-center justify-between gap-3">
@@ -460,9 +483,9 @@ export function MoneyReportWizard() {
                 className="inline-flex items-center gap-1.5 text-sm text-muted-foreground underline underline-offset-2 hover:text-foreground"
               >
                 <Phone className="size-3.5" aria-hidden="true" />
-                Prefer to call? Dial 1930
+                {t("narrate.callPrompt")}
               </a>
-              <Button onClick={goToFacts}>Continue</Button>
+              <Button onClick={goToFacts}>{t("narrate.continue")}</Button>
             </div>
           </CardContent>
         </Card>
@@ -471,18 +494,16 @@ export function MoneyReportWizard() {
       {step === "facts" && (
         <Card>
           <CardHeader>
-            <CardTitle>Confirm the facts</CardTitle>
-            <CardDescription>
-              We pulled this from what you told us. Check it, fix anything wrong, and confirm the category.
-            </CardDescription>
+            <CardTitle>{t("facts.title")}</CardTitle>
+            <CardDescription>{t("facts.description")}</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-5">
             <div className="flex flex-col gap-2">
-              <Label htmlFor="amount">Amount lost (₹)</Label>
+              <Label htmlFor="amount">{t("facts.amountLabel")}</Label>
               <Input
                 id="amount"
                 inputMode="decimal"
-                placeholder="18000"
+                placeholder={t("facts.amountPlaceholder")}
                 value={draft.amountLost}
                 onChange={(e) => setDraft((d) => ({ ...d, amountLost: e.target.value }))}
                 aria-invalid={!!errors.amountLost}
@@ -494,7 +515,7 @@ export function MoneyReportWizard() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="when">When did this happen</Label>
+              <Label htmlFor="when">{t("facts.whenLabel")}</Label>
               <Input
                 id="when"
                 type="datetime-local"
@@ -504,10 +525,10 @@ export function MoneyReportWizard() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="instrument">Bank / wallet / UPI handle debited</Label>
+              <Label htmlFor="instrument">{t("facts.instrumentLabel")}</Label>
               <Input
                 id="instrument"
-                placeholder="e.g. HDFC Bank, or a UPI ID"
+                placeholder={t("facts.instrumentPlaceholder")}
                 value={draft.debitedInstrument}
                 onChange={(e) => setDraft((d) => ({ ...d, debitedInstrument: e.target.value }))}
               />
@@ -517,10 +538,10 @@ export function MoneyReportWizard() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="ref">Transaction / UPI reference (optional)</Label>
+              <Label htmlFor="ref">{t("facts.refLabel")}</Label>
               <Input
                 id="ref"
-                placeholder="e.g. 512345678901"
+                placeholder={t("facts.refPlaceholder")}
                 value={draft.transactionRef}
                 onChange={(e) => setDraft((d) => ({ ...d, transactionRef: e.target.value }))}
               />
@@ -533,26 +554,32 @@ export function MoneyReportWizard() {
               {!isCategoryConfirmed ? (
                 <>
                   <p className="text-sm">
-                    We think this is <strong>{suggestion.label}</strong>. {suggestion.reason}
+                    {t("facts.categorySuggestion", {
+                      label: categoryLabel(suggestion.subCategoryCode),
+                      reason: t(`category.reasons.${suggestion.reasonKey}`),
+                    })}
                   </p>
                   <div className="flex flex-wrap gap-2">
                     <Button size="sm" onClick={confirmSuggestedCategory}>
-                      Yes, that&apos;s right
+                      {t("facts.confirmYes")}
                     </Button>
-                    <CategoryPicker onChoose={chooseCategory} />
+                    <CategoryPicker onChoose={chooseCategory} t={t} categoryLabel={categoryLabel} />
                   </div>
                 </>
               ) : (
                 <div className="flex items-center justify-between gap-3">
                   <p className="text-sm">
-                    Category confirmed: <strong>{FRAUD_SUBCATEGORIES.find((s) => s.code === draft.subCategoryCode)?.label}</strong>
+                    {t.rich("facts.categoryConfirmed", {
+                      label: categoryLabel(draft.subCategoryCode),
+                      strong: (chunks) => <strong>{chunks}</strong>,
+                    })}
                   </p>
                   <Button
                     size="sm"
                     variant="outline"
                     onClick={() => setDraft((d) => ({ ...d, categoryConfirmed: false }))}
                   >
-                    Change
+                    {t("facts.categoryChange")}
                   </Button>
                 </div>
               )}
@@ -561,9 +588,9 @@ export function MoneyReportWizard() {
 
             <div className="flex items-center justify-between gap-3">
               <Button variant="outline" onClick={() => setStep("narrate")}>
-                Back
+                {t("facts.back")}
               </Button>
-              <Button onClick={goToContact}>Continue</Button>
+              <Button onClick={goToContact}>{t("facts.continue")}</Button>
             </div>
           </CardContent>
         </Card>
@@ -572,12 +599,12 @@ export function MoneyReportWizard() {
       {step === "contact" && (
         <Card>
           <CardHeader>
-            <CardTitle>Where + how to reach you</CardTitle>
-            <CardDescription>That&apos;s all we ask. No ID, no parent&apos;s name, no date of birth.</CardDescription>
+            <CardTitle>{t("contact.title")}</CardTitle>
+            <CardDescription>{t("contact.description")}</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-5">
             <div className="flex flex-col gap-2">
-              <Label htmlFor="state">State</Label>
+              <Label htmlFor="state">{t("contact.stateLabel")}</Label>
               <select
                 id="state"
                 className={selectClassName}
@@ -585,10 +612,10 @@ export function MoneyReportWizard() {
                 onChange={(e) => setDraft((d) => ({ ...d, state: e.target.value }))}
                 aria-invalid={!!errors.state}
               >
-                <option value="">Select your state</option>
+                <option value="">{t("contact.statePlaceholder")}</option>
                 {INDIAN_STATES.map((s) => (
                   <option key={s} value={s}>
-                    {s}
+                    {t(`states.${s}`)}
                   </option>
                 ))}
               </select>
@@ -596,10 +623,10 @@ export function MoneyReportWizard() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="district">District</Label>
+              <Label htmlFor="district">{t("contact.districtLabel")}</Label>
               <Input
                 id="district"
-                placeholder="e.g. Nagpur"
+                placeholder={t("contact.districtPlaceholder")}
                 value={draft.district}
                 onChange={(e) => setDraft((d) => ({ ...d, district: e.target.value }))}
                 aria-invalid={!!errors.district}
@@ -608,12 +635,12 @@ export function MoneyReportWizard() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="mobile">Mobile number</Label>
+              <Label htmlFor="mobile">{t("contact.mobileLabel")}</Label>
               <Input
                 id="mobile"
                 type="tel"
                 inputMode="tel"
-                placeholder="e.g. 98765 43210"
+                placeholder={t("contact.mobilePlaceholder")}
                 value={draft.mobile}
                 onChange={(e) => setDraft((d) => ({ ...d, mobile: e.target.value }))}
                 aria-invalid={!!errors.mobile}
@@ -623,9 +650,9 @@ export function MoneyReportWizard() {
 
             <div className="flex items-center justify-between gap-3">
               <Button variant="outline" onClick={() => setStep("facts")}>
-                Back
+                {t("contact.back")}
               </Button>
-              <Button onClick={goToEvidence}>Continue</Button>
+              <Button onClick={goToEvidence}>{t("contact.continue")}</Button>
             </div>
           </CardContent>
         </Card>
@@ -634,17 +661,17 @@ export function MoneyReportWizard() {
       {step === "evidence" && (
         <Card>
           <CardHeader>
-            <CardTitle>Add evidence</CardTitle>
-            <CardDescription>
-              Completely optional — your report is already valid without it. Screenshots, bank statements (PDF is
-              fine), call logs, chat exports — whatever you have.
-            </CardDescription>
+            <CardTitle>{t("evidence.title")}</CardTitle>
+            <CardDescription>{t("evidence.description")}</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-5">
             <FileUpload
               id="evidence"
-              label="Files"
-              helperText={`Images and PDFs, up to ${formatBytes(EVIDENCE_MAX_RAW_INPUT_BYTES)} each, up to ${EVIDENCE_MAX_FILES} files. Images are compressed on your device before upload.`}
+              label={t("evidence.filesLabel")}
+              helperText={t("evidence.helperText", {
+                maxSize: formatBytes(EVIDENCE_MAX_RAW_INPUT_BYTES),
+                maxFiles: EVIDENCE_MAX_FILES,
+              })}
               accept={EVIDENCE_ACCEPT}
               files={evidenceFiles}
               onFilesChange={handleEvidenceFilesChange}
@@ -653,24 +680,20 @@ export function MoneyReportWizard() {
 
             <Alert>
               <ShieldCheck />
-              <AlertTitle>About the files you attach</AlertTitle>
-              <AlertDescription>
-                This is a hackathon prototype — files are checked and marked{" "}
-                <span className="font-medium text-foreground">&ldquo;simulated clean&rdquo;</span>, not scanned by a
-                real anti-malware engine. Don&apos;t attach anything you wouldn&apos;t want stored on a demo system.
-              </AlertDescription>
+              <AlertTitle>{t("evidence.scanNoticeTitle")}</AlertTitle>
+              <AlertDescription>{t("evidence.scanNoticeBody")}</AlertDescription>
             </Alert>
 
             <div className="flex items-center justify-between gap-3">
               <Button variant="outline" onClick={() => setStep("contact")}>
-                Back
+                {t("evidence.back")}
               </Button>
               <div className="flex gap-2">
                 <Button variant="ghost" onClick={skipEvidence}>
-                  Skip
+                  {t("evidence.skip")}
                 </Button>
                 <Button onClick={goToReview} disabled={evidencePreparing}>
-                  {evidencePreparing ? "Preparing…" : "Continue"}
+                  {evidencePreparing ? t("evidence.preparing") : t("evidence.continue")}
                 </Button>
               </div>
             </div>
@@ -681,48 +704,47 @@ export function MoneyReportWizard() {
       {step === "review" && (
         <Card>
           <CardHeader>
-            <CardTitle>Review</CardTitle>
-            <CardDescription>Here&apos;s what we&apos;ll send. Nothing is filed until you submit.</CardDescription>
+            <CardTitle>{t("review.title")}</CardTitle>
+            <CardDescription>{t("review.description")}</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
-            <ReviewLine onEdit={() => setStep("narrate")}>
-              You told us: &ldquo;{draft.narrative.trim().slice(0, 200)}
-              {draft.narrative.trim().length > 200 ? "…" : ""}&rdquo;
+            <ReviewLine onEdit={() => setStep("narrate")} editLabel={tCommon("actions.edit")}>
+              {t("review.narrativeLine", {
+                narrative:
+                  draft.narrative.trim().slice(0, 200) + (draft.narrative.trim().length > 200 ? "…" : ""),
+              })}
             </ReviewLine>
-            <ReviewLine onEdit={() => setStep("facts")}>
-              ₹{Number(draft.amountLost || 0).toLocaleString("en-IN")} was taken on{" "}
-              {new Date(draft.occurredAt).toLocaleString("en-IN")}
-              {draft.debitedInstrument ? `, via ${draft.debitedInstrument}` : ""}
-              {draft.transactionRef ? `. Reference: ${draft.transactionRef}` : "."}
+            <ReviewLine onEdit={() => setStep("facts")} editLabel={tCommon("actions.edit")}>
+              {reviewMoneyLine()}
             </ReviewLine>
-            <ReviewLine onEdit={() => setStep("facts")}>
-              We think this is <strong>{FRAUD_SUBCATEGORIES.find((s) => s.code === draft.subCategoryCode)?.label}</strong>. Is
-              that right?
+            <ReviewLine onEdit={() => setStep("facts")} editLabel={tCommon("actions.edit")}>
+              {t("review.categoryLine", { label: categoryLabel(draft.subCategoryCode) })}
             </ReviewLine>
-            <ReviewLine onEdit={() => setStep("contact")}>
-              You&apos;re in {draft.district}, {draft.state}. We&apos;ll reach you at {draft.mobile}.
+            <ReviewLine onEdit={() => setStep("contact")} editLabel={tCommon("actions.edit")}>
+              {t("review.contactLine", { district: draft.district, state: draft.state, mobile: draft.mobile })}
             </ReviewLine>
-            <ReviewLine onEdit={() => setStep("evidence")}>
+            <ReviewLine onEdit={() => setStep("evidence")} editLabel={tCommon("actions.edit")}>
               {evidenceFiles.length === 0
-                ? "No evidence attached. That's fine — it's optional."
-                : `${evidenceFiles.length} file${evidenceFiles.length === 1 ? "" : "s"} attached: ${evidenceFiles
-                    .map((f) => f.name)
-                    .join(", ")}`}
+                ? t("review.evidenceNone")
+                : t("review.evidenceAttached", {
+                    count: evidenceFiles.length,
+                    files: evidenceFiles.map((f) => f.name).join(", "),
+                  })}
             </ReviewLine>
 
             {submitError && (
               <Alert variant="destructive">
-                <AlertTitle>Couldn&apos;t submit</AlertTitle>
+                <AlertTitle>{t("review.submitError")}</AlertTitle>
                 <AlertDescription>{submitError}</AlertDescription>
               </Alert>
             )}
 
             <div className="flex items-center justify-between gap-3">
               <Button variant="outline" onClick={() => setStep("evidence")} disabled={submitting}>
-                Back
+                {t("review.back")}
               </Button>
               <Button onClick={handleSubmit} disabled={submitting}>
-                {submitting ? "Submitting…" : "Submit report"}
+                {submitting ? t("review.submitting") : t("review.submit")}
               </Button>
             </div>
           </CardContent>
@@ -733,8 +755,8 @@ export function MoneyReportWizard() {
         <div className="flex flex-col gap-6">
           <Card>
             <CardHeader>
-              <CardTitle>Your Complaint ID</CardTitle>
-              <CardDescription>Large, copyable, and yours to keep.</CardDescription>
+              <CardTitle>{t("done.idCardTitle")}</CardTitle>
+              <CardDescription>{t("done.idCardDescription")}</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
               <p className="rounded-lg border border-border bg-muted/40 px-4 py-6 text-center font-mono text-2xl font-semibold tracking-wide text-foreground select-all">
@@ -743,26 +765,23 @@ export function MoneyReportWizard() {
               <div className="flex flex-wrap gap-2">
                 <Button size="sm" variant="secondary" onClick={handleCopyId}>
                   {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
-                  {copied ? "Copied" : "Copy"}
+                  {copied ? t("done.copied") : t("done.copy")}
                 </Button>
                 <Button size="sm" variant="secondary" onClick={handleDownloadId}>
                   <Download className="size-3.5" />
-                  Download
+                  {t("done.download")}
                 </Button>
               </div>
               <div className="rounded-lg border border-border p-3">
-                <p className="mb-1 text-xs font-medium text-muted-foreground">Here&apos;s the SMS we&apos;d send you (simulated — nothing is actually sent)</p>
+                <p className="mb-1 text-xs font-medium text-muted-foreground">{t("done.smsPreviewLabel")}</p>
                 <p className="text-sm">{result.smsPreview}</p>
               </div>
               {evidenceUploadStatus !== "idle" && (
                 <p className="text-xs text-muted-foreground" aria-live="polite">
-                  {evidenceUploadStatus === "uploading" && "Uploading your evidence…"}
-                  {evidenceUploadStatus === "done" &&
-                    `Evidence attached and marked "simulated clean" — not a real virus scan.`}
-                  {evidenceUploadStatus === "partial" &&
-                    "Some evidence files were attached; others couldn't be saved (unsupported type or too large). Your report itself was still filed."}
-                  {evidenceUploadStatus === "error" &&
-                    "Evidence couldn't be attached, but your report was still filed successfully."}
+                  {evidenceUploadStatus === "uploading" && t("done.evidenceUploading")}
+                  {evidenceUploadStatus === "done" && t("done.evidenceDone")}
+                  {evidenceUploadStatus === "partial" && t("done.evidencePartial")}
+                  {evidenceUploadStatus === "error" && t("done.evidenceError")}
                 </p>
               )}
             </CardContent>
@@ -770,53 +789,44 @@ export function MoneyReportWizard() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Do these 3 things in the next hour</CardTitle>
+              <CardTitle>{t("done.checklistTitle")}</CardTitle>
             </CardHeader>
             <CardContent>
               <ol className="flex flex-col gap-2 text-sm">
-                <li>1. Call your bank&apos;s fraud helpline and ask them to flag the transaction.</li>
-                <li>2. Don&apos;t delete the messages, calls, or app related to this — they may be needed later.</li>
-                <li>
-                  3. Don&apos;t trust anyone who calls claiming to be police about this complaint — verify through
-                  1930 first.
-                </li>
+                <li>1. {t("done.checklist1")}</li>
+                <li>2. {t("done.checklist2")}</li>
+                <li>3. {t("done.checklist3")}</li>
               </ol>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle>What happens next</CardTitle>
+              <CardTitle>{t("done.nextTitle")}</CardTitle>
             </CardHeader>
             <CardContent className="flex flex-col gap-2 text-sm text-muted-foreground">
-              <p>
-                Your report has been received and is queued for review. <strong>This Complaint ID is not an FIR</strong> — it
-                is a record that a report was made and is the reference your bank and the cyber cell will use.
-              </p>
+              <p>{t("done.nextBody")}</p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle>Want updates?</CardTitle>
-              <CardDescription>
-                Optional. Verify your number and we&apos;ll link this report to it so you can check on it later.
-                Skip if you&apos;d rather not.
-              </CardDescription>
+              <CardTitle>{t("done.updatesTitle")}</CardTitle>
+              <CardDescription>{t("done.updatesDescription")}</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
               {otpStage === "confirmed" ? (
                 <Alert>
                   <Check />
-                  <AlertTitle>Linked</AlertTitle>
-                  <AlertDescription>Your number is verified and linked to this report.</AlertDescription>
+                  <AlertTitle>{t("done.updatesLinkedTitle")}</AlertTitle>
+                  <AlertDescription>{t("done.updatesLinkedBody")}</AlertDescription>
                 </Alert>
               ) : otpStage === "skipped" ? (
-                <p className="text-sm text-muted-foreground">Skipped — your Complaint ID above still works on its own.</p>
+                <p className="text-sm text-muted-foreground">{t("done.updatesSkipped")}</p>
               ) : (
                 <>
                   <div className="flex flex-col gap-2">
-                    <Label htmlFor="want-mobile">Mobile number</Label>
+                    <Label htmlFor="want-mobile">{t("done.mobileLabel")}</Label>
                     <Input
                       id="want-mobile"
                       type="tel"
@@ -827,14 +837,11 @@ export function MoneyReportWizard() {
                   </div>
                   <Alert>
                     <Info />
-                    <AlertTitle>Demo code: {DEMO_OTP_CODE}</AlertTitle>
-                    <AlertDescription>
-                      This is a hackathon prototype — no real SMS is sent. In production this code would arrive by
-                      text.
-                    </AlertDescription>
+                    <AlertTitle>{t("done.demoCodeTitle", { code: DEMO_OTP_CODE })}</AlertTitle>
+                    <AlertDescription>{t("done.demoCodeBody")}</AlertDescription>
                   </Alert>
                   <div className="flex flex-col gap-2">
-                    <Label htmlFor="otp-code">Enter the code</Label>
+                    <Label htmlFor="otp-code">{t("done.otpLabel")}</Label>
                     <Input
                       id="otp-code"
                       inputMode="numeric"
@@ -846,10 +853,10 @@ export function MoneyReportWizard() {
                   {otpError && <p className="text-sm text-destructive">{otpError}</p>}
                   <div className="flex gap-2">
                     <Button size="sm" onClick={handleConfirmOtp} disabled={otpSubmitting || otpCode.length === 0}>
-                      {otpSubmitting ? "Confirming…" : "Confirm"}
+                      {otpSubmitting ? t("done.confirming") : t("done.confirm")}
                     </Button>
                     <Button size="sm" variant="ghost" onClick={() => setOtpStage("skipped")}>
-                      Skip
+                      {t("done.skip")}
                     </Button>
                   </div>
                 </>
@@ -858,7 +865,7 @@ export function MoneyReportWizard() {
           </Card>
 
           <Button variant="outline" onClick={() => router.push("/")}>
-            Back to home
+            {t("done.backHome")}
           </Button>
         </div>
       )}
@@ -867,14 +874,23 @@ export function MoneyReportWizard() {
 }
 
 function FieldProvenance({ text }: { text: string }) {
+  const t = useTranslations("reportMoney.facts");
   return (
     <p className="text-xs text-muted-foreground">
-      From what you told us: <span className="font-medium text-foreground">&ldquo;{text}&rdquo;</span>
+      {t("provenance", { text })}
     </p>
   );
 }
 
-function ReviewLine({ children, onEdit }: { children: React.ReactNode; onEdit: () => void }) {
+function ReviewLine({
+  children,
+  onEdit,
+  editLabel,
+}: {
+  children: React.ReactNode;
+  onEdit: () => void;
+  editLabel: string;
+}) {
   return (
     <div className="flex items-start justify-between gap-3 border-b border-border pb-3 last:border-0 last:pb-0">
       <p className="text-sm text-foreground">{children}</p>
@@ -883,18 +899,26 @@ function ReviewLine({ children, onEdit }: { children: React.ReactNode; onEdit: (
         onClick={onEdit}
         className="shrink-0 text-sm font-medium text-primary underline underline-offset-2 hover:no-underline"
       >
-        Edit
+        {editLabel}
       </button>
     </div>
   );
 }
 
-function CategoryPicker({ onChoose }: { onChoose: (code: FraudSubCategoryCode) => void }) {
+function CategoryPicker({
+  onChoose,
+  t,
+  categoryLabel,
+}: {
+  onChoose: (code: FraudSubCategoryCode) => void;
+  t: ReturnType<typeof useTranslations>;
+  categoryLabel: (code: FraudSubCategoryCode) => string;
+}) {
   const [open, setOpen] = React.useState(false);
   if (!open) {
     return (
       <Button size="sm" variant="outline" onClick={() => setOpen(true)}>
-        Change it
+        {t("facts.changeIt")}
       </Button>
     );
   }
@@ -908,15 +932,15 @@ function CategoryPicker({ onChoose }: { onChoose: (code: FraudSubCategoryCode) =
         }}
       >
         <option value="" disabled>
-          Choose the right category
+          {t("facts.choosePrompt")}
         </option>
         {FRAUD_SUBCATEGORIES.map((s) => (
           <option key={s.code} value={s.code}>
-            {s.label}
+            {categoryLabel(s.code)}
           </option>
         ))}
       </select>
-      <Badge variant="secondary">your choice</Badge>
+      <Badge variant="secondary">{t("facts.yourChoice")}</Badge>
     </div>
   );
 }

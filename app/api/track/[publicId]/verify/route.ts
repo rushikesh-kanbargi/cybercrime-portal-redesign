@@ -17,7 +17,7 @@ export async function POST(
   const parsed = trackVerifySchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
-      { ok: false, message: "Enter the 6-digit code." },
+      { ok: false, message: "Enter the 6-digit code.", code: "TRACK_VERIFY_INVALID" },
       { status: 400 },
     );
   }
@@ -26,14 +26,14 @@ export async function POST(
   const limit = checkRateLimit(`track-verify:ip:${ip}`, 20, 10 * 60 * 1000);
   if (!limit.allowed) {
     return NextResponse.json(
-      { ok: false, message: "Too many attempts. Wait a few minutes." },
+      { ok: false, message: "Too many attempts. Wait a few minutes.", code: "TRACK_VERIFY_RATE_LIMITED" },
       { status: 429 },
     );
   }
 
   const result = await verifyTrackOtp(publicId, parsed.data.code, hashIp(ip));
   if (!result.ok) {
-    return NextResponse.json({ ok: false, message: result.message });
+    return NextResponse.json({ ok: false, message: result.message, code: result.code });
   }
 
   const token = mintTrackToken(publicId);

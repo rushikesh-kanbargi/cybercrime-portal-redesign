@@ -50,12 +50,19 @@ export async function verifyTrackOtp(
   publicId: string,
   code: string,
   ipHash: string | null,
-): Promise<{ ok: true; complaintId: string } | { ok: false; message: string }> {
+): Promise<
+  | { ok: true; complaintId: string }
+  // `code` is a stable discriminator the API layer/client use to pick a
+  // translated string (locales/<lang>/errors.json) — `message` stays the
+  // English default for logs/non-i18n callers, never rendered directly for
+  // the citizen-facing UI (§17.3.1).
+  | { ok: false; message: string; code: "NOT_FOUND" | "OTP_EXPIRED" | "OTP_TOO_MANY_ATTEMPTS" | "OTP_MISMATCH" }
+> {
   const complaint = await db.query.complaints.findFirst({
     where: eq(complaints.publicId, publicId),
   });
   if (!complaint) {
-    return { ok: false, message: "We couldn't find that Complaint ID." };
+    return { ok: false, message: "We couldn't find that Complaint ID.", code: "NOT_FOUND" };
   }
 
   const challenge = await db.query.otpChallenges.findFirst({
@@ -68,17 +75,17 @@ export async function verifyTrackOtp(
   });
 
   if (!challenge || challenge.expiresAt.getTime() < Date.now()) {
-    return { ok: false, message: "That code has expired. Send a new one." };
+    return { ok: false, message: "That code has expired. Send a new one.", code: "OTP_EXPIRED" };
   }
   if (challenge.attempts >= MAX_VERIFY_ATTEMPTS) {
-    return { ok: false, message: "Too many attempts. Send a new code." };
+    return { ok: false, message: "Too many attempts. Send a new code.", code: "OTP_TOO_MANY_ATTEMPTS" };
   }
   if (!otpMatches(code, challenge.codeHash)) {
     await db
       .update(otpChallenges)
       .set({ attempts: challenge.attempts + 1 })
       .where(eq(otpChallenges.id, challenge.id));
-    return { ok: false, message: "That code didn't match. Try again." };
+    return { ok: false, message: "That code didn't match. Try again.", code: "OTP_MISMATCH" };
   }
 
   await db

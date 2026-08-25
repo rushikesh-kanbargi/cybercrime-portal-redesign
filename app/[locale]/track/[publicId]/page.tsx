@@ -1,7 +1,8 @@
 "use client";
 
 import { use, useEffect, useState } from "react";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -15,8 +16,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { OtpInput } from "@/components/auth/otp-input";
 import { StatusTimeline, type TimelineStatus } from "@/components/tracking/status-timeline";
-import { NOT_AN_FIR_NOTICE } from "@/lib/status-labels";
 import { Info } from "lucide-react";
+
+// Fallback for any category code without a translated label — the MVP only
+// ever produces ONLINE_FINANCIAL_FRAUD (locales/<lang>/track.json), so this
+// is a safety net, not the primary path.
+function humanizeCategory(code: string): string {
+  return code.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
 
 interface CaseData {
   complaint: {
@@ -37,16 +44,15 @@ type Stage =
   | { name: "verifying" }
   | { name: "timeline"; data: CaseData };
 
-function humanizeCategory(code: string): string {
-  return code.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-}
-
 export default function TrackCasePage({
   params,
 }: {
   params: Promise<{ publicId: string }>;
 }) {
   const { publicId } = use(params);
+  const t = useTranslations("track");
+  const tErrors = useTranslations("errors");
+  const tCommon = useTranslations("common");
   const [stage, setStage] = useState<Stage>({ name: "loading" });
   const [otp, setOtp] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -107,7 +113,7 @@ export default function TrackCasePage({
     });
     const data = await res.json();
     if (!data.ok) {
-      setError(data.message ?? "That code didn't match. Try again.");
+      setError(data.code ? tErrors(data.code) : t("case.genericError"));
       setStage((prev) =>
         prev.name === "verifying" ? { name: "need-verification" } : prev,
       );
@@ -119,7 +125,7 @@ export default function TrackCasePage({
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-4 py-10">
       <div className="flex items-center gap-2">
-        <h1 className="text-lg font-semibold text-foreground">Complaint {publicId}</h1>
+        <h1 className="text-lg font-semibold text-foreground">{t("case.heading", { publicId })}</h1>
       </div>
 
       {stage.name === "loading" ? (
@@ -135,10 +141,10 @@ export default function TrackCasePage({
       {stage.name === "not-found" ? (
         <Alert>
           <Info />
-          <AlertTitle>We couldn&apos;t find that</AlertTitle>
+          <AlertTitle>{t("case.notFoundTitle")}</AlertTitle>
           <AlertDescription>
-            Check for a typo, or look in the SMS we sent you.{" "}
-            <Link href="/track">Try a different Complaint ID</Link>.
+            {t("case.notFoundBody")}{" "}
+            <Link href="/track">{t("case.notFoundLink")}</Link>.
           </AlertDescription>
         </Alert>
       ) : null}
@@ -146,45 +152,34 @@ export default function TrackCasePage({
       {stage.name === "no-contact" ? (
         <Alert>
           <Info />
-          <AlertTitle>We can&apos;t verify this one online</AlertTitle>
-          <AlertDescription>
-            This complaint has no mobile number on file, so we can&apos;t send a
-            verification code for it. Contact your State/UT Grievance Officer
-            with your Complaint ID.
-          </AlertDescription>
+          <AlertTitle>{t("case.noContactTitle")}</AlertTitle>
+          <AlertDescription>{t("case.noContactBody")}</AlertDescription>
         </Alert>
       ) : null}
 
       {stage.name === "need-verification" || stage.name === "verifying" ? (
         <Card>
           <CardHeader>
-            <CardTitle>Verify to view this case</CardTitle>
-            <CardDescription>
-              We&apos;ll send a code to the mobile number on file for this
-              complaint. Two things together — this ID, and that code — are
-              what let you see the details.
-            </CardDescription>
+            <CardTitle>{t("case.verifyTitle")}</CardTitle>
+            <CardDescription>{t("case.verifyDescription")}</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
             {stage.name === "need-verification" && !stage.demoCode ? (
               <Button onClick={requestCode} type="button">
-                Send verification code
+                {t("case.sendCode")}
               </Button>
             ) : (
               <>
                 {stage.name === "need-verification" && stage.demoCode ? (
                   <Alert>
                     <Info />
-                    <AlertTitle>
-                      Prototype: OTP is mocked, not a real SMS
-                    </AlertTitle>
+                    <AlertTitle>{t("case.mockedOtpTitle")}</AlertTitle>
                     <AlertDescription>
-                      Sent (mocked) to {stage.maskedMobile}. Demo code:{" "}
-                      <span className="font-mono font-semibold text-foreground">
-                        {stage.demoCode}
-                      </span>
-                      . See{" "}
-                      <Link href="/whats-real">what&apos;s real vs mocked</Link>.
+                      {t.rich("case.mockedOtpBody", {
+                        maskedMobile: stage.maskedMobile ?? "",
+                        code: stage.demoCode ?? "",
+                        link: (chunks) => <Link href="/whats-real">{chunks}</Link>,
+                      })}
                     </AlertDescription>
                   </Alert>
                 ) : null}
@@ -202,7 +197,7 @@ export default function TrackCasePage({
                     </p>
                   ) : null}
                   <Button type="submit" disabled={otp.length !== 6 || stage.name === "verifying"}>
-                    {stage.name === "verifying" ? "Verifying…" : "Verify"}
+                    {stage.name === "verifying" ? t("case.verifying") : t("case.verify")}
                   </Button>
                 </form>
               </>
@@ -216,16 +211,21 @@ export default function TrackCasePage({
           <Card>
             <CardHeader>
               <div className="flex flex-wrap items-center gap-2">
-                <CardTitle>{humanizeCategory(stage.data.complaint.categoryCode)}</CardTitle>
+                <CardTitle>
+                  {stage.data.complaint.categoryCode === "ONLINE_FINANCIAL_FRAUD"
+                    ? t("categoryLabels.ONLINE_FINANCIAL_FRAUD")
+                    : humanizeCategory(stage.data.complaint.categoryCode)}
+                </CardTitle>
                 {stage.data.complaint.isAnonymous ? (
-                  <Badge variant="secondary">Anonymous report</Badge>
+                  <Badge variant="secondary">{t("case.anonymousBadge")}</Badge>
                 ) : null}
               </div>
               <CardDescription>
-                Reported{" "}
-                {new Date(
-                  stage.data.complaint.submittedAt ?? stage.data.complaint.createdAt,
-                ).toLocaleDateString("en-IN", { dateStyle: "medium" })}
+                {t("case.reportedOn", {
+                  date: new Date(
+                    stage.data.complaint.submittedAt ?? stage.data.complaint.createdAt,
+                  ).toLocaleDateString("en-IN", { dateStyle: "medium" }),
+                })}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -234,8 +234,8 @@ export default function TrackCasePage({
           </Card>
           <Alert>
             <Info />
-            <AlertTitle>This is not an FIR</AlertTitle>
-            <AlertDescription>{NOT_AN_FIR_NOTICE}</AlertDescription>
+            <AlertTitle>{t("case.notAnFirTitle")}</AlertTitle>
+            <AlertDescription>{tCommon("notAnFir")}</AlertDescription>
           </Alert>
         </>
       ) : null}

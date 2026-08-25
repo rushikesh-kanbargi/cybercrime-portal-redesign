@@ -12,7 +12,7 @@ export async function POST(request: Request) {
   const parsed = trackLookupSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
-      { found: false, code: "INVALID_INPUT", message: "Enter your Complaint ID." },
+      { found: false, code: "TRACK_LOOKUP_INVALID", message: "Enter your Complaint ID." },
       { status: 400 },
     );
   }
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         found: false,
-        code: "RATE_LIMITED",
+        code: "TRACK_LOOKUP_RATE_LIMITED",
         message: "Too many lookups. Wait a few minutes and try again.",
       },
       { status: 429 },
@@ -38,6 +38,7 @@ export async function POST(request: Request) {
     // the quota it already has to burn per IP.
     return NextResponse.json({
       found: false,
+      code: "TRACK_LOOKUP_NOT_FOUND",
       message: "We couldn't find that. Check for a typo, or look in the SMS we sent you.",
     });
   }
@@ -46,6 +47,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       found: true,
       hasContact: false,
+      code: "TRACK_LOOKUP_NO_CONTACT",
       message:
         "This complaint has no mobile number on file, so we can't send a verification code for it.",
     });

@@ -5,16 +5,20 @@
 //
 // Top-level category is fixed for this flow — everyone here arrived via
 // "Money was taken from my account" — only the sub-category is inferred.
+//
+// Every user-facing label/reason lives in locales/<lang>/reportMoney.json
+// under category.<code>.label / category.reason.<reasonKey> (§17.3.1) —
+// this module returns codes and a reasonKey only, never rendered English.
 
 export const MONEY_FRAUD_CATEGORY_CODE = "ONLINE_FINANCIAL_FRAUD";
 
 export const FRAUD_SUBCATEGORIES = [
-  { code: "UPI_FRAUD", label: "UPI Fraud" },
-  { code: "INTERNET_BANKING_FRAUD", label: "Internet Banking Fraud" },
-  { code: "CARD_FRAUD", label: "Debit/Credit Card Fraud" },
-  { code: "KYC_OTP_SCAM", label: "KYC / OTP Update Scam" },
-  { code: "INVESTMENT_FRAUD", label: "Investment / Trading App Fraud" },
-  { code: "OTHER_FINANCIAL_FRAUD", label: "Other Financial Fraud" },
+  { code: "UPI_FRAUD" },
+  { code: "INTERNET_BANKING_FRAUD" },
+  { code: "CARD_FRAUD" },
+  { code: "KYC_OTP_SCAM" },
+  { code: "INVESTMENT_FRAUD" },
+  { code: "OTHER_FINANCIAL_FRAUD" },
 ] as const;
 
 export type FraudSubCategoryCode = (typeof FRAUD_SUBCATEGORIES)[number]["code"];
@@ -22,8 +26,7 @@ export type FraudSubCategoryCode = (typeof FRAUD_SUBCATEGORIES)[number]["code"];
 export interface CategorySuggestion {
   categoryCode: string;
   subCategoryCode: FraudSubCategoryCode;
-  label: string;
-  reason: string;
+  reasonKey: string;
   confidence: "high" | "low";
 }
 
@@ -32,44 +35,42 @@ export interface CategorySuggestion {
 const RULES: Array<{
   subCategoryCode: FraudSubCategoryCode;
   pattern: RegExp;
-  reason: string;
+  reasonKey: string;
 }> = [
   {
     subCategoryCode: "KYC_OTP_SCAM",
     pattern: /\b(kyc|otp|expir(e|ed|y|ing)|verify.*(account|link)|link.*(sent|click))\b/i,
-    reason: "you mentioned KYC, an OTP, or a link that expired or needed verifying",
+    reasonKey: "kycOtpLink",
   },
   {
     subCategoryCode: "INVESTMENT_FRAUD",
     pattern: /\b(invest(ment|ing)?|trading|stock|crypto|mutual fund|returns?|telegram group)\b/i,
-    reason: "you mentioned an investment, trading, or crypto opportunity",
+    reasonKey: "investment",
   },
   {
     subCategoryCode: "CARD_FRAUD",
     pattern: /\b(credit card|debit card|card (swipe|skim|clone))\b/i,
-    reason: "you mentioned a debit or credit card",
+    reasonKey: "card",
   },
   {
     subCategoryCode: "UPI_FRAUD",
     pattern: /\b(upi|phonepe|google\s*pay|gpay|paytm|bhim)\b/i,
-    reason: "you mentioned UPI, PhonePe, Google Pay, Paytm, or BHIM",
+    reasonKey: "upi",
   },
   {
     subCategoryCode: "INTERNET_BANKING_FRAUD",
     pattern: /\b(net\s*banking|internet\s*banking|netbanking)\b/i,
-    reason: "you mentioned internet/net banking",
+    reasonKey: "netBanking",
   },
 ];
 
 export function classifyFraud(narrative: string): CategorySuggestion {
   for (const rule of RULES) {
     if (rule.pattern.test(narrative)) {
-      const meta = FRAUD_SUBCATEGORIES.find((s) => s.code === rule.subCategoryCode)!;
       return {
         categoryCode: MONEY_FRAUD_CATEGORY_CODE,
         subCategoryCode: rule.subCategoryCode,
-        label: meta.label,
-        reason: `We think this because ${rule.reason}.`,
+        reasonKey: rule.reasonKey,
         confidence: "high",
       };
     }
@@ -77,8 +78,7 @@ export function classifyFraud(narrative: string): CategorySuggestion {
   return {
     categoryCode: MONEY_FRAUD_CATEGORY_CODE,
     subCategoryCode: "OTHER_FINANCIAL_FRAUD",
-    label: "Other Financial Fraud",
-    reason: "We couldn't detect a specific pattern from what you told us — please confirm or change this.",
+    reasonKey: "noPatternDetected",
     confidence: "low",
   };
 }
