@@ -2224,22 +2224,24 @@ Against that: *"Let us complete the main journey from start to finish"* and *"Ev
 
 ### 25.4 Included in the MVP — the full, closed list
 
-1. **Landing** — two intents, `tel:1930` in persistent chrome, prototype disclosure banner.
-2. **`/report/money`** — the guided intake, local-first draft from the first keystroke.
-3. **Rules-based category classifier + confirmation UI** (model refinement only if time — §15.7).
-4. **Regex extraction from a pasted bank SMS**, with editable, provenance-labelled chips.
-5. **Optional evidence upload** — client-side compression, PDF accepted, genuinely skippable.
-6. **Review screen** in plain sentences.
-7. **Confirmation** — ID + copy/download + next-hour checklist + "what happens next" + "not an FIR".
-8. **Mocked-OTP account upgrade** (Flow 9) — skippable.
-9. **`/track`** — Complaint ID → mock OTP → plain-language status timeline, including the **"Disposed"** translation.
-10. **A one-complaint list** for a logged-in user (a list, not a dashboard — §7.2 #16).
-11. **`/help/just-happened`** — hand-written, the page that does not exist today.
-12. **`/whats-real`** — real vs mocked vs not-solved. A scoring feature (§3.10).
-13. **`/accessibility`** and **`/privacy`** — honestly scoped.
-14. **EN + HI complete end-to-end**, including error messages and the confirmation screen (§17.2).
-15. **WCAG 2.1 AA on every screen above**, keyboard-complete, mobile-first.
-16. **Seeded synthetic demo data** + published mock credentials for reviewers (**VERIFIED** requirement, §3.5).
+Checked off as each item actually ships (verified — build/lint/run, not claimed), not when work merely starts. Updated live during implementation; see §31 for the detailed build log behind each checkmark.
+
+- [x] 1. **Landing** — two intents, `tel:1930` in persistent chrome, prototype disclosure banner. *(`7653e08`, `e29fccd`)*
+- [x] 2. **`/report/money`** — the guided intake, local-first draft from the first keystroke. *(`e29fccd`)*
+- [x] 3. **Rules-based category classifier + confirmation UI** (model refinement only if time — §15.7). *(`e29fccd`)*
+- [x] 4. **Regex extraction from a pasted bank SMS**, with editable, provenance-labelled chips. *(`e29fccd`)*
+- [x] 5. **Optional evidence upload** — client-side compression, PDF accepted, genuinely skippable. *(`0c72f23`)*
+- [x] 6. **Review screen** in plain sentences. *(`e29fccd`)*
+- [x] 7. **Confirmation** — ID + copy/download + next-hour checklist + "what happens next" + "not an FIR". *(`e29fccd`)*
+- [x] 8. **Mocked-OTP account upgrade** (Flow 9) — skippable. *(`e29fccd`, hardened `ba15f37`/`574c477`)*
+- [x] 9. **`/track`** — Complaint ID → mock OTP → plain-language status timeline, including the **"Disposed"** translation. *(`14b6125`)*
+- [ ] 10. **A one-complaint list** for a logged-in user (a list, not a dashboard — §7.2 #16). **Not yet built.**
+- [x] 11. **`/help/just-happened`** — hand-written, the page that does not exist today. *(`8836795`)*
+- [x] 12. **`/whats-real`** — real vs mocked vs not-solved. A scoring feature (§3.10). *(`8836795`)*
+- [x] 13. **`/accessibility`** and **`/privacy`** — honestly scoped. *(`8836795`)*
+- [ ] 14. **EN + HI complete end-to-end**, including error messages and the confirmation screen (§17.2). **In progress** — i18n foundation + full-spine translation underway.
+- [ ] 15. **WCAG 2.1 AA on every screen above**, keyboard-complete, mobile-first. **Not yet run** — queued immediately after item 14 lands (same files, sequenced to avoid collision).
+- [ ] 16. **Seeded synthetic demo data** + published mock credentials for reviewers (**VERIFIED** requirement, §3.5). **Not yet built.**
 
 ### 25.5 Explicitly OUT of MVP scope
 
