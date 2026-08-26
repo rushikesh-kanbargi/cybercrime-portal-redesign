@@ -1,0 +1,7 @@
+# Project Summary
+
+India's National Cyber Crime Reporting Portal requires an account, a mobile OTP, a CAPTCHA, and a mandatory government-ID upload before a fraud victim can even describe what happened. It enforces a 200-character minimum on the incident description, and the national helpline, 1930, appears on the homepage only as an unlinked image with no `tel:` link anywhere on the page. For someone whose money was just stolen, often at night, on a phone, in a panic, this is the wrong shape entirely.
+
+This prototype rebuilds the single highest-stakes journey, reporting online financial fraud, end to end: no login to start, no ID upload, no minimum description length, and a real, persistent `tel:1930` link that never scrolls away. A citizen describes what happened in their own words, confirms a few auto-extracted facts (amount, date, transaction reference), gives only a phone number and location, and receives a real Complaint ID in under 90 seconds, on a real database, with an optional account link for later tracking. Everything is fully bilingual (English and Hindi, including every error message), WCAG 2.1 AA accessible (verified: 0 axe violations, 100/100 Lighthouse), and honest about its own limits: a dedicated `/whats-real` page states plainly that OTP is mocked, no real government system is touched, and Aadhaar, PAN, and DigiLocker were deliberately left out, with the legal and product reasoning for each.
+
+Built with Next.js, TypeScript, Drizzle ORM, and Postgres as one deployable unit. Mock and synthetic data only, throughout.
