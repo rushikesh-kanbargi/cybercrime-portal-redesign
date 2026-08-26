@@ -87,7 +87,7 @@ Chosen specifically to keep the whole product as one deployable unit within a mu
 
 ## How Codex was used in this build
 
-This build was developed primarily with Claude Code. As required by the hackathon rules, Codex was set up to run directly against this codebase for a real engineering pass (a manual failure-path resilience review). *(Status at time of writing: this section will be updated with the actual outcome and commit reference once that pass completes — see `PROJECT_SPEC.md` §33 for the live status.)*
+This build was developed primarily with Claude Code. As required by the hackathon rules, Codex was run directly against this codebase for a real engineering pass: a manual failure-path resilience review of `/report/money` and `/track` (missing required fields, a browser refresh mid-form, oversized/wrong-type evidence uploads, an unknown Complaint ID, a wrong OTP code, and unavailable browser storage). Codex found and fixed two real, previously-shipped bugs on its own: the "Continue where you left off?" resume banner's saved-timestamp placeholder was never actually being filled in, and the evidence-upload drag/drop path checked file size but never checked file type before accepting a file. See the git history for the exact commits and `PROJECT_SPEC.md` for the full account, including the one issue Codex's pass introduced (a lint violation) that was caught and fixed afterward.
 
 ## Accessibility
 
