@@ -89,12 +89,9 @@ Next.js 16 (App Router) · TypeScript · Tailwind CSS v4 · shadcn/ui (Radix pri
 
 Chosen specifically to keep the whole product as one deployable unit within a multi-day hackathon window — see `PROJECT_SPEC.md` §20 for the full reasoning and rejected alternatives.
 
-## Repository layout: design phase vs. the built app
+## Repository history note
 
-This repo contains two things from two different phases of the same project:
-
-- **`app/`, `components/`, `lib/`, `locales/` — the built app.** This is what runs. Everything described above (the three real report flows, the database, the tracking flow) lives here.
-- **`mock/`, `data/`, `docs/specs/`, and the root `CLAUDE.md`/`prompt.md` — early design-phase artifacts.** Static HTML mockups, a synthetic-data generator, and scenario/schema exploration docs from before the real app existed, covering a much broader 13-category, 28-scenario taxonomy than what actually shipped. The root `CLAUDE.md` still says *"Design only... do not build the app yet"* — that instruction is superseded; the app has been built. These files are kept for the record of how the scope narrowed from "everything we could imagine" to "the three flows we could actually ship well in the time available" (see `PROJECT_SPEC.md` for that narrowing, decision by decision), not because they describe the current app.
+An earlier, separate design-phase exploration (static HTML mockups, a synthetic-data generator, and scenario/schema docs covering a much broader 13-category taxonomy than what shipped) briefly lived alongside the built app after a merge. Its one genuinely useful, still-unpublished finding — the undisclosed 24-hour post-1930-call deadline — was folded into the FAQ; the rest was removed as fully superseded by the real app and by `PROJECT_SPEC.md`, which has the full, decision-by-decision account of how the scope narrowed to the three flows that actually shipped. The root `CLAUDE.md` from that exploration was kept and updated — its hard rules (no real Aadhaar/PAN, never submit anywhere real, disclose every mock, no admin panel as product) already describe how this app was actually built.
 
 ## How Codex was used in this build
 
