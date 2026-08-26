@@ -1,0 +1,16 @@
+{
+  "meta": {
+    "title": "Contact Us: Cybercrime Report & Track",
+    "description": "How to get real help for a cybercrime, and what this independent prototype can and can't do."
+  },
+  "title": "Contact Us",
+  "subtitle": "For anything time-sensitive or real, use the channels below, not this prototype.",
+  "helplineTitle": "For an actual cybercrime, right now",
+  "helplineBody": "Call 1930, India's national cybercrime helpline. It's the fastest real channel for financial fraud, harassment, hacked accounts, or anything else covered on this site.",
+  "portalTitle": "The real national portal",
+  "portalBody": "cybercrime.gov.in is the official government portal operated by I4C under the Ministry of Home Affairs. It is the authoritative source for filing an official complaint and for every category this prototype hasn't built.",
+  "noDirectoryTitle": "Why there's no officer directory here",
+  "noDirectoryBody": "The real portal lists contact details for state-level grievance and nodal officers. We don't have that data, it changes over time and by jurisdiction, and inventing names, numbers, or emails would be exactly the kind of fabricated content this project refuses to ship. If you need a specific state officer, that directory lives on the real portal, not here.",
+  "aboutThisPrototypeTitle": "About this prototype",
+  "aboutThisPrototypeBody": "This is an independent hackathon build, not a government service and not affiliated with I4C or the Ministry of Home Affairs. There is no support team behind this page to email or call. See <link>what's real vs mocked</link> for the full, honest breakdown of what this prototype actually does."
+}

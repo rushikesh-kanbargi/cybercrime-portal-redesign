@@ -5,9 +5,10 @@ import { DropdownMenu as DropdownMenuPrimitive } from "radix-ui"
 
 import { cn } from "@/lib/utils"
 
-// Minimal subset of shadcn's dropdown-menu, scoped to what the nav
-// "Resources" group actually needs (§ chrome nav dropdown) — Root, Trigger,
-// Content, Item. No submenus/checkboxes/radio groups: nothing here uses them.
+// Minimal subset of shadcn's dropdown-menu, scoped to what the nav dropdowns
+// actually need (§ chrome nav dropdown) — Root, Trigger, Content, Item,
+// Label, Separator (D54 — Label/Separator added for the longer Resources
+// group). No submenus/checkboxes/radio groups: nothing here uses them.
 function DropdownMenu({
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.Root>) {
@@ -58,4 +59,37 @@ function DropdownMenuItem({
   )
 }
 
-export { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem }
+function DropdownMenuLabel({
+  className,
+  ...props
+}: React.ComponentProps<typeof DropdownMenuPrimitive.Label>) {
+  return (
+    <DropdownMenuPrimitive.Label
+      data-slot="dropdown-menu-label"
+      className={cn("px-2.5 pt-2 pb-1 text-xs font-medium text-muted-foreground", className)}
+      {...props}
+    />
+  )
+}
+
+function DropdownMenuSeparator({
+  className,
+  ...props
+}: React.ComponentProps<typeof DropdownMenuPrimitive.Separator>) {
+  return (
+    <DropdownMenuPrimitive.Separator
+      data-slot="dropdown-menu-separator"
+      className={cn("my-1 h-px bg-border", className)}
+      {...props}
+    />
+  )
+}
+
+export {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+}

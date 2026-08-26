@@ -5,20 +5,62 @@ import { Link } from "@/i18n/navigation";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PageIcon } from "@/components/illustrations/page-icon";
-import { ShieldAlert, KeyRound, Phone, ArrowLeft } from "lucide-react";
+import {
+  ShieldAlert,
+  KeyRound,
+  Phone,
+  ArrowLeft,
+  Search,
+  Flag,
+  UserRoundPlus,
+  Images,
+  Newspaper,
+  GraduationCap,
+  Accessibility,
+  FileText,
+} from "lucide-react";
 
 // D53 (§33) — a deliberate, honest override of D25's "remove, don't
-// disable": these two category pages exist so the homepage cards below can
+// disable": these category pages exist so nav items and homepage cards can
 // link somewhere real and true instead of a working flow that doesn't exist
 // or a dead button. Each category has its own real URL and its own real
 // translated content in locales/{en,hi}/notBuilt.json, so this is a proper
 // statically-generated route, not a query-param hack.
-const CATEGORIES = ["harassment", "hacked"] as const;
+//
+// D54 (§33) — extended from 2 to 10 slugs for full nav structural parity
+// with the real portal's "Report & Check Suspect" / "Cyber Volunteers" /
+// "Learning Corner" sections. Related real-site sub-items that are the same
+// underlying not-built concept share one slug (both "Check Suspect"
+// variants -> check-suspect; "Report Suspect to I4C" + "Report Abuse to
+// Social Media" -> report-suspect; volunteer Terms/Register/Login ->
+// volunteer-account; Photo/Video/Radio Gallery -> media-gallery; RTI +
+// CPGRAMS notices -> public-notices) rather than multiplying near-duplicate
+// pages.
+const CATEGORIES = [
+  "harassment",
+  "hacked",
+  "check-suspect",
+  "report-suspect",
+  "volunteer-account",
+  "media-gallery",
+  "daily-digest",
+  "training-resources",
+  "screen-reader",
+  "public-notices",
+] as const;
 type Category = (typeof CATEGORIES)[number];
 
 const categoryIcons: Record<Category, typeof ShieldAlert> = {
   harassment: ShieldAlert,
   hacked: KeyRound,
+  "check-suspect": Search,
+  "report-suspect": Flag,
+  "volunteer-account": UserRoundPlus,
+  "media-gallery": Images,
+  "daily-digest": Newspaper,
+  "training-resources": GraduationCap,
+  "screen-reader": Accessibility,
+  "public-notices": FileText,
 };
 
 export function generateStaticParams() {

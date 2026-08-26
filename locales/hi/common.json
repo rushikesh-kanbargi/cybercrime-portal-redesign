@@ -15,6 +15,8 @@
     "reportFraud": "धोखाधड़ी की रिपोर्ट करें",
     "track": "अपनी शिकायत ट्रैक करें",
     "myComplaints": "मेरी शिकायतें",
+    "contact": "संपर्क करें",
+    "opensNewTab": "नए टैब में खुलता है, यह प्रोटोटाइप छोड़ता है",
     "resources": "संसाधन",
     "resourcesItems": {
       "help": "अभी-अभी हुआ: अब क्या करें",
@@ -23,6 +25,41 @@
       "whatsReal": "क्या असली है, क्या मॉक्ड",
       "accessibility": "सुगम्यता विवरण",
       "privacy": "गोपनीयता सूचना"
+    },
+    "registerComplaint": {
+      "trigger": "शिकायत दर्ज करें",
+      "women": "महिला/बाल संबंधी अपराध",
+      "financial": "वित्तीय धोखाधड़ी",
+      "other": "अन्य साइबर अपराध"
+    },
+    "reportCheckSuspect": {
+      "trigger": "संदिग्ध जांचें और रिपोर्ट करें",
+      "repositoryLabel": "सस्पेक्ट रिपॉज़िटरी",
+      "checkContact": "संदिग्ध जांचें (मोबाइल, ईमेल, आदि)",
+      "checkWebsite": "संदिग्ध जांचें (वेबसाइट/ऐप)",
+      "reportLabel": "संदिग्ध की रिपोर्ट करें",
+      "reportI4C": "I4C को संदिग्ध की रिपोर्ट करें",
+      "reportSocial": "सोशल मीडिया पर दुर्व्यवहार की रिपोर्ट करें",
+      "tafcop": "अपने मोबाइल कनेक्शन जानें (TAFCOP)",
+      "gac": "GAC के पास अपील दायर करें"
+    },
+    "cyberVolunteersNav": {
+      "trigger": "साइबर वॉलंटियर",
+      "concept": "साइबर वॉलंटियर कॉन्सेप्ट",
+      "terms": "नियम व शर्तें",
+      "register": "वॉलंटियर के रूप में पंजीकरण करें",
+      "unlawfulContent": "गैरकानूनी सामग्री क्या है",
+      "login": "लॉगिन"
+    },
+    "resourcesExtra": {
+      "learningLabel": "लर्निंग कॉर्नर",
+      "advisories": "एडवाइज़री",
+      "cyberAwareness": "साइबर जागरूकता",
+      "mediaGallery": "मीडिया गैलरी",
+      "dailyDigest": "डेली डाइजेस्ट",
+      "trainingResources": "प्रशिक्षण संसाधन",
+      "screenReader": "स्क्रीन रीडर",
+      "publicNotices": "RTI / CPGRAMS सार्वजनिक नोटिस"
     }
   },
   "footer": {

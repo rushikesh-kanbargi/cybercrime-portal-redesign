@@ -1,0 +1,31 @@
+{
+  "meta": {
+    "title": "Cyber Volunteer Concept: Cybercrime Report & Track",
+    "description": "What the real government Cyber Volunteer Programme is, explained honestly, without this prototype claiming to run it."
+  },
+  "title": "Cyber Volunteer Concept",
+  "subtitle": "What the real Cyber Volunteer Programme actually is, described for information only.",
+  "disclaimer": "This prototype does not implement, operate, or represent this programme. Nothing on this page is a registration form. It is a factual description of a real government initiative, written so you know what it is before you go looking for it on the real portal.",
+  "whatItIsTitle": "What the programme is",
+  "whatItIsBody": "The Cyber Volunteer Programme is run by the Indian Cyber Crime Coordination Centre (I4C), under the Ministry of Home Affairs. It invites verified citizens to support cybercrime prevention work in their own time, alongside their regular lives, rather than as government employees.",
+  "howItWorksTitle": "How it generally works",
+  "howItWorksItems": [
+    {
+      "title": "Registration and verification",
+      "body": "A citizen registers on the real government portal and goes through an identity and background verification process before being approved."
+    },
+    {
+      "title": "State-level approval",
+      "body": "Approval and coordination happen through state-level nodal officers, not automatically on submission."
+    },
+    {
+      "title": "Ongoing, voluntary participation",
+      "body": "Once approved, volunteers take part on an ongoing, voluntary basis. It is not a paid position and not a substitute for reporting your own case."
+    }
+  ],
+  "whatVolunteersDoTitle": "What kinds of things volunteers help with",
+  "whatVolunteersDoBody": "Broadly, and in general terms, volunteer efforts support two kinds of work: flagging unlawful online content for official review, and spreading cyber-safety awareness in local communities. Our <link>What is Unlawful Content</link> page explains that first part in more detail.",
+  "notHereTitle": "What isn't here",
+  "notHereBody": "Registering, verifying your identity, or logging in as a volunteer needs a real account and vetting system this prototype doesn't build. If you're looking for that, our honest stub for it explains why and points you to the real portal.",
+  "footer": "This is background information, not a feature of this prototype. See <whatsRealLink>what's real vs mocked</whatsRealLink> for the full picture, or the <stubLink>volunteer registration page</stubLink> for what to do if you actually want to sign up."
+}

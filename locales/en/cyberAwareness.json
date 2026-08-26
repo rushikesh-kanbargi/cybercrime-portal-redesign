@@ -1,0 +1,52 @@
+{
+  "meta": {
+    "title": "Cyber Awareness: Cybercrime Report & Track",
+    "description": "Plain-language definitions of common cybercrime and online-safety terms, complementing our safety tips."
+  },
+  "title": "Cyber Awareness",
+  "subtitle": "Short, plain-language definitions for terms you'll see in advisories, news, and scam warnings. For what to actually do, see our Cyber Safety Tips.",
+  "termsTitle": "Terms worth knowing",
+  "terms": [
+    {
+      "title": "Phishing",
+      "body": "A fake email or message designed to look like it's from a real organisation, aimed at tricking you into revealing a password, OTP, or card details."
+    },
+    {
+      "title": "Vishing",
+      "body": "The same trick as phishing, done over a phone call instead of a message, often by someone pretending to be from your bank or the police."
+    },
+    {
+      "title": "Smishing",
+      "body": "Phishing sent by SMS, usually a short, urgent message with a link, about a parcel, a KYC update, or a blocked account."
+    },
+    {
+      "title": "Malware",
+      "body": "Software installed on your device without your informed consent that can steal data, spy on you, or damage your device. Often arrives disguised as a useful app."
+    },
+    {
+      "title": "Ransomware",
+      "body": "Malware that locks or encrypts your files and demands payment to unlock them. Paying does not guarantee your files come back."
+    },
+    {
+      "title": "Identity theft",
+      "body": "Someone using your personal details, like your name, Aadhaar, or PAN, to open accounts, take loans, or commit fraud in your name without your knowledge."
+    },
+    {
+      "title": "Two-factor authentication (2FA)",
+      "body": "A second proof of identity, beyond your password, needed to log in, usually an OTP or an authenticator app. Turning it on for email and banking apps makes a stolen password far less useful to an attacker."
+    },
+    {
+      "title": "Digital footprint",
+      "body": "The trail of data you leave behind through what you post, search, and share online. Scammers often use publicly visible details from it to make a fake call sound convincing."
+    },
+    {
+      "title": "Digital arrest scam",
+      "body": "A specific vishing pattern where a caller impersonates law enforcement and claims you're under \"digital arrest,\" pressuring you to stay on a call and pay money. No real Indian agency arrests anyone this way."
+    },
+    {
+      "title": "Sextortion",
+      "body": "Blackmail where someone threatens to share private or fabricated intimate images or videos unless you pay them or send more content."
+    }
+  ],
+  "footer": "Knowing the terms helps you recognise a pattern faster. For the actions to take before and after something happens, see our <link>Cyber Safety Tips</link>."
+}

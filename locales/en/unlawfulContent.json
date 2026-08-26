@@ -1,0 +1,45 @@
+{
+  "meta": {
+    "title": "What is Unlawful Content: Cybercrime Report & Track",
+    "description": "A factual explanation of what counts as unlawful online content in India, and what to do if you see it."
+  },
+  "title": "What is Unlawful Content",
+  "subtitle": "A plain-language explanation of what this term covers, and what to actually do if you come across it.",
+  "categoriesTitle": "Broad categories",
+  "categoriesItems": [
+    {
+      "title": "Child sexual abuse material (CSAM)",
+      "body": "Any image, video, or material that sexually exploits a child. This is illegal to create, possess, view, or share, without exception, anywhere in India."
+    },
+    {
+      "title": "Non-consensual intimate imagery",
+      "body": "Private or intimate images or videos of a real person shared, or threatened to be shared, without their consent, including deepfakes made to look like a real person."
+    },
+    {
+      "title": "Content that incites violence or hatred",
+      "body": "Material that promotes communal violence, terrorism, or hatred against a group, or that calls for real-world harm against specific people."
+    },
+    {
+      "title": "Content that violates the IT Act, 2000",
+      "body": "India's Information Technology Act sets out further categories of unlawful electronic content, including certain kinds of impersonation and content threatening public order."
+    }
+  ],
+  "safetyNoteTitle": "Important: how to report it safely",
+  "safetyNoteBody": "If you come across content like this, especially CSAM, do not download, save, or forward it, even to report it. Sharing it further can itself be a criminal act, regardless of intent. Use the platform's own report button, or report the URL/account directly to the authorities, without keeping a copy yourself.",
+  "whatToDoTitle": "What to do if you see it",
+  "whatToDoItems": [
+    {
+      "title": "Report it on the platform first",
+      "body": "Every major platform has an in-app or on-page report option for exactly this. That report reaches the platform's own trust and safety team directly."
+    },
+    {
+      "title": "Report it to the real national portal",
+      "body": "cybercrime.gov.in has a dedicated reporting path for unlawful content, separate from the financial fraud journey."
+    },
+    {
+      "title": "Call 1930 if you or someone else is at immediate risk",
+      "body": "If the content involves an active threat to someone's safety, treat it as urgent."
+    }
+  ],
+  "footer": "This page is informational, not a reporting tool. See our <link>Cyber Volunteer Concept</link> page for how citizens support flagging content like this in the real programme."
+}

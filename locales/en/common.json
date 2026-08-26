@@ -15,6 +15,8 @@
     "reportFraud": "Report a fraud",
     "track": "Track your complaint",
     "myComplaints": "My complaints",
+    "contact": "Contact us",
+    "opensNewTab": "Opens in a new tab, leaves this prototype",
     "resources": "Resources",
     "resourcesItems": {
       "help": "It just happened: what to do now",
@@ -23,6 +25,41 @@
       "whatsReal": "What's real vs mocked",
       "accessibility": "Accessibility statement",
       "privacy": "Privacy notice"
+    },
+    "registerComplaint": {
+      "trigger": "Register a Complaint",
+      "women": "Women/Children Related Crime",
+      "financial": "Financial Fraud",
+      "other": "Other Cyber Crime"
+    },
+    "reportCheckSuspect": {
+      "trigger": "Report & Check Suspect",
+      "repositoryLabel": "Suspect Repository",
+      "checkContact": "Check Suspect (mobile, email, etc.)",
+      "checkWebsite": "Check Suspect (Website/App)",
+      "reportLabel": "Report Suspect",
+      "reportI4C": "Report Suspect to I4C",
+      "reportSocial": "Report Abuse to Social Media",
+      "tafcop": "Know your Mobile connections (TAFCOP)",
+      "gac": "File an Appeal with GAC"
+    },
+    "cyberVolunteersNav": {
+      "trigger": "Cyber Volunteers",
+      "concept": "Cyber Volunteer Concept",
+      "terms": "Terms & Conditions",
+      "register": "Register as a volunteer",
+      "unlawfulContent": "What is Unlawful Content",
+      "login": "Login"
+    },
+    "resourcesExtra": {
+      "learningLabel": "Learning Corner",
+      "advisories": "Advisories",
+      "cyberAwareness": "Cyber Awareness",
+      "mediaGallery": "Media Gallery",
+      "dailyDigest": "Daily Digest",
+      "trainingResources": "Training Resources",
+      "screenReader": "Screen Reader",
+      "publicNotices": "RTI / CPGRAMS Public Notices"
     }
   },
   "footer": {
