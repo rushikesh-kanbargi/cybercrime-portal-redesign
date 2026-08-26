@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getSubmittedComplaintCount } from "@/lib/stats";
+import { RollingNumber } from "@/components/motion/rolling-number";
 
 // Real, non-fabricated activity count (this pass's §33 D-item) — a live
 // query against the actual `complaints` table, not an invented number.
@@ -16,7 +17,12 @@ export async function LiveActivity() {
         <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary/50" />
         <span className="relative inline-flex size-2 rounded-full bg-primary" />
       </span>
-      <span className="font-medium text-foreground">{t("text", { count })}</span>
+      <span className="font-medium text-foreground">
+        {t.rich("text", {
+          count,
+          num: () => <RollingNumber value={count} className="font-semibold text-primary" />,
+        })}
+      </span>
       <span className="text-muted-foreground">
         {t.rich("caption", {
           link: (chunks) => (

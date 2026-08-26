@@ -5,6 +5,7 @@ import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { SkipLink } from "@/components/chrome/skip-link";
+import { AmbientBackdrop } from "@/components/chrome/ambient-backdrop";
 import { PrototypeBanner } from "@/components/chrome/prototype-banner";
 import { SiteHeader } from "@/components/chrome/site-header";
 import { SiteFooter } from "@/components/chrome/site-footer";
@@ -60,6 +61,7 @@ export default async function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <NextIntlClientProvider>
+          <AmbientBackdrop />
           <SkipLink />
           <PrototypeBanner />
           <SiteHeader />

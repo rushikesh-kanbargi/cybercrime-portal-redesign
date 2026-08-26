@@ -43,8 +43,14 @@ import { Press } from "@/components/motion/press";
 // macro-whitespace and a bigger type scale (high-end-visual-design), and
 // wraps each section in a real scroll-triggered reveal — while keeping every
 // link real (D25) and every claim on this page true (D-honesty rules).
-const otherCategoryIcons = [ShieldAlert, KeyRound] as const;
-const otherCategorySlugs = ["harassment", "hacked"] as const;
+// D-new — user-directed: the money card previously dominated the page as a
+// large bezeled "flagship" while the other two intents sat below as a
+// visually secondary afterthought under "Something else happened?", which
+// read as "this site is about money fraud" even though the comment above
+// always intended intent-first parity. Now one grid, three equal-weight
+// cards, differing only by an honest availability badge — not by size.
+const categoryIcons = [Banknote, ShieldAlert, KeyRound] as const;
+const categoryHrefs = ["/report/money", "/report/harassment", "/report/hacked"] as const;
 const howItWorksIcons = [MessageSquareText, CircleCheck, FileCheck2, Search] as const;
 const trustIcons = [UserX, Timer, ShieldOff] as const;
 const learnMoreIcons = [ShieldCheck, CircleHelp] as const;
@@ -56,9 +62,33 @@ export default async function Home() {
   const trustSectionItems = t.raw("trustSection.items") as Array<{ title: string; body: string }>;
 
   return (
-    <div className="flex flex-1 flex-col gap-24 overflow-x-hidden pb-24 sm:gap-32">
-      <div className="mx-auto grid w-full max-w-5xl gap-10 px-4 pt-16 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-10">
-        <HeroEntrance className="flex flex-col gap-6">
+    <div className="flex flex-1 flex-col gap-10 overflow-x-hidden pb-20 sm:gap-14">
+      {/* Trust bar + hero band are one visual block (top page chrome), not
+          two separate sections — grouped in their own wrapper so the
+          section `gap` above doesn't insert space between them. */}
+      <div className="flex flex-col">
+        {/* Solid-color trust bar — a real, unmistakable block of brand color
+            (not a tint) at the very top of the page, the same trust facts
+            used in the hero list below, just given real visual weight
+            instead of small muted text. */}
+        <div className="w-full bg-primary text-primary-foreground">
+          <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-center gap-x-8 gap-y-2 px-4 py-2.5 text-sm font-medium">
+            {(t.raw("trust") as Array<{ label: string }>).map((item) => (
+              <span key={item.label} className="flex items-center gap-1.5">
+                <CircleCheck className="size-4 shrink-0" aria-hidden="true" />
+                {item.label}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Full-bleed hero band — a real background in normal page flow, not
+            an overlay effect, so it renders regardless of stacking context.
+            Visibly colored (not a 5-8% dust of tint) on purpose: this is the
+            first thing anyone sees. */}
+        <div className="relative w-full border-b border-primary/15 bg-gradient-to-b from-primary/22 via-brand-gold/14 to-background pt-8 pb-6">
+        <div className="mx-auto grid w-full max-w-5xl gap-10 px-4 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-10">
+          <HeroEntrance className="flex flex-col gap-6">
           <HeroEntranceItem>
             <span className="inline-flex w-fit items-center gap-2 rounded-full border border-primary/20 bg-primary/8 px-3 py-1 text-[11px] font-medium tracking-[0.08em] text-accent-foreground uppercase">
               <span className="size-1.5 rounded-full bg-primary" />
@@ -75,20 +105,9 @@ export default async function Home() {
           <HeroEntranceItem>
             <p className="max-w-[60ch] text-lg text-muted-foreground">{t("subtitle")}</p>
           </HeroEntranceItem>
-
-          <HeroEntranceItem>
-            <ul className="flex flex-wrap gap-x-6 gap-y-2">
-              {(t.raw("trust") as Array<{ label: string }>).map((item) => (
-                <li key={item.label} className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                  <CircleCheck className="size-4 shrink-0 text-primary" aria-hidden="true" />
-                  {item.label}
-                </li>
-              ))}
-            </ul>
-          </HeroEntranceItem>
         </HeroEntrance>
 
-        <HeroEntrance className="h-72 sm:h-80 lg:h-96">
+        <HeroEntrance className="h-56 sm:h-64 lg:h-72">
           <HeroEntranceItem className="h-full">
             <ReportFlowIllustration
               reportLabel={t("hero.reportLabel")}
@@ -97,36 +116,80 @@ export default async function Home() {
             />
           </HeroEntranceItem>
         </HeroEntrance>
+        </div>
+        </div>
       </div>
 
-      {/* the flagship CTA — "double-bezel" nested card: an outer tinted
-          shell (physical tray) around the actual content card, per
-          high-end-visual-design's nested-architecture guidance */}
-      <div className="mx-auto w-full max-w-2xl px-4">
-        <div className="rounded-[2rem] bg-gradient-to-br from-primary/12 via-transparent to-brand-gold/12 p-1.5">
-          <div className="flex flex-col gap-5 rounded-[calc(2rem-0.375rem)] border border-border bg-card p-6 shadow-sm sm:p-7">
-            <div className="flex items-start gap-4">
-              <PageIcon icon={Banknote} size="lg" />
-              <div className="flex flex-col gap-1">
-                <p className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                  {t("moneyCard.eyebrow")}
-                </p>
-                <h2 className="text-xl font-semibold text-foreground">{t("moneyCard.title")}</h2>
-                <p className="text-sm text-muted-foreground">{t("moneyCard.body")}</p>
-              </div>
-            </div>
-            <Press className="w-full sm:w-fit" lift={3} scale={1.02}>
-              <Button asChild size="lg" className="group/button w-full sm:w-fit">
-                <Link href="/report/money">
-                  {t("moneyCard.cta")}
-                  <ArrowRight
-                    className="size-4 transition-transform duration-200 group-hover/button:translate-x-0.5"
-                    aria-hidden="true"
-                  />
-                </Link>
-              </Button>
-            </Press>
-          </div>
+      {/* Intent-first category picker: three equal-weight cards, one
+          available (real button, primary-tinted), two honestly marked as
+          not built yet (text link, muted). Availability is signaled by a
+          badge, never by giving one card more visual weight than the
+          others — this is one intent picker, not "the flagship + two
+          afterthoughts" (D25 still holds: real links only, never a fake
+          flow or a disabled button). */}
+      <div className="mx-auto w-full max-w-4xl px-4">
+        <div className="flex flex-col gap-1 text-center sm:text-left">
+          <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+            {t("categoryPicker.title")}
+          </h2>
+          <p className="text-muted-foreground">{t("categoryPicker.subtitle")}</p>
+        </div>
+        <div className="mt-6 grid gap-4 sm:grid-cols-3">
+          {(
+            t.raw("categoryPicker.items") as Array<{
+              title: string;
+              body: string;
+              cta: string;
+              available: boolean;
+            }>
+          ).map((item, i) => {
+            const Icon = categoryIcons[i];
+            return (
+              <Link
+                key={item.title}
+                href={categoryHrefs[i]}
+                className="group block rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              >
+                <Press className="h-full">
+                  <div
+                    className={
+                      item.available
+                        ? "flex h-full flex-col gap-3 rounded-2xl border border-primary/25 bg-gradient-to-br from-primary/10 via-card to-card p-6 transition-shadow duration-200 ease-[var(--ease-feedback)] group-hover:shadow-lg"
+                        : "flex h-full flex-col gap-3 rounded-2xl border border-border bg-card p-6 transition-shadow duration-200 ease-[var(--ease-feedback)] group-hover:shadow-lg"
+                    }
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <PageIcon icon={Icon} />
+                      <Badge variant={item.available ? "default" : "outline"} className="shrink-0">
+                        {item.available ? t("categoryPicker.availableBadge") : t("categoryPicker.notBuiltBadge")}
+                      </Badge>
+                    </div>
+                    <h3 className="text-lg font-medium text-foreground">{item.title}</h3>
+                    <p className="text-sm text-muted-foreground">{item.body}</p>
+                    {item.available ? (
+                      <Button asChild size="sm" className="group/button mt-1 w-fit">
+                        <span>
+                          {item.cta}
+                          <ArrowRight
+                            className="size-3.5 transition-transform duration-200 group-hover/button:translate-x-0.5"
+                            aria-hidden="true"
+                          />
+                        </span>
+                      </Button>
+                    ) : (
+                      <span className="mt-1 inline-flex items-center gap-1 text-sm font-medium text-primary">
+                        {item.cta}
+                        <ArrowRight
+                          className="size-3.5 transition-transform duration-200 group-hover:translate-x-0.5"
+                          aria-hidden="true"
+                        />
+                      </span>
+                    )}
+                  </div>
+                </Press>
+              </Link>
+            );
+          })}
         </div>
 
         <p className="mt-6 text-sm text-muted-foreground">
@@ -142,51 +205,6 @@ export default async function Home() {
         </p>
 
         <LiveActivity />
-      </div>
-
-      {/* D53 (§33) — honest breadth cards. Same card treatment as the
-          "Learn more" section below (real Card, real PageIcon, real link),
-          not a new visual language. Each links to a real, honest
-          not-yet-built explanation page, never a disabled button or a flow
-          that doesn't exist (D25's actual concern, satisfied differently). */}
-      <div className="mx-auto w-full max-w-2xl px-4">
-        <p className="mb-4 text-sm font-medium text-muted-foreground">
-          {t("otherCategories.title")}
-        </p>
-        <div className="grid gap-4 sm:grid-cols-2">
-          {(t.raw("otherCategories.items") as Array<{ title: string; body: string; cta: string }>).map(
-            (item, i) => {
-              const Icon = otherCategoryIcons[i];
-              return (
-                <Link
-                  key={item.title}
-                  href={`/not-built/${otherCategorySlugs[i]}`}
-                  className="group block rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-                >
-                  <Press className="h-full">
-                    <div className="flex h-full flex-col gap-3 rounded-2xl border border-border bg-card p-6 transition-shadow duration-200 ease-[var(--ease-feedback)] group-hover:shadow-lg">
-                      <div className="flex items-start justify-between gap-3">
-                        <PageIcon icon={Icon} />
-                        <Badge variant="outline" className="shrink-0">
-                          {t("otherCategories.badge")}
-                        </Badge>
-                      </div>
-                      <h3 className="text-lg font-medium text-foreground">{item.title}</h3>
-                      <p className="text-sm text-muted-foreground">{item.body}</p>
-                      <span className="mt-1 inline-flex items-center gap-1 text-sm font-medium text-primary">
-                        {item.cta}
-                        <ArrowRight
-                          className="size-3.5 transition-transform duration-200 group-hover:translate-x-0.5"
-                          aria-hidden="true"
-                        />
-                      </span>
-                    </div>
-                  </Press>
-                </Link>
-              );
-            },
-          )}
-        </div>
       </div>
 
       {/* How it works — asymmetric bento (grid-flow-dense, varied spans):
@@ -207,7 +225,13 @@ export default async function Home() {
             return (
               <li key={step.title} className={i === 0 ? "lg:col-span-2 lg:row-span-1" : ""}>
                 <Press className="h-full">
-                  <div className="flex h-full flex-col gap-3 rounded-2xl border border-border bg-card p-6 transition-shadow duration-200 ease-[var(--ease-feedback)] hover:shadow-lg">
+                  <div
+                    className={
+                      i === 0
+                        ? "flex h-full flex-col gap-3 rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 via-card to-card p-6 transition-shadow duration-200 ease-[var(--ease-feedback)] hover:shadow-lg"
+                        : "flex h-full flex-col gap-3 rounded-2xl border border-border bg-card p-6 transition-shadow duration-200 ease-[var(--ease-feedback)] hover:shadow-lg"
+                    }
+                  >
                     <div className="flex items-center gap-3">
                       <StepGlyph icon={Icon} index={i} tone={i % 2 === 0 ? "primary" : "gold"} />
                       <span className="font-mono text-sm text-muted-foreground">{`0${i + 1}`}</span>
@@ -233,7 +257,13 @@ export default async function Home() {
             const Icon = trustIcons[i];
             return (
               <Press key={item.title}>
-                <div className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-6 transition-shadow duration-200 ease-[var(--ease-feedback)] hover:shadow-lg">
+                <div
+                  className={
+                    i === 1
+                      ? "flex flex-col gap-3 rounded-2xl border border-brand-gold/25 bg-gradient-to-br from-brand-gold/12 via-card to-card p-6 transition-shadow duration-200 ease-[var(--ease-feedback)] hover:shadow-lg"
+                      : "flex flex-col gap-3 rounded-2xl border border-border bg-card p-6 transition-shadow duration-200 ease-[var(--ease-feedback)] hover:shadow-lg"
+                  }
+                >
                   <PageIcon icon={Icon} tone={i === 1 ? "gold" : "primary"} />
                   <h3 className="text-lg font-medium text-foreground">{item.title}</h3>
                   <p className="text-sm text-muted-foreground">{item.body}</p>

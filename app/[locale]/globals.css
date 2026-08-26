@@ -216,6 +216,19 @@
   filter: blur(0);
 }
 
+/* AmbientBackdrop (components/chrome/ambient-backdrop.tsx) — slow positional
+   drift only, gated behind Tailwind's motion-safe: variant so
+   prefers-reduced-motion drops it to a static wash automatically. */
+@keyframes drift {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(4%, 5%) scale(1.08);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

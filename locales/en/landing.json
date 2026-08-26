@@ -12,25 +12,29 @@
     "reviewingLabel": "Reviewing",
     "protectedLabel": "Confirmed"
   },
-  "moneyCard": {
-    "eyebrow": "The one journey this prototype builds end-to-end",
-    "title": "Money was taken from my account",
-    "body": "Report it in under 90 seconds. We'll ask for the essentials only.",
-    "cta": "Start now"
-  },
-  "otherCategories": {
-    "title": "Something else happened?",
-    "badge": "Not built in this prototype yet",
+  "categoryPicker": {
+    "title": "What happened to you?",
+    "subtitle": "Pick the closest match. We'll get you to the right place either way.",
+    "availableBadge": "Available now",
+    "notBuiltBadge": "Not built in this prototype yet",
     "items": [
+      {
+        "title": "Money was taken from my account",
+        "body": "Report it in under 90 seconds. We'll ask for the essentials only.",
+        "cta": "Start now",
+        "available": true
+      },
       {
         "title": "Threats, harassment, or blackmail",
         "body": "Someone is threatening you, harassing you, or trying to blackmail you online.",
-        "cta": "See what to do"
+        "cta": "Start now",
+        "available": true
       },
       {
         "title": "Hacked account, or something else happened",
         "body": "Your account was taken over, or what happened doesn't fit the categories above.",
-        "cta": "See what to do"
+        "cta": "Start now",
+        "available": true
       }
     ]
   },
@@ -74,7 +78,7 @@
     ]
   },
   "liveActivity": {
-    "text": "{count, plural, =0 {No reports filed on this prototype yet} =1 {1 report filed on this prototype so far} other {# reports filed on this prototype so far}}",
+    "text": "{count, plural, =0 {No reports filed on this prototype yet} =1 {<num>1</num> report filed on this prototype so far} other {<num>#</num> reports filed on this prototype so far}}",
     "caption": "Real activity on this demo build, not a national statistic. See <link>what's real vs mocked</link>."
   },
   "learnMore": {

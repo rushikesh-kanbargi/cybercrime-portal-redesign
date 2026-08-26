@@ -3,6 +3,7 @@ import { Link } from "@/i18n/navigation";
 import { Phone, ChevronDown, Menu, ExternalLink } from "lucide-react";
 import { LanguageSwitcher } from "./language-switcher";
 import { SiteMark } from "./site-mark";
+import { ScrollProgress } from "./scroll-progress";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -41,6 +42,7 @@ export async function SiteHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+      <ScrollProgress />
       <div className="mx-auto flex max-w-[1500px] items-center justify-between gap-2 px-4 py-3">
         <Link
           href="/"
@@ -76,13 +78,13 @@ export async function SiteHeader() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start">
               <DropdownMenuItem asChild>
-                <Link href="/not-built/harassment">{t("nav.registerComplaint.women")}</Link>
+                <Link href="/report/harassment">{t("nav.registerComplaint.women")}</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href="/report/money">{t("nav.registerComplaint.financial")}</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href="/not-built/hacked">{t("nav.registerComplaint.other")}</Link>
+                <Link href="/report/hacked">{t("nav.registerComplaint.other")}</Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -273,13 +275,13 @@ export async function SiteHeader() {
               <DropdownMenuSeparator />
               <DropdownMenuLabel>{t("nav.registerComplaint.trigger")}</DropdownMenuLabel>
               <DropdownMenuItem asChild>
-                <Link href="/not-built/harassment">{t("nav.registerComplaint.women")}</Link>
+                <Link href="/report/harassment">{t("nav.registerComplaint.women")}</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href="/report/money">{t("nav.registerComplaint.financial")}</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href="/not-built/hacked">{t("nav.registerComplaint.other")}</Link>
+                <Link href="/report/hacked">{t("nav.registerComplaint.other")}</Link>
               </DropdownMenuItem>
 
               <DropdownMenuSeparator />
