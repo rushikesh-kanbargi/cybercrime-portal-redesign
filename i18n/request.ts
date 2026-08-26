@@ -12,6 +12,7 @@ const NAMESPACES = [
   "track",
   "auth",
   "whatsReal",
+  "notBuilt",
   "help",
   "accessibility",
   "privacy",

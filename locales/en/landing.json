@@ -18,6 +18,22 @@
     "body": "Report it in under 90 seconds. We'll ask for the essentials only.",
     "cta": "Start now"
   },
+  "otherCategories": {
+    "title": "Something else happened?",
+    "badge": "Not built in this prototype yet",
+    "items": [
+      {
+        "title": "Threats, harassment, or blackmail",
+        "body": "Someone is threatening you, harassing you, or trying to blackmail you online.",
+        "cta": "See what to do"
+      },
+      {
+        "title": "Hacked account, or something else happened",
+        "body": "Your account was taken over, or what happened doesn't fit the categories above.",
+        "cta": "See what to do"
+      }
+    ]
+  },
   "howItWorks": {
     "title": "How it works",
     "subtitle": "Four steps. No forms, no wait to find out what happens next.",

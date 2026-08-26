@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   ArrowRight,
   Phone,
@@ -14,6 +15,8 @@ import {
   ShieldOff,
   ShieldCheck,
   CircleHelp,
+  ShieldAlert,
+  KeyRound,
 } from "lucide-react";
 import { ReportFlowIllustration } from "@/components/illustrations/report-flow";
 import { PageIcon } from "@/components/illustrations/page-icon";
@@ -25,8 +28,14 @@ import { Press } from "@/components/motion/press";
 
 // §9.2 / §25.2 — the home is an intent-first entry point, not a category
 // dropdown: "what happened to you?", not "which programme owns this?".
-// Only one intent is wired up in this slice (financial fraud) — per D25,
-// unbuilt flows are not shown as dead buttons.
+// Only one intent is wired up end-to-end in this slice (financial fraud).
+//
+// D53 (§33) — user-directed, explicit override of D25 ("remove, don't
+// disable"): the other two intent cards below are real breadth, not fake
+// interactivity. Each links to a real, statically-generated, fully
+// translated honest page (/not-built/[category]) that says plainly this
+// isn't built, why, and what to actually do right now — never to a working
+// flow that doesn't exist and never to a disabled button.
 //
 // D41 — visual-identity escalation (user-directed, after repeated
 // dissatisfaction with 4 prior cautious passes): this restructures the page
@@ -34,6 +43,8 @@ import { Press } from "@/components/motion/press";
 // macro-whitespace and a bigger type scale (high-end-visual-design), and
 // wraps each section in a real scroll-triggered reveal — while keeping every
 // link real (D25) and every claim on this page true (D-honesty rules).
+const otherCategoryIcons = [ShieldAlert, KeyRound] as const;
+const otherCategorySlugs = ["harassment", "hacked"] as const;
 const howItWorksIcons = [MessageSquareText, CircleCheck, FileCheck2, Search] as const;
 const trustIcons = [UserX, Timer, ShieldOff] as const;
 const learnMoreIcons = [ShieldCheck, CircleHelp] as const;
@@ -131,6 +142,51 @@ export default async function Home() {
         </p>
 
         <LiveActivity />
+      </div>
+
+      {/* D53 (§33) — honest breadth cards. Same card treatment as the
+          "Learn more" section below (real Card, real PageIcon, real link),
+          not a new visual language. Each links to a real, honest
+          not-yet-built explanation page, never a disabled button or a flow
+          that doesn't exist (D25's actual concern, satisfied differently). */}
+      <div className="mx-auto w-full max-w-2xl px-4">
+        <p className="mb-4 text-sm font-medium text-muted-foreground">
+          {t("otherCategories.title")}
+        </p>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {(t.raw("otherCategories.items") as Array<{ title: string; body: string; cta: string }>).map(
+            (item, i) => {
+              const Icon = otherCategoryIcons[i];
+              return (
+                <Link
+                  key={item.title}
+                  href={`/not-built/${otherCategorySlugs[i]}`}
+                  className="group block rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                >
+                  <Press className="h-full">
+                    <div className="flex h-full flex-col gap-3 rounded-2xl border border-border bg-card p-6 transition-shadow duration-200 ease-[var(--ease-feedback)] group-hover:shadow-lg">
+                      <div className="flex items-start justify-between gap-3">
+                        <PageIcon icon={Icon} />
+                        <Badge variant="outline" className="shrink-0">
+                          {t("otherCategories.badge")}
+                        </Badge>
+                      </div>
+                      <h3 className="text-lg font-medium text-foreground">{item.title}</h3>
+                      <p className="text-sm text-muted-foreground">{item.body}</p>
+                      <span className="mt-1 inline-flex items-center gap-1 text-sm font-medium text-primary">
+                        {item.cta}
+                        <ArrowRight
+                          className="size-3.5 transition-transform duration-200 group-hover:translate-x-0.5"
+                          aria-hidden="true"
+                        />
+                      </span>
+                    </div>
+                  </Press>
+                </Link>
+              );
+            },
+          )}
+        </div>
       </div>
 
       {/* How it works — asymmetric bento (grid-flow-dense, varied spans):
