@@ -53,4 +53,4 @@ Do not add a claim about the existing portal without a source. If unsure, say so
 
 ## Current phase
 
-**Design only.** Scenarios and schema are being decided. Do not build the app yet.
+**Built.** This file and the rest of the design-phase artifacts (`mock/`, `data/`, `docs/specs/`, `prompt.md`) predate the real app and describe a broader scope than what shipped. The actual, running product is in `app/`, `components/`, `lib/`, `locales/` — see the root `README.md` and `PROJECT_SPEC.md` for what was actually built and why the scope narrowed. The hard rules and design rules above still hold for the real app; the "do not build yet" instruction does not.

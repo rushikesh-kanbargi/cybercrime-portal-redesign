@@ -10,9 +10,13 @@ For the full, itemised list of what in this build is real, mocked, simulated, or
 
 The real cybercrime.gov.in portal requires an account (mobile OTP + CAPTCHA) and a mandatory government-ID upload before a victim can even describe what happened, enforces a 200-character minimum on the incident description, and surfaces the national helpline (1930) only as an unlinked image with no `tel:` link anywhere on the page. This prototype removes all of that: no login to start, no ID upload, no minimum description length, and a persistent, always-visible `tel:1930` link in the header on every screen.
 
-## The one journey this prototype builds end-to-end
+## The journeys this prototype builds end-to-end
 
-Landing → "Money was taken from my account" → describe what happened (with optional pasted-bank-SMS autofill) → confirm the extracted facts → how to reach you → review → a real Complaint ID → optional mocked-OTP account link → track that complaint later by ID.
+Three real, working report flows, all sharing the same shape: describe what happened → confirm a few facts → how to reach you → optional evidence → review → a real Complaint ID → optional mocked-OTP account link → track that complaint later by ID.
+
+- **Money was taken from my account** — the flagship flow, with optional pasted-bank-SMS autofill and rule-based fraud sub-category detection.
+- **Threats, harassment, or blackmail** — platform + ongoing-status detection, with in-flow safety guidance (screenshot before blocking, never pay, call 1930 if in danger).
+- **Hacked account** — platform + access-status detection, with real account-recovery guidance (change password from a trusted device, check recovery settings, use the platform's own recovery flow).
 
 Target: under 90 seconds, on a phone, with no account required.
 
@@ -84,6 +88,13 @@ AUTH_SECRET=
 Next.js 16 (App Router) · TypeScript · Tailwind CSS v4 · shadcn/ui (Radix primitives) · Drizzle ORM · Postgres · next-intl (English + Hindi, complete end-to-end including every error message) · Framer Motion.
 
 Chosen specifically to keep the whole product as one deployable unit within a multi-day hackathon window — see `PROJECT_SPEC.md` §20 for the full reasoning and rejected alternatives.
+
+## Repository layout: design phase vs. the built app
+
+This repo contains two things from two different phases of the same project:
+
+- **`app/`, `components/`, `lib/`, `locales/` — the built app.** This is what runs. Everything described above (the three real report flows, the database, the tracking flow) lives here.
+- **`mock/`, `data/`, `docs/specs/`, and the root `CLAUDE.md`/`prompt.md` — early design-phase artifacts.** Static HTML mockups, a synthetic-data generator, and scenario/schema exploration docs from before the real app existed, covering a much broader 13-category, 28-scenario taxonomy than what actually shipped. The root `CLAUDE.md` still says *"Design only... do not build the app yet"* — that instruction is superseded; the app has been built. These files are kept for the record of how the scope narrowed from "everything we could imagine" to "the three flows we could actually ship well in the time available" (see `PROJECT_SPEC.md` for that narrowing, decision by decision), not because they describe the current app.
 
 ## How Codex was used in this build
 
