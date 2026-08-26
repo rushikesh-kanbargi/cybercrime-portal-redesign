@@ -130,6 +130,23 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
       return false;
     }
   });
+  // §28.2 failure case #8 — private-browsing/storage-disabled Safari often
+  // still exposes `window.localStorage` but throws on the first real write,
+  // not on access. A read-only existence check misses that; a real
+  // write-then-remove probe is the only reliable test. Lazy useState init
+  // (same pattern as showResumeBanner above) runs it once, synchronously,
+  // before the draft-saving effect ever tries for real.
+  const [storageUnavailable] = React.useState(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      const probeKey = "cc-storage-probe";
+      window.localStorage.setItem(probeKey, "1");
+      window.localStorage.removeItem(probeKey);
+      return false;
+    } catch {
+      return true;
+    }
+  });
   const [errors, setErrors] = React.useState<Record<string, string>>({});
   // §16.3 #8 — focus moves to the step heading on step change, and to the
   // error summary when validation fails, instead of leaving focus stranded
@@ -473,6 +490,12 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
             </div>
           </AlertDescription>
         </Alert>
+      )}
+
+      {storageUnavailable && step === "narrate" && (
+        <p className="text-sm text-muted-foreground" role="status">
+          {t("storageUnavailable")}
+        </p>
       )}
 
       {step !== "done" && (
