@@ -17,8 +17,11 @@ import {
 } from "lucide-react";
 import { ReportFlowIllustration } from "@/components/illustrations/report-flow";
 import { PageIcon } from "@/components/illustrations/page-icon";
+import { StepGlyph } from "@/components/illustrations/step-glyph";
 import { LiveActivity } from "@/components/chrome/live-activity";
 import { ScrollReveal } from "@/components/motion/scroll-reveal";
+import { HeroEntrance, HeroEntranceItem } from "@/components/motion/hero-entrance";
+import { Press } from "@/components/motion/press";
 
 // §9.2 / §25.2 — the home is an intent-first entry point, not a category
 // dropdown: "what happened to you?", not "which programme owns this?".
@@ -44,33 +47,45 @@ export default async function Home() {
   return (
     <div className="flex flex-1 flex-col gap-24 overflow-x-hidden pb-24 sm:gap-32">
       <div className="mx-auto grid w-full max-w-5xl gap-10 px-4 pt-16 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-10">
-        <div className="animate-enter flex flex-col gap-6">
-          <span className="inline-flex w-fit items-center gap-2 rounded-full border border-primary/20 bg-primary/8 px-3 py-1 text-[11px] font-medium tracking-[0.08em] text-accent-foreground uppercase">
-            <span className="size-1.5 rounded-full bg-primary" />
-            {t("heroEyebrow")}
-          </span>
+        <HeroEntrance className="flex flex-col gap-6">
+          <HeroEntranceItem>
+            <span className="inline-flex w-fit items-center gap-2 rounded-full border border-primary/20 bg-primary/8 px-3 py-1 text-[11px] font-medium tracking-[0.08em] text-accent-foreground uppercase">
+              <span className="size-1.5 rounded-full bg-primary" />
+              {t("heroEyebrow")}
+            </span>
+          </HeroEntranceItem>
 
-          <h1 className="text-[clamp(2.5rem,5vw,4rem)] leading-[1.08] font-semibold tracking-tight text-balance text-foreground">
-            {t("title")}
-          </h1>
-          <p className="max-w-[60ch] text-lg text-muted-foreground">{t("subtitle")}</p>
+          <HeroEntranceItem>
+            <h1 className="text-[clamp(2.5rem,5vw,4rem)] leading-[1.08] font-semibold tracking-tight text-balance text-foreground">
+              {t("title")}
+            </h1>
+          </HeroEntranceItem>
 
-          <ul className="flex flex-wrap gap-x-6 gap-y-2">
-            {(t.raw("trust") as Array<{ label: string }>).map((item) => (
-              <li key={item.label} className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                <CircleCheck className="size-4 shrink-0 text-primary" aria-hidden="true" />
-                {item.label}
-              </li>
-            ))}
-          </ul>
-        </div>
+          <HeroEntranceItem>
+            <p className="max-w-[60ch] text-lg text-muted-foreground">{t("subtitle")}</p>
+          </HeroEntranceItem>
 
-        <div className="animate-enter h-72 sm:h-80 lg:h-96">
-          <ReportFlowIllustration
-            reportLabel={t("hero.reportLabel")}
-            protectedLabel={t("hero.protectedLabel")}
-          />
-        </div>
+          <HeroEntranceItem>
+            <ul className="flex flex-wrap gap-x-6 gap-y-2">
+              {(t.raw("trust") as Array<{ label: string }>).map((item) => (
+                <li key={item.label} className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                  <CircleCheck className="size-4 shrink-0 text-primary" aria-hidden="true" />
+                  {item.label}
+                </li>
+              ))}
+            </ul>
+          </HeroEntranceItem>
+        </HeroEntrance>
+
+        <HeroEntrance className="h-72 sm:h-80 lg:h-96">
+          <HeroEntranceItem className="h-full">
+            <ReportFlowIllustration
+              reportLabel={t("hero.reportLabel")}
+              reviewingLabel={t("hero.reviewingLabel")}
+              protectedLabel={t("hero.protectedLabel")}
+            />
+          </HeroEntranceItem>
+        </HeroEntrance>
       </div>
 
       {/* the flagship CTA — "double-bezel" nested card: an outer tinted
@@ -89,15 +104,17 @@ export default async function Home() {
                 <p className="text-sm text-muted-foreground">{t("moneyCard.body")}</p>
               </div>
             </div>
-            <Button asChild size="lg" className="group/button w-full sm:w-fit">
-              <Link href="/report/money">
-                {t("moneyCard.cta")}
-                <ArrowRight
-                  className="size-4 transition-transform duration-200 group-hover/button:translate-x-0.5"
-                  aria-hidden="true"
-                />
-              </Link>
-            </Button>
+            <Press className="w-full sm:w-fit" lift={3} scale={1.02}>
+              <Button asChild size="lg" className="group/button w-full sm:w-fit">
+                <Link href="/report/money">
+                  {t("moneyCard.cta")}
+                  <ArrowRight
+                    className="size-4 transition-transform duration-200 group-hover/button:translate-x-0.5"
+                    aria-hidden="true"
+                  />
+                </Link>
+              </Button>
+            </Press>
           </div>
         </div>
 
@@ -132,18 +149,17 @@ export default async function Home() {
           {howItWorksSteps.map((step, i) => {
             const Icon = howItWorksIcons[i];
             return (
-              <li
-                key={step.title}
-                className={`relative flex flex-col gap-3 rounded-2xl border border-border bg-card p-6 transition-[box-shadow,transform] duration-200 ease-[var(--ease-feedback)] [@media(hover:hover)]:hover:-translate-y-1 [@media(hover:hover)]:hover:shadow-lg ${
-                  i === 0 ? "lg:col-span-2 lg:row-span-1" : ""
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <PageIcon icon={Icon} tone={i % 2 === 0 ? "primary" : "gold"} />
-                  <span className="font-mono text-sm text-muted-foreground">{`0${i + 1}`}</span>
-                </div>
-                <h3 className="text-lg font-medium text-foreground">{step.title}</h3>
-                <p className="text-sm text-muted-foreground">{step.body}</p>
+              <li key={step.title} className={i === 0 ? "lg:col-span-2 lg:row-span-1" : ""}>
+                <Press className="h-full">
+                  <div className="flex h-full flex-col gap-3 rounded-2xl border border-border bg-card p-6 transition-shadow duration-200 ease-[var(--ease-feedback)] hover:shadow-lg">
+                    <div className="flex items-center gap-3">
+                      <StepGlyph icon={Icon} index={i} tone={i % 2 === 0 ? "primary" : "gold"} />
+                      <span className="font-mono text-sm text-muted-foreground">{`0${i + 1}`}</span>
+                    </div>
+                    <h3 className="text-lg font-medium text-foreground">{step.title}</h3>
+                    <p className="text-sm text-muted-foreground">{step.body}</p>
+                  </div>
+                </Press>
               </li>
             );
           })}
@@ -160,14 +176,13 @@ export default async function Home() {
           {trustSectionItems.map((item, i) => {
             const Icon = trustIcons[i];
             return (
-              <div
-                key={item.title}
-                className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-6 transition-[box-shadow,transform] duration-200 ease-[var(--ease-feedback)] [@media(hover:hover)]:hover:-translate-y-1 [@media(hover:hover)]:hover:shadow-lg"
-              >
-                <PageIcon icon={Icon} tone={i === 1 ? "gold" : "primary"} />
-                <h3 className="text-lg font-medium text-foreground">{item.title}</h3>
-                <p className="text-sm text-muted-foreground">{item.body}</p>
-              </div>
+              <Press key={item.title}>
+                <div className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-6 transition-shadow duration-200 ease-[var(--ease-feedback)] hover:shadow-lg">
+                  <PageIcon icon={Icon} tone={i === 1 ? "gold" : "primary"} />
+                  <h3 className="text-lg font-medium text-foreground">{item.title}</h3>
+                  <p className="text-sm text-muted-foreground">{item.body}</p>
+                </div>
+              </Press>
             );
           })}
         </div>
@@ -188,18 +203,22 @@ export default async function Home() {
                 <Link
                   key={item.title}
                   href={learnMoreHrefs[i]}
-                  className="group flex flex-col gap-3 rounded-2xl border border-border bg-card p-6 transition-[box-shadow,transform] duration-200 ease-[var(--ease-feedback)] [@media(hover:hover)]:hover:-translate-y-1 [@media(hover:hover)]:hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                  className="group block rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                 >
-                  <PageIcon icon={Icon} tone={i === 0 ? "gold" : "primary"} />
-                  <h3 className="text-lg font-medium text-foreground">{item.title}</h3>
-                  <p className="text-sm text-muted-foreground">{item.body}</p>
-                  <span className="mt-1 inline-flex items-center gap-1 text-sm font-medium text-primary">
-                    {item.cta}
-                    <ArrowRight
-                      className="size-3.5 transition-transform duration-200 group-hover:translate-x-0.5"
-                      aria-hidden="true"
-                    />
-                  </span>
+                  <Press>
+                    <div className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-6 transition-shadow duration-200 ease-[var(--ease-feedback)] group-hover:shadow-lg">
+                      <PageIcon icon={Icon} tone={i === 0 ? "gold" : "primary"} />
+                      <h3 className="text-lg font-medium text-foreground">{item.title}</h3>
+                      <p className="text-sm text-muted-foreground">{item.body}</p>
+                      <span className="mt-1 inline-flex items-center gap-1 text-sm font-medium text-primary">
+                        {item.cta}
+                        <ArrowRight
+                          className="size-3.5 transition-transform duration-200 group-hover:translate-x-0.5"
+                          aria-hidden="true"
+                        />
+                      </span>
+                    </div>
+                  </Press>
                 </Link>
               );
             },

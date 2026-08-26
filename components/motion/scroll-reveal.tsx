@@ -1,19 +1,34 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-// Real scroll-reveal, evaluated against ReactBits' "Animated Content" /
-// "Fade Content" components (mcp__reactbits__search_components) and rejected
-// as a straight install: both start the element with `className="invisible"`
-// and require the `gsap`/`ScrollTrigger` dependency (not currently installed)
-// — that pattern gates content behind JS, which fails a no-JS render, a
-// headless/SSR snapshot, or a background tab (exactly what CLAUDE.md's reveal
-// rule forbids). This is the same visual result (translate + fade + blur on
-// scroll-into-view) via the platform's own IntersectionObserver: zero new
-// dependency, and the element is laid out and visible by default — only an
-// [data-reveal="pending"] class ever hides it, added after mount, and
-// `prefers-reduced-motion` already neutralizes the transition globally.
+// D-new — real framer-motion `whileInView` replaces the hand-rolled
+// IntersectionObserver (D50 fixed a bug in that version: every section
+// defaulted to hidden until an observer callback fired, so most of the
+// homepage never rendered visibly). The fix's actual invariant carries over
+// unchanged, just re-implemented with the new dependency: content already on
+// screen at mount must NEVER depend on JS/an observer to be visible.
+//
+// How that invariant holds here: state defaults to "in-view". In that state
+// the element renders with `initial={false}` — framer-motion applies no
+// inline style at all for a variant that's never entered, so SSR/no-JS/a
+// failed hydration all just show the plain, fully visible DOM. Only content
+// genuinely below the fold at mount (checked in the effect below, exactly as
+// before) flips to "pending", which is the ONLY path that ever renders
+// `initial="hidden"` — and by then the check already ran client-side, so it
+// can only apply to content the user hasn't scrolled to yet.
+const variants: Variants = {
+  hidden: { opacity: 0, y: 28, filter: "blur(6px)" },
+  visible: (delaySeconds: number) => ({
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { type: "spring", stiffness: 90, damping: 20, mass: 0.6, delay: delaySeconds },
+  }),
+};
+
 export function ScrollReveal({
   children,
   className,
@@ -24,43 +39,31 @@ export function ScrollReveal({
   delayMs?: number;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  // Default to visible. Content already on screen at mount (which is most of
-  // this homepage's content, on most viewports) must never depend on a
-  // scroll event or an observer callback to appear — that was the actual bug:
-  // every section started hidden and stayed that way until an
-  // IntersectionObserver tick nobody could rely on. Only content genuinely
-  // BELOW the fold at mount gets pre-hidden, then revealed on scroll-into-view.
   const [state, setState] = useState<"pending" | "in-view">("in-view");
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
     const el = ref.current;
-    if (!el || typeof IntersectionObserver === "undefined") return;
+    if (!el || reduceMotion) return; // reduced motion: stay visible, no reveal
 
     const rect = el.getBoundingClientRect();
     const alreadyVisible = rect.top < window.innerHeight * 0.85;
     if (alreadyVisible) return; // stays "in-view", no animation needed
 
     setState("pending");
-    let timeoutId: ReturnType<typeof setTimeout> | undefined;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          timeoutId = setTimeout(() => setState("in-view"), delayMs);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.15, rootMargin: "0px 0px -10% 0px" },
-    );
-    observer.observe(el);
-    return () => {
-      observer.disconnect();
-      clearTimeout(timeoutId);
-    };
-  }, [delayMs]);
+  }, [reduceMotion]);
 
   return (
-    <div ref={ref} data-reveal={state} className={cn(className)}>
+    <motion.div
+      ref={ref}
+      className={cn(className)}
+      variants={variants}
+      custom={delayMs / 1000}
+      initial={state === "pending" ? "hidden" : false}
+      whileInView={state === "pending" ? "visible" : undefined}
+      viewport={{ once: true, amount: 0.15, margin: "0px 0px -10% 0px" }}
+    >
       {children}
-    </div>
+    </motion.div>
   );
 }
