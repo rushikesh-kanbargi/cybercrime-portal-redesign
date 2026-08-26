@@ -1,0 +1,50 @@
+[
+  {
+    "aadhaar_sim": "000012345678",
+    "name": "Sunita Deshpande",
+    "dob": "1958-03-14",
+    "mobile_sim": "+91 98765 43210",
+    "email_sim": "sunita@example.com",
+    "address_pincode": "411038"
+  },
+  {
+    "aadhaar_sim": "000023456789",
+    "name": "Rahul Verma",
+    "dob": "2010-11-02",
+    "mobile_sim": "+91 98765 43211",
+    "email_sim": "rahul@example.com",
+    "address_pincode": "560076"
+  },
+  {
+    "aadhaar_sim": "000034567890",
+    "name": "Priya Nair",
+    "dob": "1999-06-21",
+    "mobile_sim": "+91 98765 43212",
+    "email_sim": "priya@example.com",
+    "address_pincode": "682024"
+  },
+  {
+    "aadhaar_sim": "000045678901",
+    "name": "Imran Qureshi",
+    "dob": "1987-01-09",
+    "mobile_sim": "+91 98765 43213",
+    "email_sim": "imran@example.com",
+    "address_pincode": "226010"
+  },
+  {
+    "aadhaar_sim": "000056789012",
+    "name": "Meera Iyer",
+    "dob": "1994-09-30",
+    "mobile_sim": "+91 98765 43214",
+    "email_sim": "meera@example.com",
+    "address_pincode": "600042"
+  },
+  {
+    "aadhaar_sim": "000067890123",
+    "name": "Devendra Patil",
+    "dob": "1976-04-17",
+    "mobile_sim": "+91 98765 43215",
+    "email_sim": "devendra@example.com",
+    "address_pincode": "440015"
+  }
+]

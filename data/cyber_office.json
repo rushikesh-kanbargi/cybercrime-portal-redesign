@@ -1,0 +1,76 @@
+[
+  {
+    "id": "off_01",
+    "name": "Cyber Crime Police Station, Pune City",
+    "address": "2nd Floor, Police Commissionerate, Camp",
+    "pincode": "411001",
+    "jurisdiction_pincodes": [
+      "411001",
+      "411038",
+      "411045"
+    ],
+    "phone": "+91 80 4710 1001",
+    "email": "cyber.pune@example.com"
+  },
+  {
+    "id": "off_02",
+    "name": "Cyber Crime Police Station, Bengaluru South",
+    "address": "CID Annexe, Palace Road",
+    "pincode": "560001",
+    "jurisdiction_pincodes": [
+      "560001",
+      "560076",
+      "560103"
+    ],
+    "phone": "+91 80 4710 1002",
+    "email": "cyber.blr@example.com"
+  },
+  {
+    "id": "off_03",
+    "name": "Cyber Crime Police Station, Kochi City",
+    "address": "Commissioner's Office, Marine Drive",
+    "pincode": "682011",
+    "jurisdiction_pincodes": [
+      "682011",
+      "682024"
+    ],
+    "phone": "+91 80 4710 1003",
+    "email": "cyber.kochi@example.com"
+  },
+  {
+    "id": "off_04",
+    "name": "Cyber Crime Police Station, Lucknow",
+    "address": "Gomti Nagar Extension",
+    "pincode": "226010",
+    "jurisdiction_pincodes": [
+      "226010",
+      "226016"
+    ],
+    "phone": "+91 80 4710 1004",
+    "email": "cyber.lko@example.com"
+  },
+  {
+    "id": "off_05",
+    "name": "Cyber Crime Police Station, Chennai Central",
+    "address": "Vepery High Road",
+    "pincode": "600007",
+    "jurisdiction_pincodes": [
+      "600007",
+      "600042"
+    ],
+    "phone": "+91 80 4710 1005",
+    "email": "cyber.chn@example.com"
+  },
+  {
+    "id": "off_06",
+    "name": "Cyber Crime Police Station, Nagpur",
+    "address": "Civil Lines",
+    "pincode": "440001",
+    "jurisdiction_pincodes": [
+      "440001",
+      "440015"
+    ],
+    "phone": "+91 80 4710 1006",
+    "email": "cyber.ngp@example.com"
+  }
+]

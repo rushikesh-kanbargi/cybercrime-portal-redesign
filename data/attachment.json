@@ -1,0 +1,46 @@
+[
+  {
+    "complaint_id": "cmp_01",
+    "id": "att_01",
+    "filename": "bank-sms.png",
+    "mime": "image/png",
+    "capture_method": "screenshot",
+    "sha256": "9f2c41ab7e05d3ca8814bb60f7392ad1c04e6b95",
+    "scan_status": "clean",
+    "what_it_shows": "The debit SMS from the bank",
+    "uploaded_at": "2026-08-25T19:50:00+05:30"
+  },
+  {
+    "complaint_id": "cmp_02",
+    "id": "att_02",
+    "filename": "app-screen-recording.mp4",
+    "mime": "video/mp4",
+    "capture_method": "screen_recording",
+    "sha256": "9f2c41ab7e05d3ca8814bb60f7392ad1c04e6b95",
+    "scan_status": "clean",
+    "what_it_shows": "The fake profit dashboard, and the withdrawal being refused",
+    "uploaded_at": "2026-08-18T14:08:00+05:30"
+  },
+  {
+    "complaint_id": "cmp_06",
+    "id": "att_03",
+    "filename": "screenshots.pdf",
+    "mime": "application/pdf",
+    "capture_method": "file_picker",
+    "sha256": "9f2c41ab7e05d3ca8814bb60f7392ad1c04e6b95",
+    "scan_status": "clean",
+    "what_it_shows": "Six posts from the page",
+    "uploaded_at": "2026-08-19T21:38:00+05:30"
+  },
+  {
+    "complaint_id": "cmp_09",
+    "id": "att_04",
+    "filename": "ransom-note.exe",
+    "mime": "application/x-msdownload",
+    "capture_method": "file_picker",
+    "sha256": "9f2c41ab7e05d3ca8814bb60f7392ad1c04e6b95",
+    "scan_status": "quarantined",
+    "what_it_shows": "The dropper itself. Preserved for the forensic lab, never deleted.",
+    "uploaded_at": "2026-08-24T10:38:00+05:30"
+  }
+]

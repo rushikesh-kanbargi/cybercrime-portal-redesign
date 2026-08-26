@@ -1,0 +1,26 @@
+[
+  {
+    "complaint_id": "cmp_03",
+    "id": "tr_01",
+    "threat_type": "arrest",
+    "demand_amount_inr": 250000,
+    "deadline_at": "2026-08-22T13:00:00+05:30",
+    "contacted_known_contacts": false
+  },
+  {
+    "complaint_id": "cmp_07",
+    "id": "tr_02",
+    "threat_type": "expose_content",
+    "demand_amount_inr": 15000,
+    "deadline_at": "2026-08-26T20:00:00+05:30",
+    "contacted_known_contacts": true
+  },
+  {
+    "complaint_id": "cmp_09",
+    "id": "tr_03",
+    "threat_type": "expose_content",
+    "demand_amount_inr": 400000,
+    "deadline_at": "2026-08-28T00:00:00+05:30",
+    "contacted_known_contacts": false
+  }
+]
