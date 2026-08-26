@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { PageIcon } from "@/components/illustrations/page-icon";
 import { Scale, TriangleAlert } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 // D54 (§33) — real, honest informational page for "What is Unlawful
 // Content" from the Cyber Volunteers nav group. General legal categories
@@ -36,10 +37,15 @@ export default async function UnlawfulContentPage() {
       <div className="flex flex-col gap-4">
         <h2 className="text-xl font-semibold tracking-tight text-foreground">{t("categoriesTitle")}</h2>
         <div className="flex flex-col gap-4">
-          {categoriesItems.map((item) => (
+          {categoriesItems.map((item, i) => (
             <Card
               key={item.title}
-              className="transition-[box-shadow,transform] duration-200 ease-[var(--ease-feedback)] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:shadow-md"
+              className={cn(
+                "transition-[box-shadow,transform] duration-200 ease-[var(--ease-feedback)] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:shadow-md",
+                i % 2 === 0
+                  ? "border-primary/20 bg-gradient-to-br from-primary/6 via-card to-card"
+                  : "border-brand-gold/20 bg-gradient-to-br from-brand-gold/6 via-card to-card",
+              )}
             >
               <CardHeader>
                 <CardTitle className="text-base">{item.title}</CardTitle>
@@ -67,10 +73,15 @@ export default async function UnlawfulContentPage() {
       <div className="flex flex-col gap-4">
         <h2 className="text-xl font-semibold tracking-tight text-foreground">{t("whatToDoTitle")}</h2>
         <div className="flex flex-col gap-4">
-          {whatToDoItems.map((item) => (
+          {whatToDoItems.map((item, i) => (
             <Card
               key={item.title}
-              className="transition-[box-shadow,transform] duration-200 ease-[var(--ease-feedback)] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:shadow-md"
+              className={cn(
+                "transition-[box-shadow,transform] duration-200 ease-[var(--ease-feedback)] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:shadow-md",
+                i % 2 === 0
+                  ? "border-primary/20 bg-gradient-to-br from-primary/6 via-card to-card"
+                  : "border-brand-gold/20 bg-gradient-to-br from-brand-gold/6 via-card to-card",
+              )}
             >
               <CardHeader>
                 <CardTitle className="text-base">{item.title}</CardTitle>

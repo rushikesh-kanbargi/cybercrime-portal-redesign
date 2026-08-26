@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { ArrowRight, Phone, LifeBuoy } from "lucide-react";
 import { PageIcon } from "@/components/illustrations/page-icon";
+import { cn } from "@/lib/utils";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("help.meta");
@@ -33,7 +34,14 @@ export default async function JustHappenedPage() {
 
       <div className="flex flex-col gap-4">
         {steps.map((step, i) => (
-          <Card key={step.title}>
+          <Card
+            key={step.title}
+            className={cn(
+              i % 2 === 0
+                ? "border-primary/20 bg-gradient-to-br from-primary/6 via-card to-card"
+                : "border-brand-gold/20 bg-gradient-to-br from-brand-gold/6 via-card to-card",
+            )}
+          >
             <CardHeader>
               <CardTitle className="text-base">
                 {i + 1}. {step.title}
@@ -46,7 +54,7 @@ export default async function JustHappenedPage() {
         ))}
       </div>
 
-      <Card>
+      <Card className="border-2 border-brand-gold/25 bg-gradient-to-br from-brand-gold/8 to-transparent">
         <CardContent className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-col gap-1">
             <h2 className="text-lg font-medium text-foreground">{t("readyTitle")}</h2>

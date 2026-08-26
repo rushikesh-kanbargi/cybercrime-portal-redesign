@@ -34,9 +34,9 @@ export default async function ContactPage() {
       </a>
       <p className="-mt-4 text-sm text-muted-foreground">{t("helplineBody")}</p>
 
-      <Card className="transition-[box-shadow,transform] duration-200 ease-[var(--ease-feedback)] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:shadow-md">
+      <Card className="border-primary/20 bg-gradient-to-br from-primary/6 via-card to-card transition-[box-shadow,transform] duration-200 ease-[var(--ease-feedback)] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:shadow-md">
         <CardHeader className="flex flex-row items-start gap-3 space-y-0">
-          <PageIcon icon={Globe} />
+          <PageIcon icon={Globe} tone="primary" />
           <CardTitle className="text-base">{t("portalTitle")}</CardTitle>
         </CardHeader>
         <CardContent>
@@ -44,9 +44,9 @@ export default async function ContactPage() {
         </CardContent>
       </Card>
 
-      <Card className="transition-[box-shadow,transform] duration-200 ease-[var(--ease-feedback)] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:shadow-md">
+      <Card className="border-brand-gold/20 bg-gradient-to-br from-brand-gold/6 via-card to-card transition-[box-shadow,transform] duration-200 ease-[var(--ease-feedback)] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:shadow-md">
         <CardHeader className="flex flex-row items-start gap-3 space-y-0">
-          <PageIcon icon={ShieldQuestion} />
+          <PageIcon icon={ShieldQuestion} tone="gold" />
           <CardTitle className="text-base">{t("noDirectoryTitle")}</CardTitle>
         </CardHeader>
         <CardContent>
@@ -54,9 +54,9 @@ export default async function ContactPage() {
         </CardContent>
       </Card>
 
-      <Card className="transition-[box-shadow,transform] duration-200 ease-[var(--ease-feedback)] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:shadow-md">
+      <Card className="border-primary/20 bg-gradient-to-br from-primary/6 via-card to-card transition-[box-shadow,transform] duration-200 ease-[var(--ease-feedback)] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:shadow-md">
         <CardHeader className="flex flex-row items-start gap-3 space-y-0">
-          <PageIcon icon={Info} />
+          <PageIcon icon={Info} tone="primary" />
           <CardTitle className="text-base">{t("aboutThisPrototypeTitle")}</CardTitle>
         </CardHeader>
         <CardContent>

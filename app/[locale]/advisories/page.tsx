@@ -4,6 +4,7 @@ import { Link } from "@/i18n/navigation";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { PageIcon } from "@/components/illustrations/page-icon";
 import { Megaphone } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 // D54 (§33) — real, honest "Advisories" page from Learning Corner. General,
 // evergreen scam patterns only, no incident counts or dates, so nothing
@@ -31,10 +32,15 @@ export default async function AdvisoriesPage() {
       </div>
 
       <div className="flex flex-col gap-4">
-        {items.map((item) => (
+        {items.map((item, i) => (
           <Card
             key={item.title}
-            className="transition-[box-shadow,transform] duration-200 ease-[var(--ease-feedback)] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:shadow-md"
+            className={cn(
+              "transition-[box-shadow,transform] duration-200 ease-[var(--ease-feedback)] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:shadow-md",
+              i % 2 === 0
+                ? "border-primary/20 bg-gradient-to-br from-primary/6 via-card to-card"
+                : "border-brand-gold/20 bg-gradient-to-br from-brand-gold/6 via-card to-card",
+            )}
           >
             <CardHeader>
               <CardTitle className="text-base">{item.title}</CardTitle>

@@ -34,7 +34,11 @@ export default async function FaqPage() {
         <p className="text-lg text-muted-foreground">{t("subtitle")}</p>
       </div>
 
-      <Accordion type="single" collapsible className="rounded-2xl border border-border bg-card px-5 shadow-sm">
+      <Accordion
+        type="single"
+        collapsible
+        className="rounded-2xl border border-brand-gold/20 bg-gradient-to-br from-brand-gold/8 via-card to-card px-5 shadow-sm"
+      >
         {items.map((item, i) => (
           <AccordionItem key={item.question} value={`item-${i}`}>
             <AccordionTrigger>{item.question}</AccordionTrigger>

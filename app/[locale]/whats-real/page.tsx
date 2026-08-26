@@ -51,7 +51,7 @@ export default async function WhatsRealPage() {
         <p className="text-lg text-muted-foreground">{t.rich("intro", richStrong)}</p>
       </div>
 
-      <Card>
+      <Card className="border-primary/20 bg-gradient-to-br from-primary/8 via-card to-card">
         <CardHeader>
           <CardTitle>{t("keyFactTitle")}</CardTitle>
         </CardHeader>
@@ -93,7 +93,7 @@ export default async function WhatsRealPage() {
         <h2 className="text-xl font-semibold tracking-tight text-foreground">{t("whyNotTitle")}</h2>
         <p className="text-sm text-muted-foreground">{t.rich("whyNotIntro", richEm)}</p>
 
-        <Card>
+        <Card className="border-primary/20 bg-gradient-to-br from-primary/6 via-card to-card">
           <CardHeader>
             <CardTitle className="text-base">{t("aadhaar.title")}</CardTitle>
           </CardHeader>
@@ -102,7 +102,7 @@ export default async function WhatsRealPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-brand-gold/20 bg-gradient-to-br from-brand-gold/6 via-card to-card">
           <CardHeader>
             <CardTitle className="text-base">{t("pan.title")}</CardTitle>
           </CardHeader>
@@ -111,7 +111,7 @@ export default async function WhatsRealPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-primary/20 bg-gradient-to-br from-primary/6 via-card to-card">
           <CardHeader>
             <CardTitle className="text-base">{t("digilocker.title")}</CardTitle>
           </CardHeader>

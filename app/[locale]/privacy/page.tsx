@@ -30,7 +30,7 @@ export default async function PrivacyPage() {
         <p className="text-lg text-muted-foreground">{t("subtitle")}</p>
       </div>
 
-      <Card>
+      <Card className="border-primary/20 bg-gradient-to-br from-primary/8 via-card to-card">
         <CardHeader>
           <CardTitle>{t("honestTitle")}</CardTitle>
         </CardHeader>
@@ -109,7 +109,7 @@ export default async function PrivacyPage() {
 
       <Separator />
 
-      <Card>
+      <Card className="border-brand-gold/20 bg-gradient-to-br from-brand-gold/8 via-card to-card">
         <CardHeader>
           <CardTitle>{t("dpdpTitle")}</CardTitle>
           <CardDescription>{t("dpdpDescription")}</CardDescription>

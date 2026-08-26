@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { PageIcon } from "@/components/illustrations/page-icon";
 import { Accessibility } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("accessibility.meta");
@@ -26,7 +27,7 @@ export default async function AccessibilityPage() {
         <p className="text-lg text-muted-foreground">{t("subtitle")}</p>
       </div>
 
-      <Card>
+      <Card className="border-primary/20 bg-gradient-to-br from-primary/8 via-card to-card">
         <CardHeader>
           <CardTitle>{t("targetTitle")}</CardTitle>
         </CardHeader>
@@ -44,8 +45,15 @@ export default async function AccessibilityPage() {
 
       <div className="flex flex-col gap-4">
         <h2 className="text-xl font-semibold tracking-tight text-foreground">{t("implementedTitle")}</h2>
-        {implemented.map((item) => (
-          <Card key={item.title}>
+        {implemented.map((item, i) => (
+          <Card
+            key={item.title}
+            className={cn(
+              i % 2 === 0
+                ? "border-primary/20 bg-gradient-to-br from-primary/6 via-card to-card"
+                : "border-brand-gold/20 bg-gradient-to-br from-brand-gold/6 via-card to-card",
+            )}
+          >
             <CardHeader>
               <CardTitle className="text-base">{item.title}</CardTitle>
             </CardHeader>

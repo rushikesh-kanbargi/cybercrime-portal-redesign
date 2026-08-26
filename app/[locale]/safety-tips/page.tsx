@@ -6,6 +6,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { PageIcon } from "@/components/illustrations/page-icon";
 import { ShieldCheck, LifeBuoy, ArrowRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("safetyTips.meta");
@@ -30,10 +31,15 @@ export default async function SafetyTipsPage() {
           {t("beforeItHappens.title")}
         </h2>
         <div className="flex flex-col gap-4">
-          {beforeItems.map((item) => (
+          {beforeItems.map((item, i) => (
             <Card
               key={item.title}
-              className="transition-[box-shadow,transform] duration-200 ease-[var(--ease-feedback)] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:shadow-md"
+              className={cn(
+                "transition-[box-shadow,transform] duration-200 ease-[var(--ease-feedback)] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:shadow-md",
+                i % 2 === 0
+                  ? "border-primary/20 bg-gradient-to-br from-primary/6 via-card to-card"
+                  : "border-brand-gold/20 bg-gradient-to-br from-brand-gold/6 via-card to-card",
+              )}
             >
               <CardHeader>
                 <CardTitle className="text-base">{item.title}</CardTitle>
@@ -75,10 +81,15 @@ export default async function SafetyTipsPage() {
           {t("commonScamPatterns.title")}
         </h2>
         <div className="flex flex-col gap-4">
-          {patternItems.map((item) => (
+          {patternItems.map((item, i) => (
             <Card
               key={item.title}
-              className="transition-[box-shadow,transform] duration-200 ease-[var(--ease-feedback)] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:shadow-md"
+              className={cn(
+                "transition-[box-shadow,transform] duration-200 ease-[var(--ease-feedback)] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:shadow-md",
+                i % 2 === 0
+                  ? "border-primary/20 bg-gradient-to-br from-primary/6 via-card to-card"
+                  : "border-brand-gold/20 bg-gradient-to-br from-brand-gold/6 via-card to-card",
+              )}
             >
               <CardHeader>
                 <CardTitle className="text-base">{item.title}</CardTitle>
