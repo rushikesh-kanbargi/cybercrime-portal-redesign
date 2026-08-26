@@ -5,7 +5,8 @@
   },
   "progress": {
     "lastQuestion": "Last question",
-    "moreQuestions": "{count, plural, one {# more question} other {# more questions}}"
+    "moreQuestions": "{count, plural, one {# more question} other {# more questions}}",
+    "steps": ["Tell us", "Confirm", "Contact", "Evidence", "Review"]
   },
   "storageUnavailable": "We can't save your progress in this browser. Try to finish in one go.",
   "resumeBanner": {
@@ -62,6 +63,14 @@
     "mobileLabel": "Mobile number",
     "mobilePlaceholder": "e.g. 98765 43210",
     "mobileError": "Enter a valid mobile number.",
+    "mobileConsent": {
+      "whatLabel": "What we do with it",
+      "what": "Send your Complaint ID and status updates on this case.",
+      "whoLabel": "Who sees it",
+      "who": "The police unit your complaint is routed to. Nobody else.",
+      "requiredLabel": "Is it required?",
+      "required": "No. You still get your Complaint ID either way; this only adds SMS updates."
+    },
     "back": "Back",
     "continue": "Continue",
     "savedFromProfileTitle": "From your saved details",
@@ -85,7 +94,11 @@
     "dragPrompt": "Drag files here, or",
     "chooseFiles": "choose files",
     "removeFile": "Remove {name}",
-    "filesSelectedCount": "{count, plural, =0 {No files selected} one {# file selected} other {# files selected}}"
+    "filesSelectedCount": "{count, plural, =0 {No files selected} one {# file selected} other {# files selected}}",
+    "textFallbackLabel": "Nothing to upload? Paste the details instead",
+    "textFallbackHelp": "Message headers, phone numbers, UPI IDs, transaction references, links: anything you can copy but not screenshot. This gets added to your report.",
+    "textFallbackPlaceholder": "e.g. Received a call from +91 XXXXX XXXXX claiming to be my bank...",
+    "textFallbackNarrativeLabel": "Additional evidence (pasted by the citizen)"
   },
   "review": {
     "title": "Review",
@@ -99,6 +112,8 @@
     "contactLine": "You're in {district}, {state}. We'll reach you at {mobile}.",
     "evidenceNone": "No evidence attached. That's fine, it's optional.",
     "evidenceAttached": "{count, plural, one {# file} other {# files}} attached: {files}",
+    "evidenceTextOnly": "No files, but you pasted additional details. They'll be added to your report.",
+    "evidenceTextSuffix": " Plus pasted details.",
     "submitError": "Couldn't submit",
     "back": "Back",
     "submit": "Submit report",

@@ -16,14 +16,23 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { OtpInput } from "@/components/auth/otp-input";
 import { StatusTimeline, type TimelineStatus } from "@/components/tracking/status-timeline";
-import { Info } from "lucide-react";
+import { PageIcon } from "@/components/illustrations/page-icon";
+import { Info, ShieldCheck, Banknote, ShieldAlert, KeyRound, type LucideIcon } from "lucide-react";
 
-// Fallback for any category code without a translated label — the MVP only
-// ever produces ONLINE_FINANCIAL_FRAUD (locales/<lang>/track.json), so this
-// is a safety net, not the primary path.
+// Fallback for any category code without a translated label — a safety net
+// for a code this build doesn't know about, not the primary path.
 function humanizeCategory(code: string): string {
   return code.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
+
+// One entry per real, working report flow (money/harassment/hacked) — the
+// icon and translated label both key off the same categoryCode the
+// complaint was actually filed under.
+const CATEGORY_ICONS: Record<string, LucideIcon> = {
+  ONLINE_FINANCIAL_FRAUD: Banknote,
+  HARASSMENT: ShieldAlert,
+  ACCOUNT_COMPROMISE: KeyRound,
+};
 
 interface CaseData {
   complaint: {
@@ -158,8 +167,11 @@ export default function TrackCasePage({
       ) : null}
 
       {stage.name === "need-verification" || stage.name === "verifying" ? (
-        <Card>
+        <Card className="border-brand-gold/20 bg-gradient-to-br from-brand-gold/8 via-card to-card">
           <CardHeader>
+            <div className="mb-1">
+              <PageIcon icon={ShieldCheck} tone="gold" />
+            </div>
             <CardTitle>{t("case.verifyTitle")}</CardTitle>
             <CardDescription>{t("case.verifyDescription")}</CardDescription>
           </CardHeader>
@@ -208,12 +220,15 @@ export default function TrackCasePage({
 
       {stage.name === "timeline" ? (
         <>
-          <Card>
+          <Card className="border-primary/20 bg-gradient-to-br from-primary/8 via-card to-card">
             <CardHeader>
+              <div className="mb-1">
+                <PageIcon icon={CATEGORY_ICONS[stage.data.complaint.categoryCode] ?? Banknote} tone="primary" />
+              </div>
               <div className="flex flex-wrap items-center gap-2">
                 <CardTitle>
-                  {stage.data.complaint.categoryCode === "ONLINE_FINANCIAL_FRAUD"
-                    ? t("categoryLabels.ONLINE_FINANCIAL_FRAUD")
+                  {stage.data.complaint.categoryCode in CATEGORY_ICONS
+                    ? t(`categoryLabels.${stage.data.complaint.categoryCode}`)
                     : humanizeCategory(stage.data.complaint.categoryCode)}
                 </CardTitle>
                 {stage.data.complaint.isAnonymous ? (

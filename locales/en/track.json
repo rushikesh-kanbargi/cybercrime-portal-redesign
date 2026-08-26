@@ -4,7 +4,8 @@
     "description": "Enter the Complaint ID you were given when you reported. We'll send a verification code to the mobile number on file before showing any case details.",
     "idLabel": "Complaint ID",
     "idPlaceholder": "e.g. CYB2026AB12CD",
-    "continue": "Continue"
+    "continue": "Continue",
+    "stagesPreviewTitle": "What you'll see once you're verified"
   },
   "case": {
     "heading": "Complaint {publicId}",
@@ -66,6 +67,8 @@
     }
   },
   "categoryLabels": {
-    "ONLINE_FINANCIAL_FRAUD": "Online Financial Fraud"
+    "ONLINE_FINANCIAL_FRAUD": "Online Financial Fraud",
+    "HARASSMENT": "Threats, Harassment, or Blackmail",
+    "ACCOUNT_COMPROMISE": "Hacked Account"
   }
 }

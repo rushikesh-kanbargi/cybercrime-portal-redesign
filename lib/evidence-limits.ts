@@ -28,3 +28,11 @@ export function formatBytes(bytes: number): string {
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
+
+// Client-side pre-check mirroring the allow-list above — was duplicated
+// byte-for-byte across all three report wizards (money/harassment/hacked).
+export function isAcceptedEvidenceFile(file: File): boolean {
+  if (file.type in EVIDENCE_MIME_EXTENSIONS) return true;
+  const name = file.name.toLowerCase();
+  return [".jpg", ".jpeg", ".png", ".webp", ".pdf"].some((extension) => name.endsWith(extension));
+}

@@ -11,7 +11,20 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { Info, Phone, Copy, Download, Check, ShieldCheck, MessageSquareText } from "lucide-react";
+import {
+  Info,
+  Phone,
+  Copy,
+  Download,
+  Check,
+  ShieldCheck,
+  MessageSquareText,
+  FileCheck2,
+  MapPin,
+  Paperclip,
+  ClipboardCheck,
+  AlertTriangle,
+} from "lucide-react";
 import { PageIcon } from "@/components/illustrations/page-icon";
 import { cn } from "@/lib/utils";
 import { extractFacts, type ExtractedField } from "@/lib/extract";
@@ -20,12 +33,19 @@ import { INDIAN_STATES } from "@/lib/india-states";
 import { submitMoneyReport, confirmUpdatesOptIn, uploadEvidence } from "./actions";
 import { FileUpload } from "@/components/ui/file-upload";
 import { compressImageFile } from "@/lib/compress-image";
+import { StepProgress } from "@/components/tracking/step-progress";
+import { ConsentNotice } from "@/components/tracking/consent-notice";
+import { ErrorSummary } from "@/components/tracking/error-summary";
+import { ReviewLine } from "@/components/tracking/review-line";
+import { ActionChecklist } from "@/components/tracking/action-checklist";
+import { UpdatesOptIn } from "@/components/tracking/updates-optin";
+import { ConfirmationIllustration } from "@/components/illustrations/confirmation-illustration";
 import {
   EVIDENCE_ACCEPT,
   EVIDENCE_MAX_FILES,
   EVIDENCE_MAX_RAW_INPUT_BYTES,
-  EVIDENCE_MIME_EXTENSIONS,
   formatBytes,
+  isAcceptedEvidenceFile,
 } from "@/lib/evidence-limits";
 
 const DRAFT_KEY = "cc-money-draft-v1";
@@ -51,6 +71,12 @@ interface DraftState {
   state: string;
   district: string;
   mobile: string;
+  // IC3's pattern (report structured evidence as text when there's nothing
+  // to screenshot) — optional, alongside the file upload, never replacing
+  // it. Folded into the narrative at submit time (see handleSubmit) rather
+  // than a new DB column, since it's the same kind of free-text account of
+  // what happened as the narrative already is.
+  evidenceText: string;
   savedAt: number;
 }
 
@@ -77,6 +103,7 @@ function emptyDraft(): DraftState {
     state: "",
     district: "",
     mobile: "",
+    evidenceText: "",
     savedAt: Date.now(),
   };
 }
@@ -90,12 +117,6 @@ function readStoredDraft(): DraftState | null {
   } catch {
     return null;
   }
-}
-
-function isAcceptedEvidenceFile(file: File): boolean {
-  if (file.type in EVIDENCE_MIME_EXTENSIONS) return true;
-  const name = file.name.toLowerCase();
-  return [".jpg", ".jpeg", ".png", ".webp", ".pdf"].some((extension) => name.endsWith(extension));
 }
 
 // §17.3.5 — ₹ with Indian digit grouping (₹1,80,000, not ₹180,000).
@@ -232,7 +253,7 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
   function resumeDraft() {
     const stored = readStoredDraft();
     if (stored) {
-      setDraft(stored);
+      setDraft({ ...stored, evidenceText: stored.evidenceText ?? "" });
       setFactsInitialized(true);
       setAutofillFromProfile(false);
     }
@@ -374,8 +395,12 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
     setSubmitting(true);
     setSubmitError(null);
     try {
+      const pastedEvidence = draft.evidenceText.trim();
+      const narrative = pastedEvidence
+        ? `${draft.narrative.trim()}\n\n${t("evidence.textFallbackNarrativeLabel")}:\n${pastedEvidence}`
+        : draft.narrative.trim();
       const res = await submitMoneyReport({
-        narrative: draft.narrative.trim(),
+        narrative,
         occurredAt: new Date(draft.occurredAt),
         amountLost: Number(draft.amountLost),
         debitedInstrument: draft.debitedInstrument.trim() || undefined,
@@ -523,17 +548,42 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
         </p>
       )}
 
+      {/* Australia's ReportCyber pattern: bundle "what to do right now"
+          with the report itself, not only on the confirmation screen after
+          submitting. Same three real items as the done-step checklist
+          (reused, not duplicated content) — filing this report doesn't
+          replace calling the bank, and someone mid-crisis shouldn't have to
+          finish the whole flow before hearing that. */}
+      {step === "narrate" && (
+        <Card className="animate-enter border-warning/25 bg-gradient-to-br from-warning/8 via-card to-card">
+          <CardHeader>
+            <div className="mb-1">
+              <PageIcon icon={AlertTriangle} className="bg-warning/15 text-warning-foreground" />
+            </div>
+            <CardTitle className="text-base">{t("done.checklistTitle")}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ActionChecklist
+              items={[t("done.checklist1"), t("done.checklist2"), t("done.checklist3")]}
+            />
+          </CardContent>
+        </Card>
+      )}
+
       {step !== "done" && (
-        <p className="text-sm text-muted-foreground" aria-live="polite">
-          {remaining === 0 ? t("progress.lastQuestion") : t("progress.moreQuestions", { count: remaining })}
-        </p>
+        <div className="flex flex-col gap-2">
+          <StepProgress steps={t.raw("progress.steps") as string[]} currentIndex={stepIndex} />
+          <p className="text-sm text-muted-foreground" aria-live="polite">
+            {remaining === 0 ? t("progress.lastQuestion") : t("progress.moreQuestions", { count: remaining })}
+          </p>
+        </div>
       )}
 
       {step === "narrate" && (
-        <Card className="animate-enter">
+        <Card className="animate-enter border-primary/20 bg-gradient-to-br from-primary/8 via-card to-card">
           <CardHeader>
             <div className="mb-1">
-              <PageIcon icon={MessageSquareText} />
+              <PageIcon icon={MessageSquareText} tone="primary" />
             </div>
             <CardTitle as="h1" ref={stepHeadingRef} tabIndex={-1} className="outline-none focus-visible:ring-3 focus-visible:ring-ring/50 rounded-sm">
               {t("narrate.title")}
@@ -600,8 +650,11 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
       )}
 
       {step === "facts" && (
-        <Card className="animate-enter">
+        <Card className="animate-enter border-brand-gold/20 bg-gradient-to-br from-brand-gold/8 via-card to-card">
           <CardHeader>
+            <div className="mb-1">
+              <PageIcon icon={FileCheck2} tone="gold" />
+            </div>
             <CardTitle as="h1" ref={stepHeadingRef} tabIndex={-1} className="outline-none focus-visible:ring-3 focus-visible:ring-ring/50 rounded-sm">
               {t("facts.title")}
             </CardTitle>
@@ -717,8 +770,11 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
       )}
 
       {step === "contact" && (
-        <Card className="animate-enter">
+        <Card className="animate-enter border-primary/20 bg-gradient-to-br from-primary/8 via-card to-card">
           <CardHeader>
+            <div className="mb-1">
+              <PageIcon icon={MapPin} tone="primary" />
+            </div>
             <CardTitle as="h1" ref={stepHeadingRef} tabIndex={-1} className="outline-none focus-visible:ring-3 focus-visible:ring-ring/50 rounded-sm">
               {t("contact.title")}
             </CardTitle>
@@ -788,6 +844,14 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
                 aria-invalid={!!errors.mobile}
               />
               {errors.mobile && <p className="text-sm text-destructive">{errors.mobile}</p>}
+              <ConsentNotice
+                whatLabel={t("contact.mobileConsent.whatLabel")}
+                what={t("contact.mobileConsent.what")}
+                whoLabel={t("contact.mobileConsent.whoLabel")}
+                who={t("contact.mobileConsent.who")}
+                requiredLabel={t("contact.mobileConsent.requiredLabel")}
+                required={t("contact.mobileConsent.required")}
+              />
             </div>
 
             <div className="flex items-center justify-between gap-3">
@@ -801,8 +865,11 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
       )}
 
       {step === "evidence" && (
-        <Card className="animate-enter">
+        <Card className="animate-enter border-brand-gold/20 bg-gradient-to-br from-brand-gold/8 via-card to-card">
           <CardHeader>
+            <div className="mb-1">
+              <PageIcon icon={Paperclip} tone="gold" />
+            </div>
             <CardTitle as="h1" ref={stepHeadingRef} tabIndex={-1} className="outline-none focus-visible:ring-3 focus-visible:ring-ring/50 rounded-sm">
               {t("evidence.title")}
             </CardTitle>
@@ -825,6 +892,18 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
               filesSelectedAnnouncement={(count) => t("evidence.filesSelectedCount", { count })}
             />
             {evidenceError && <p className="text-sm text-destructive">{evidenceError}</p>}
+
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="evidence-text">{t("evidence.textFallbackLabel")}</Label>
+              <p className="text-sm text-muted-foreground">{t("evidence.textFallbackHelp")}</p>
+              <Textarea
+                id="evidence-text"
+                rows={4}
+                placeholder={t("evidence.textFallbackPlaceholder")}
+                value={draft.evidenceText}
+                onChange={(e) => setDraft((d) => ({ ...d, evidenceText: e.target.value }))}
+              />
+            </div>
 
             <Alert>
               <ShieldCheck />
@@ -850,8 +929,11 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
       )}
 
       {step === "review" && (
-        <Card className="animate-enter">
+        <Card className="animate-enter border-primary/20 bg-gradient-to-br from-primary/8 via-card to-card">
           <CardHeader>
+            <div className="mb-1">
+              <PageIcon icon={ClipboardCheck} tone="primary" />
+            </div>
             <CardTitle as="h1" ref={stepHeadingRef} tabIndex={-1} className="outline-none focus-visible:ring-3 focus-visible:ring-ring/50 rounded-sm">
               {t("review.title")}
             </CardTitle>
@@ -875,11 +957,13 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
             </ReviewLine>
             <ReviewLine onEdit={() => setStep("evidence")} editLabel={tCommon("actions.edit")}>
               {evidenceFiles.length === 0
-                ? t("review.evidenceNone")
+                ? draft.evidenceText.trim()
+                  ? t("review.evidenceTextOnly")
+                  : t("review.evidenceNone")
                 : t("review.evidenceAttached", {
                     count: evidenceFiles.length,
                     files: evidenceFiles.map((f) => f.name).join(", "),
-                  })}
+                  }) + (draft.evidenceText.trim() ? t("review.evidenceTextSuffix") : "")}
             </ReviewLine>
 
             {submitError && (
@@ -903,15 +987,19 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
 
       {step === "done" && result && (
         <div className="animate-enter flex flex-col gap-6">
-          <Card className="border-2 border-primary/15">
+          <Card className="border-2 border-success/25 bg-gradient-to-br from-success/8 via-card to-card">
             <CardHeader>
+              <ConfirmationIllustration />
+              <div className="mt-3 mb-1">
+                <PageIcon icon={ShieldCheck} className="bg-success/15 text-success" />
+              </div>
               <CardTitle as="h1" ref={stepHeadingRef} tabIndex={-1} className="outline-none focus-visible:ring-3 focus-visible:ring-ring/50 rounded-sm">
                 {t("done.idCardTitle")}
               </CardTitle>
               <CardDescription>{t("done.idCardDescription")}</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
-              <p className="rounded-lg border border-primary/20 bg-primary/5 px-4 py-7 text-center font-mono text-3xl font-semibold tracking-wide text-foreground select-all sm:text-4xl">
+              <p className="rounded-lg border border-success/25 bg-success/5 px-4 py-7 text-center font-mono text-3xl font-semibold tracking-wide text-foreground select-all sm:text-4xl">
                 {result.publicId}
               </p>
               <div className="flex flex-wrap gap-2">
@@ -939,16 +1027,17 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="border-warning/25 bg-gradient-to-br from-warning/8 via-card to-card">
             <CardHeader>
+              <div className="mb-1">
+                <PageIcon icon={AlertTriangle} className="bg-warning/15 text-warning-foreground" />
+              </div>
               <CardTitle>{t("done.checklistTitle")}</CardTitle>
             </CardHeader>
             <CardContent>
-              <ol className="flex flex-col gap-2 text-sm">
-                <li>1. {t("done.checklist1")}</li>
-                <li>2. {t("done.checklist2")}</li>
-                <li>3. {t("done.checklist3")}</li>
-              </ol>
+              <ActionChecklist
+                items={[t("done.checklist1"), t("done.checklist2"), t("done.checklist3")]}
+              />
             </CardContent>
           </Card>
 
@@ -961,60 +1050,19 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>{t("done.updatesTitle")}</CardTitle>
-              <CardDescription>{t("done.updatesDescription")}</CardDescription>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-4">
-              {otpStage === "confirmed" ? (
-                <Alert>
-                  <Check />
-                  <AlertTitle>{t("done.updatesLinkedTitle")}</AlertTitle>
-                  <AlertDescription>{t("done.updatesLinkedBody")}</AlertDescription>
-                </Alert>
-              ) : otpStage === "skipped" ? (
-                <p className="text-sm text-muted-foreground">{t("done.updatesSkipped")}</p>
-              ) : (
-                <>
-                  <div className="flex flex-col gap-2">
-                    <Label htmlFor="want-mobile">{t("done.mobileLabel")}</Label>
-                    <Input
-                      id="want-mobile"
-                      type="tel"
-                      inputMode="tel"
-                      value={wantMobile}
-                      onChange={(e) => setWantMobile(e.target.value)}
-                    />
-                  </div>
-                  <Alert>
-                    <Info />
-                    <AlertTitle>{t("done.demoCodeTitle", { code: DEMO_OTP_CODE })}</AlertTitle>
-                    <AlertDescription>{t("done.demoCodeBody")}</AlertDescription>
-                  </Alert>
-                  <div className="flex flex-col gap-2">
-                    <Label htmlFor="otp-code">{t("done.otpLabel")}</Label>
-                    <Input
-                      id="otp-code"
-                      inputMode="numeric"
-                      maxLength={6}
-                      value={otpCode}
-                      onChange={(e) => setOtpCode(e.target.value)}
-                    />
-                  </div>
-                  {otpError && <p className="text-sm text-destructive">{otpError}</p>}
-                  <div className="flex gap-2">
-                    <Button size="sm" onClick={handleConfirmOtp} disabled={otpSubmitting || otpCode.length === 0}>
-                      {otpSubmitting ? t("done.confirming") : t("done.confirm")}
-                    </Button>
-                    <Button size="sm" variant="ghost" onClick={() => setOtpStage("skipped")}>
-                      {t("done.skip")}
-                    </Button>
-                  </div>
-                </>
-              )}
-            </CardContent>
-          </Card>
+          <UpdatesOptIn
+            t={t}
+            otpStage={otpStage}
+            wantMobile={wantMobile}
+            onWantMobileChange={setWantMobile}
+            otpCode={otpCode}
+            onOtpCodeChange={setOtpCode}
+            otpError={otpError}
+            otpSubmitting={otpSubmitting}
+            onConfirm={handleConfirmOtp}
+            onSkip={() => setOtpStage("skipped")}
+            demoCode={DEMO_OTP_CODE}
+          />
 
           <Button variant="outline" className="min-h-11" onClick={() => router.push("/")}>
             {t("done.backHome")}
@@ -1031,81 +1079,6 @@ function FieldProvenance({ text }: { text: string }) {
     <p className="text-xs text-muted-foreground">
       {t("provenance", { text })}
     </p>
-  );
-}
-
-// §16.3 #11 — errors are text, not colour: an inline message per field plus
-// a summary at the top of the step, each entry linking to (and focusing)
-// its field. §16.3 #8 — the summary itself takes focus so a screen-reader
-// or keyboard user lands on it immediately after a failed "Continue".
-function ErrorSummary({
-  errors,
-  fieldIds,
-  title,
-  summaryRef,
-}: {
-  errors: Record<string, string>;
-  fieldIds: Record<string, string>;
-  title: string;
-  summaryRef: React.RefObject<HTMLDivElement | null>;
-}) {
-  const entries = Object.entries(errors);
-  if (entries.length === 0) return null;
-  return (
-    <div
-      ref={summaryRef}
-      tabIndex={-1}
-      role="alert"
-      className="rounded-lg border border-destructive/40 bg-destructive/5 p-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
-    >
-      <p className="text-sm font-semibold text-destructive">{title}</p>
-      <ul className="mt-2 flex flex-col gap-1">
-        {entries.map(([field, message]) => {
-          const id = fieldIds[field];
-          return (
-            <li key={field} className="text-sm">
-              {id ? (
-                <a
-                  href={`#${id}`}
-                  className="text-destructive underline underline-offset-2"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    document.getElementById(id)?.focus();
-                  }}
-                >
-                  {message}
-                </a>
-              ) : (
-                <span className="text-destructive">{message}</span>
-              )}
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  );
-}
-
-function ReviewLine({
-  children,
-  onEdit,
-  editLabel,
-}: {
-  children: React.ReactNode;
-  onEdit: () => void;
-  editLabel: string;
-}) {
-  return (
-    <div className="flex items-start justify-between gap-3 border-b border-border pb-3 last:border-0 last:pb-0">
-      <p className="text-sm text-foreground">{children}</p>
-      <button
-        type="button"
-        onClick={onEdit}
-        className="shrink-0 text-sm font-medium text-primary underline underline-offset-2 hover:no-underline"
-      >
-        {editLabel}
-      </button>
-    </div>
   );
 }
 

@@ -42,17 +42,18 @@ export function StatusTimeline({ statuses }: { statuses: TimelineStatus[] }) {
         return (
           <li key={`${status.code}-${status.occurredAt}`} className="flex gap-3">
             <div className="flex flex-col items-center pt-0.5">
-              <Icon
-                aria-hidden="true"
+              <span
                 className={cn(
-                  "size-5 shrink-0",
+                  "flex size-8 shrink-0 items-center justify-center rounded-full",
                   tone === "attention"
-                    ? "text-warning-foreground"
+                    ? "bg-warning/15 text-warning-foreground"
                     : tone === "done"
-                      ? "text-success"
-                      : "text-primary",
+                      ? "bg-success/15 text-success"
+                      : "bg-primary/10 text-primary",
                 )}
-              />
+              >
+                <Icon aria-hidden="true" className="size-4.5" />
+              </span>
               {index < statuses.length - 1 ? (
                 <div className="mt-1 w-px flex-1 bg-border" aria-hidden="true" />
               ) : null}

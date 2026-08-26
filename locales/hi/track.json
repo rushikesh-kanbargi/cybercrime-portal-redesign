@@ -4,7 +4,8 @@
     "description": "रिपोर्ट करते समय जो शिकायत आईडी आपको दी गई थी, वह दर्ज करें। मामले का विवरण दिखाने से पहले हम दर्ज मोबाइल नंबर पर एक वेरिफिकेशन कोड भेजेंगे।",
     "idLabel": "शिकायत आईडी",
     "idPlaceholder": "जैसे CYB2026AB12CD",
-    "continue": "आगे बढ़ें"
+    "continue": "आगे बढ़ें",
+    "stagesPreviewTitle": "सत्यापन के बाद आप यह देखेंगे"
   },
   "case": {
     "heading": "शिकायत {publicId}",
@@ -66,6 +67,8 @@
     }
   },
   "categoryLabels": {
-    "ONLINE_FINANCIAL_FRAUD": "ऑनलाइन वित्तीय धोखाधड़ी"
+    "ONLINE_FINANCIAL_FRAUD": "ऑनलाइन वित्तीय धोखाधड़ी",
+    "HARASSMENT": "धमकी, उत्पीड़न, या ब्लैकमेल",
+    "ACCOUNT_COMPROMISE": "हैक हुआ खाता"
   }
 }

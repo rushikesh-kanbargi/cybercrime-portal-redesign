@@ -5,7 +5,8 @@
   },
   "progress": {
     "lastQuestion": "आखिरी सवाल",
-    "moreQuestions": "{count, plural, one {# और सवाल बाकी है} other {# और सवाल बाकी हैं}}"
+    "moreQuestions": "{count, plural, one {# और सवाल बाकी है} other {# और सवाल बाकी हैं}}",
+    "steps": ["बताएं", "पुष्टि करें", "संपर्क", "सबूत", "समीक्षा"]
   },
   "storageUnavailable": "हम इस ब्राउज़र में आपकी प्रगति सुरक्षित नहीं रख सकते। कोशिश करें कि इसे एक ही बार में पूरा करें।",
   "resumeBanner": {
@@ -62,6 +63,14 @@
     "mobileLabel": "मोबाइल नंबर",
     "mobilePlaceholder": "जैसे 98765 43210",
     "mobileError": "एक सही मोबाइल नंबर दर्ज करें।",
+    "mobileConsent": {
+      "whatLabel": "हम इसका उपयोग किसलिए करते हैं",
+      "what": "आपकी शिकायत आईडी और इस केस पर स्टेटस अपडेट भेजने के लिए।",
+      "whoLabel": "इसे कौन देखता है",
+      "who": "जिस पुलिस यूनिट को आपकी शिकायत भेजी जाती है, वही। और कोई नहीं।",
+      "requiredLabel": "क्या यह ज़रूरी है?",
+      "required": "नहीं। आपको बिना इसके भी शिकायत आईडी मिलेगी; यह सिर्फ SMS अपडेट जोड़ता है।"
+    },
     "back": "पीछे",
     "continue": "आगे बढ़ें",
     "savedFromProfileTitle": "आपके सुरक्षित विवरण से",
@@ -85,7 +94,11 @@
     "dragPrompt": "फाइलें यहां खींचें, या",
     "chooseFiles": "फाइलें चुनें",
     "removeFile": "{name} हटाएं",
-    "filesSelectedCount": "{count, plural, =0 {कोई फाइल चयनित नहीं} other {# फाइलें चयनित}}"
+    "filesSelectedCount": "{count, plural, =0 {कोई फाइल चयनित नहीं} other {# फाइलें चयनित}}",
+    "textFallbackLabel": "अपलोड करने के लिए कुछ नहीं? इसके बजाय विवरण पेस्ट करें",
+    "textFallbackHelp": "मैसेज हेडर, फोन नंबर, UPI आईडी, ट्रांजेक्शन रेफरेंस, लिंक: जो भी आप कॉपी कर सकें पर स्क्रीनशॉट नहीं। यह आपकी रिपोर्ट में जोड़ दिया जाएगा।",
+    "textFallbackPlaceholder": "जैसे +91 XXXXX XXXXX से कॉल आया जो खुद को मेरा बैंक बता रहा था...",
+    "textFallbackNarrativeLabel": "अतिरिक्त सबूत (नागरिक द्वारा पेस्ट किया गया)"
   },
   "review": {
     "title": "समीक्षा करें",
@@ -99,6 +112,8 @@
     "contactLine": "आप {district}, {state} में हैं। हम आपसे {mobile} पर संपर्क करेंगे।",
     "evidenceNone": "कोई सबूत नहीं जोड़ा गया। कोई बात नहीं, यह वैकल्पिक है।",
     "evidenceAttached": "{count, plural, one {# फाइल} other {# फाइलें}} जोड़ी गईं: {files}",
+    "evidenceTextOnly": "कोई फाइल नहीं, लेकिन आपने अतिरिक्त विवरण पेस्ट किया है। यह आपकी रिपोर्ट में जोड़ दिया जाएगा।",
+    "evidenceTextSuffix": " साथ ही पेस्ट किया गया विवरण भी।",
     "submitError": "सबमिट नहीं हो सका",
     "back": "पीछे",
     "submit": "रिपोर्ट सबमिट करें",
