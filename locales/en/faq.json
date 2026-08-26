@@ -35,6 +35,10 @@
     {
       "question": "What if I don't have all the details, like a transaction ID?",
       "answerBody": "You can still file. Every field beyond the essentials is optional: describe what happened in your own words and add whatever details you do have. You can always come back and add more later using your Complaint ID."
+    },
+    {
+      "question": "I already called 1930. Do I still need to file a report?",
+      "answerBody": "Yes, and soon. The government's own guidance says that after calling 1930, completing the online report is mandatory within 24 hours of the call, or the bank-freeze request behind it can lapse. The real portal doesn't display this deadline anywhere; this build is telling you now so you don't lose the window."
     }
   ],
   "footer": "Still unsure what's real in this build? <link>See the full breakdown</link>."
