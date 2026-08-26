@@ -10,9 +10,16 @@
   --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
+  /* awwwards-ui-ux rule 2 — one slow curve for one-time entrances, a
+     separate fast curve for hover/feedback state changes. Reusing the same
+     curve for both is what makes hover states feel sluggish. */
   --ease-standard: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-feedback: cubic-bezier(0.4, 0, 0.2, 1);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
+  --color-brand-gold: var(--brand-gold);
+  --color-brand-gold-foreground: var(--brand-gold-foreground);
+  --color-brand-gold-ink: var(--brand-gold-ink);
   --color-warning: var(--warning);
   --color-warning-foreground: var(--warning-foreground);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -54,21 +61,30 @@
 }
 
 :root {
-  /* §19.2 — institutional blue/teal, warm off-white surfaces, single accent */
+  /* D41 — visual-identity escalation: same institutional trust posture, but
+     a genuine two-hue system instead of a flat single accent. Primary moves
+     from a desaturated report-blue to a deeper, more saturated teal (same
+     lightness as before, so the audited contrast ratios against
+     foreground/background hold); --brand-gold is a NEW confident secondary
+     accent (warm, not red/alarm, not purple/indigo) used decoratively —
+     illustration fills, section eyebrows, dividers, chart highlights — never
+     as body text color, so it never needs its own contrast audit against body
+     copy. /report/money intentionally keeps using --primary/--destructive
+     only (see money-report-wizard.tsx) — --brand-gold does not appear there. */
   --background: oklch(0.985 0.006 80);
   --foreground: oklch(0.22 0.014 250);
   --card: oklch(0.99 0.004 80);
   --card-foreground: oklch(0.22 0.014 250);
   --popover: oklch(0.99 0.004 80);
   --popover-foreground: oklch(0.22 0.014 250);
-  --primary: oklch(0.4 0.07 233);
-  --primary-foreground: oklch(0.98 0.006 233);
+  --primary: oklch(0.4 0.11 202);
+  --primary-foreground: oklch(0.98 0.006 202);
   --secondary: oklch(0.95 0.008 80);
   --secondary-foreground: oklch(0.28 0.02 250);
   --muted: oklch(0.95 0.008 80);
   --muted-foreground: oklch(0.46 0.014 250);
-  --accent: oklch(0.93 0.02 233);
-  --accent-foreground: oklch(0.28 0.05 233);
+  --accent: oklch(0.93 0.03 202);
+  --accent-foreground: oklch(0.28 0.07 202);
   --destructive: oklch(0.55 0.2 25);
   --success: oklch(0.53 0.11 150);
   --success-foreground: oklch(0.98 0.01 150);
@@ -76,7 +92,14 @@
   --warning-foreground: oklch(0.28 0.05 80);
   --border: oklch(0.89 0.008 80);
   --input: oklch(0.89 0.008 80);
-  --ring: oklch(0.4 0.07 233);
+  --ring: oklch(0.4 0.11 202);
+  --brand-gold: oklch(0.72 0.15 55);
+  /* text-on-solid-gold — gold stays light-toned in both themes, so this is a
+     constant dark ink, not re-derived in .dark below */
+  --brand-gold-foreground: oklch(0.24 0.04 55);
+  /* text-on-soft-gold-tint (e.g. bg-brand-gold/15 over a card) — this one
+     DOES flip per theme, same role as --accent-foreground vs --accent */
+  --brand-gold-ink: oklch(0.32 0.09 55);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -85,12 +108,12 @@
   --radius: 0.5rem;
   --sidebar: oklch(0.985 0.006 80);
   --sidebar-foreground: oklch(0.22 0.014 250);
-  --sidebar-primary: oklch(0.4 0.07 233);
-  --sidebar-primary-foreground: oklch(0.98 0.006 233);
+  --sidebar-primary: oklch(0.4 0.11 202);
+  --sidebar-primary-foreground: oklch(0.98 0.006 202);
   --sidebar-accent: oklch(0.95 0.008 80);
   --sidebar-accent-foreground: oklch(0.28 0.02 250);
   --sidebar-border: oklch(0.89 0.008 80);
-  --sidebar-ring: oklch(0.4 0.07 233);
+  --sidebar-ring: oklch(0.4 0.11 202);
 }
 
 .dark {
@@ -100,14 +123,14 @@
   --card-foreground: oklch(0.95 0.006 80);
   --popover: oklch(0.23 0.014 250);
   --popover-foreground: oklch(0.95 0.006 80);
-  --primary: oklch(0.75 0.09 233);
-  --primary-foreground: oklch(0.18 0.03 233);
+  --primary: oklch(0.78 0.12 202);
+  --primary-foreground: oklch(0.18 0.04 202);
   --secondary: oklch(0.27 0.014 250);
   --secondary-foreground: oklch(0.95 0.006 80);
   --muted: oklch(0.27 0.014 250);
   --muted-foreground: oklch(0.68 0.012 250);
-  --accent: oklch(0.3 0.03 233);
-  --accent-foreground: oklch(0.9 0.02 233);
+  --accent: oklch(0.3 0.04 202);
+  --accent-foreground: oklch(0.9 0.03 202);
   --destructive: oklch(0.65 0.19 25);
   --success: oklch(0.65 0.13 150);
   --success-foreground: oklch(0.15 0.03 150);
@@ -115,7 +138,10 @@
   --warning-foreground: oklch(0.2 0.04 80);
   --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.75 0.09 233);
+  --ring: oklch(0.78 0.12 202);
+  --brand-gold: oklch(0.78 0.14 55);
+  --brand-gold-foreground: oklch(0.24 0.04 55);
+  --brand-gold-ink: oklch(0.86 0.1 55);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -166,6 +192,28 @@
 
 .animate-enter {
   animation: enter 380ms var(--ease-standard) both;
+}
+
+/* Scroll-reveal (components/motion/scroll-reveal.tsx): default state is
+   fully visible — the [data-reveal] attribute + .in-view class are only ever
+   ADDED by an IntersectionObserver, never used to hide content by default.
+   No JS / no IntersectionObserver support / a headless render all just show
+   the content already in place — nothing is gated behind the animation. */
+[data-reveal] {
+  transition:
+    opacity 600ms var(--ease-standard),
+    transform 600ms var(--ease-standard),
+    filter 600ms var(--ease-standard);
+}
+[data-reveal="pending"] {
+  opacity: 0;
+  transform: translateY(28px);
+  filter: blur(6px);
+}
+[data-reveal="in-view"] {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
 }
 
 @media (prefers-reduced-motion: reduce) {

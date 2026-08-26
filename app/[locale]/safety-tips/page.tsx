@@ -18,22 +18,22 @@ export default async function SafetyTipsPage() {
   const patternItems = t.raw("commonScamPatterns.items") as Array<{ title: string; body: string }>;
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-10 px-4 py-12">
-      <div className="animate-enter flex flex-col gap-3">
+    <div className="mx-auto flex w-full max-w-2xl flex-col gap-12 px-4 py-16">
+      <div className="animate-enter flex flex-col gap-4">
         <PageIcon icon={ShieldCheck} size="lg" />
-        <h1 className="text-3xl font-semibold tracking-tight text-foreground">{t("title")}</h1>
+        <h1 className="text-4xl font-semibold tracking-tight text-foreground">{t("title")}</h1>
         <p className="text-lg text-muted-foreground">{t("subtitle")}</p>
       </div>
 
       <div className="flex flex-col gap-4">
-        <h2 className="text-xl font-semibold tracking-tight text-foreground">
+        <h2 className="text-2xl font-semibold tracking-tight text-foreground">
           {t("beforeItHappens.title")}
         </h2>
         <div className="flex flex-col gap-4">
           {beforeItems.map((item) => (
             <Card
               key={item.title}
-              className="transition-shadow duration-200 hover:shadow-md"
+              className="transition-[box-shadow,transform] duration-200 ease-[var(--ease-feedback)] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:shadow-md"
             >
               <CardHeader>
                 <CardTitle className="text-base">{item.title}</CardTitle>
@@ -48,10 +48,10 @@ export default async function SafetyTipsPage() {
 
       <Separator />
 
-      <Card className="border-2 border-primary/15">
+      <Card className="border-2 border-brand-gold/25 bg-gradient-to-br from-brand-gold/8 to-transparent">
         <CardContent className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-3">
-            <PageIcon icon={LifeBuoy} />
+            <PageIcon icon={LifeBuoy} tone="gold" />
             <div className="flex flex-col gap-1">
               <h2 className="text-lg font-medium text-foreground">
                 {t("ifItJustHappened.title")}
@@ -71,14 +71,14 @@ export default async function SafetyTipsPage() {
       <Separator />
 
       <div className="flex flex-col gap-4">
-        <h2 className="text-xl font-semibold tracking-tight text-foreground">
+        <h2 className="text-2xl font-semibold tracking-tight text-foreground">
           {t("commonScamPatterns.title")}
         </h2>
         <div className="flex flex-col gap-4">
           {patternItems.map((item) => (
             <Card
               key={item.title}
-              className="transition-shadow duration-200 hover:shadow-md"
+              className="transition-[box-shadow,transform] duration-200 ease-[var(--ease-feedback)] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:shadow-md"
             >
               <CardHeader>
                 <CardTitle className="text-base">{item.title}</CardTitle>

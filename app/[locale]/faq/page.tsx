@@ -27,14 +27,14 @@ export default async function FaqPage() {
   const items = t.raw("items") as FaqItem[];
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 px-4 py-12">
-      <div className="animate-enter flex flex-col gap-3">
-        <PageIcon icon={CircleHelp} size="lg" />
-        <h1 className="text-3xl font-semibold tracking-tight text-foreground">{t("title")}</h1>
+    <div className="mx-auto flex w-full max-w-2xl flex-col gap-10 px-4 py-16">
+      <div className="animate-enter flex flex-col gap-4">
+        <PageIcon icon={CircleHelp} size="lg" tone="gold" />
+        <h1 className="text-4xl font-semibold tracking-tight text-foreground">{t("title")}</h1>
         <p className="text-lg text-muted-foreground">{t("subtitle")}</p>
       </div>
 
-      <Accordion type="single" collapsible className="rounded-xl border border-border bg-card px-5">
+      <Accordion type="single" collapsible className="rounded-2xl border border-border bg-card px-5 shadow-sm">
         {items.map((item, i) => (
           <AccordionItem key={item.question} value={`item-${i}`}>
             <AccordionTrigger>{item.question}</AccordionTrigger>
