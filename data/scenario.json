@@ -1,0 +1,393 @@
+[
+  {
+    "id": "A1",
+    "group": "A",
+    "group_name": "Harm to identity and reputation",
+    "title": "Cyber bullying, harassment or stalking",
+    "urgency": "P1-LIVE",
+    "first_question": "Is it still happening right now?",
+    "modules": [
+      "web_artifact",
+      "online_identity",
+      "communication_event"
+    ],
+    "money": "none"
+  },
+  {
+    "id": "A2",
+    "group": "A",
+    "group_name": "Harm to identity and reputation",
+    "title": "Someone made a fake account of me",
+    "urgency": "P1-LIVE",
+    "first_question": "Is the fake profile still up?",
+    "modules": [
+      "online_identity",
+      "web_artifact"
+    ],
+    "money": "none"
+  },
+  {
+    "id": "A3",
+    "group": "A",
+    "group_name": "Harm to identity and reputation",
+    "title": "Fake news or a defamatory post about me",
+    "urgency": "P1-LIVE",
+    "first_question": "Where is it posted, and how many have seen it?",
+    "modules": [
+      "web_artifact",
+      "online_identity"
+    ],
+    "money": "none"
+  },
+  {
+    "id": "A4",
+    "group": "A",
+    "group_name": "Harm to identity and reputation",
+    "title": "Morphed or obscene images of me",
+    "urgency": "P0-THREAT",
+    "first_question": "Is it public, or only threatened?",
+    "modules": [
+      "complaint_money",
+      "financial_transaction",
+      "web_artifact",
+      "threat_record"
+    ],
+    "money": "optional"
+  },
+  {
+    "id": "A5",
+    "group": "A",
+    "group_name": "Harm to identity and reputation",
+    "title": "My account was taken over",
+    "urgency": "P1-ACCESS",
+    "first_question": "Can you still log in?",
+    "modules": [
+      "online_identity",
+      "device_event"
+    ],
+    "money": "none"
+  },
+  {
+    "id": "B1",
+    "group": "B",
+    "group_name": "Threats and coercion",
+    "title": "Sextortion or blackmail",
+    "urgency": "P0-THREAT",
+    "first_question": "Is there a deadline they gave you?",
+    "modules": [
+      "complaint_money",
+      "financial_transaction",
+      "threat_record",
+      "communication_event",
+      "online_identity"
+    ],
+    "money": "optional"
+  },
+  {
+    "id": "B2",
+    "group": "B",
+    "group_name": "Threats and coercion",
+    "title": "Fake CBI or police call (digital arrest)",
+    "urgency": "P0-THREAT",
+    "first_question": "Are you on a call with them right now?",
+    "modules": [
+      "complaint_money",
+      "financial_transaction",
+      "communication_event",
+      "threat_record"
+    ],
+    "money": "optional"
+  },
+  {
+    "id": "B3",
+    "group": "B",
+    "group_name": "Threats and coercion",
+    "title": "Intimidating messages or emails",
+    "urgency": "P0-THREAT",
+    "first_question": "Do they know where you live?",
+    "modules": [
+      "complaint_money",
+      "financial_transaction",
+      "communication_event"
+    ],
+    "money": "optional"
+  },
+  {
+    "id": "C1",
+    "group": "C",
+    "group_name": "Money is gone",
+    "title": "Fraud call, then I transferred money",
+    "urgency": "P0-MONEY",
+    "first_question": "When did the money leave?",
+    "modules": [
+      "complaint_money",
+      "financial_transaction",
+      "communication_event"
+    ],
+    "money": "required"
+  },
+  {
+    "id": "C2",
+    "group": "C",
+    "group_name": "Money is gone",
+    "title": "UPI or wallet fraud",
+    "urgency": "P0-MONEY",
+    "first_question": "When did the money leave?",
+    "modules": [
+      "complaint_money",
+      "financial_transaction"
+    ],
+    "money": "required"
+  },
+  {
+    "id": "C3",
+    "group": "C",
+    "group_name": "Money is gone",
+    "title": "Card fraud or SIM swap",
+    "urgency": "P0-MONEY",
+    "first_question": "Is your SIM still working?",
+    "modules": [
+      "complaint_money",
+      "financial_transaction",
+      "device_event"
+    ],
+    "money": "required"
+  },
+  {
+    "id": "C4",
+    "group": "C",
+    "group_name": "Money is gone",
+    "title": "Net banking fraud",
+    "urgency": "P0-MONEY",
+    "first_question": "Do you still control the account?",
+    "modules": [
+      "complaint_money",
+      "financial_transaction",
+      "device_event"
+    ],
+    "money": "required"
+  },
+  {
+    "id": "C5",
+    "group": "C",
+    "group_name": "Money is gone",
+    "title": "Fake investment or trading app",
+    "urgency": "P0-MONEY",
+    "first_question": "How many payments did you make?",
+    "modules": [
+      "complaint_money",
+      "financial_transaction",
+      "web_artifact"
+    ],
+    "money": "required"
+  },
+  {
+    "id": "C6",
+    "group": "C",
+    "group_name": "Money is gone",
+    "title": "Loan app fraud and harassment",
+    "urgency": "P0-THREAT",
+    "first_question": "Are they contacting your contacts?",
+    "modules": [
+      "complaint_money",
+      "financial_transaction",
+      "communication_event",
+      "threat_record"
+    ],
+    "money": "optional"
+  },
+  {
+    "id": "C7",
+    "group": "C",
+    "group_name": "Money is gone",
+    "title": "Job fraud",
+    "urgency": "P2",
+    "first_question": "Did you pay a registration fee?",
+    "modules": [
+      "complaint_money",
+      "financial_transaction",
+      "communication_event"
+    ],
+    "money": "required"
+  },
+  {
+    "id": "C8",
+    "group": "C",
+    "group_name": "Money is gone",
+    "title": "Matrimonial fraud",
+    "urgency": "P2",
+    "first_question": "How long did it go on?",
+    "modules": [
+      "complaint_money",
+      "financial_transaction",
+      "online_identity"
+    ],
+    "money": "required"
+  },
+  {
+    "id": "C9",
+    "group": "C",
+    "group_name": "Money is gone",
+    "title": "Crypto fraud",
+    "urgency": "P0-MONEY",
+    "first_question": "Do you have the wallet address?",
+    "modules": [
+      "complaint_money",
+      "financial_transaction"
+    ],
+    "money": "required"
+  },
+  {
+    "id": "D1",
+    "group": "D",
+    "group_name": "Deception vectors",
+    "title": "Phishing link",
+    "urgency": "P1-ACCESS",
+    "first_question": "Did you enter anything on it?",
+    "modules": [
+      "complaint_money",
+      "financial_transaction",
+      "web_artifact",
+      "communication_event"
+    ],
+    "money": "optional"
+  },
+  {
+    "id": "D2",
+    "group": "D",
+    "group_name": "Deception vectors",
+    "title": "Fake website or app",
+    "urgency": "P1-LIVE",
+    "first_question": "Is it still online?",
+    "modules": [
+      "complaint_money",
+      "financial_transaction",
+      "web_artifact"
+    ],
+    "money": "optional"
+  },
+  {
+    "id": "D3",
+    "group": "D",
+    "group_name": "Deception vectors",
+    "title": "QR code scam",
+    "urgency": "P0-MONEY",
+    "first_question": "Did you scan to receive, or to pay?",
+    "modules": [
+      "complaint_money",
+      "financial_transaction",
+      "web_artifact"
+    ],
+    "money": "optional"
+  },
+  {
+    "id": "D4",
+    "group": "D",
+    "group_name": "Deception vectors",
+    "title": "Fake customer care number",
+    "urgency": "P0-MONEY",
+    "first_question": "Where did you find the number?",
+    "modules": [
+      "complaint_money",
+      "financial_transaction",
+      "communication_event"
+    ],
+    "money": "optional"
+  },
+  {
+    "id": "E1",
+    "group": "E",
+    "group_name": "Gaming",
+    "title": "In-game items or currency stolen",
+    "urgency": "P1-ACCESS",
+    "first_question": "Can you still log in to the game?",
+    "modules": [
+      "online_identity"
+    ],
+    "money": "none"
+  },
+  {
+    "id": "E2",
+    "group": "E",
+    "group_name": "Gaming",
+    "title": "Gaming account taken over",
+    "urgency": "P1-ACCESS",
+    "first_question": "Is the email on the account still yours?",
+    "modules": [
+      "online_identity",
+      "device_event"
+    ],
+    "money": "none"
+  },
+  {
+    "id": "E3",
+    "group": "E",
+    "group_name": "Gaming",
+    "title": "Paid for game currency, never received",
+    "urgency": "P2",
+    "first_question": "Who did you pay, and how?",
+    "modules": [
+      "complaint_money",
+      "financial_transaction",
+      "online_identity"
+    ],
+    "money": "optional"
+  },
+  {
+    "id": "E4",
+    "group": "E",
+    "group_name": "Gaming",
+    "title": "Grooming or bullying inside a game",
+    "urgency": "P0-CHILD",
+    "first_question": "How old is the person affected?",
+    "modules": [
+      "complaint_money",
+      "financial_transaction",
+      "communication_event",
+      "online_identity",
+      "web_artifact"
+    ],
+    "money": "optional"
+  },
+  {
+    "id": "F1",
+    "group": "F",
+    "group_name": "Device and data",
+    "title": "Hacking or unauthorised access",
+    "urgency": "P1-ACCESS",
+    "first_question": "Is the attacker still in?",
+    "modules": [
+      "device_event",
+      "online_identity"
+    ],
+    "money": "none"
+  },
+  {
+    "id": "F2",
+    "group": "F",
+    "group_name": "Device and data",
+    "title": "Ransomware",
+    "urgency": "P1-ACCESS",
+    "first_question": "Have you disconnected the machine?",
+    "modules": [
+      "complaint_money",
+      "financial_transaction",
+      "device_event",
+      "threat_record"
+    ],
+    "money": "optional"
+  },
+  {
+    "id": "F3",
+    "group": "F",
+    "group_name": "Device and data",
+    "title": "My data was leaked or breached",
+    "urgency": "P2",
+    "first_question": "What data, and where did you see it?",
+    "modules": [
+      "web_artifact",
+      "online_identity"
+    ],
+    "money": "none"
+  }
+]

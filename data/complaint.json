@@ -1,0 +1,133 @@
+[
+  {
+    "id": "cmp_01",
+    "reference_no": "CCR-SIM-2026-004182",
+    "account_id": "acc_01",
+    "reporter_relationship": "self",
+    "victim_age_band": "senior",
+    "victim_display_name": null,
+    "narrative_raw": "Got a call from someone saying he was from my bank and my account would be blocked today. He knew my name. He asked for the OTP and I gave it. Rs 80,000 went out on UPI around 7:40 pm.",
+    "scenario_ids": [
+      "C1",
+      "C2"
+    ],
+    "submitted_at": "2026-08-25T19:52:00+05:30",
+    "is_protected_identity": false
+  },
+  {
+    "id": "cmp_02",
+    "reference_no": "CCR-SIM-2026-003911",
+    "account_id": "acc_04",
+    "reporter_relationship": "self",
+    "victim_age_band": "adult",
+    "victim_display_name": null,
+    "narrative_raw": "I joined a WhatsApp group about share trading. The app showed my profit going up. I paid four times. When I tried to withdraw they asked for a tax payment and then removed me from the group.",
+    "scenario_ids": [
+      "C5"
+    ],
+    "submitted_at": "2026-08-18T14:10:00+05:30",
+    "is_protected_identity": false
+  },
+  {
+    "id": "cmp_03",
+    "reference_no": "CCR-SIM-2026-004055",
+    "account_id": "acc_06",
+    "reporter_relationship": "child_relative",
+    "victim_age_band": "senior",
+    "victim_display_name": "D. Patil",
+    "narrative_raw": "A video call came from people in police uniform saying a parcel in my father's name had drugs and he would be arrested. They kept him on the call for two hours. He transferred Rs 2,50,000.",
+    "scenario_ids": [
+      "B2",
+      "C1"
+    ],
+    "submitted_at": "2026-08-22T12:05:00+05:30",
+    "is_protected_identity": false
+  },
+  {
+    "id": "cmp_04",
+    "reference_no": "CCR-SIM-2026-004120",
+    "account_id": "acc_05",
+    "reporter_relationship": "self",
+    "victim_age_band": "adult",
+    "victim_display_name": null,
+    "narrative_raw": "My phone stopped getting signal in the evening. By morning Rs 62,000 had gone from my card. The bank said an OTP was used. I never received it.",
+    "scenario_ids": [
+      "C3"
+    ],
+    "submitted_at": "2026-08-24T08:30:00+05:30",
+    "is_protected_identity": false
+  },
+  {
+    "id": "cmp_05",
+    "reference_no": "CCR-SIM-2026-004160",
+    "account_id": "acc_03",
+    "reporter_relationship": "self",
+    "victim_age_band": "adult",
+    "victim_display_name": null,
+    "narrative_raw": "Someone wanted to buy my sofa on a marketplace. He sent a QR code and said scanning it would send me the money. I scanned it and entered my PIN and Rs 14,500 left my account instead.",
+    "scenario_ids": [
+      "D3"
+    ],
+    "submitted_at": "2026-08-24T16:20:00+05:30",
+    "is_protected_identity": false
+  },
+  {
+    "id": "cmp_06",
+    "reference_no": "CCR-SIM-2026-004044",
+    "account_id": "acc_02",
+    "reporter_relationship": "self",
+    "victim_age_band": "minor",
+    "victim_display_name": null,
+    "narrative_raw": "A group from my class made a page about me and keep posting edited photos. I do not want my parents to find out.",
+    "scenario_ids": [
+      "A1",
+      "A2"
+    ],
+    "submitted_at": "2026-08-19T21:40:00+05:30",
+    "is_protected_identity": true
+  },
+  {
+    "id": "cmp_07",
+    "reference_no": "CCR-SIM-2026-004071",
+    "account_id": "acc_03",
+    "reporter_relationship": "self",
+    "victim_age_band": "adult",
+    "victim_display_name": null,
+    "narrative_raw": "Someone morphed my photo and says they will post it unless I pay.",
+    "scenario_ids": [
+      "A4",
+      "B1"
+    ],
+    "submitted_at": "2026-08-21T23:05:00+05:30",
+    "is_protected_identity": true
+  },
+  {
+    "id": "cmp_08",
+    "reference_no": "CCR-SIM-2026-004098",
+    "account_id": "acc_02",
+    "reporter_relationship": "parent_guardian",
+    "victim_age_band": "minor",
+    "victim_display_name": "R. Verma",
+    "narrative_raw": "Someone got into my son's game account and moved his skins and coins to another account. He paid real money for those over two years.",
+    "scenario_ids": [
+      "E1",
+      "E2"
+    ],
+    "submitted_at": "2026-08-23T18:15:00+05:30",
+    "is_protected_identity": false
+  },
+  {
+    "id": "cmp_09",
+    "reference_no": "CCR-SIM-2026-004135",
+    "account_id": "acc_04",
+    "reporter_relationship": "self",
+    "victim_age_band": "adult",
+    "victim_display_name": null,
+    "narrative_raw": "Our office desktop and the backup drive are both locked. A note on screen asks for payment in crypto by Friday. The business has stopped.",
+    "scenario_ids": [
+      "F2"
+    ],
+    "submitted_at": "2026-08-24T10:40:00+05:30",
+    "is_protected_identity": false
+  }
+]

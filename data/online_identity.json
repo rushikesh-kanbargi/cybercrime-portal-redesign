@@ -1,0 +1,28 @@
+[
+  {
+    "complaint_id": "cmp_06",
+    "id": "oi_01",
+    "role": "impersonating_victim",
+    "platform": "SocialApp",
+    "handle_sim": "notpriya_real",
+    "profile_url_sim": "https://socialapp.example/notpriya_real",
+    "display_name_sim": "Priya N.",
+    "first_seen_at": "2026-08-19T00:00:00+05:30",
+    "is_active": true,
+    "asset_description": null,
+    "asset_value_inr": null
+  },
+  {
+    "complaint_id": "cmp_08",
+    "id": "oi_02",
+    "role": "victim_compromised",
+    "platform": "Skyforge Online",
+    "handle_sim": "notpriya_real",
+    "profile_url_sim": null,
+    "display_name_sim": null,
+    "first_seen_at": "2026-08-23T17:00:00+05:30",
+    "is_active": false,
+    "asset_description": "2 rare skins and roughly 12,000 in-game coins",
+    "asset_value_inr": 31000
+  }
+]

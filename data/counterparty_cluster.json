@@ -1,0 +1,61 @@
+[
+  {
+    "id": "cc_01",
+    "identifier_sim": "rk.traders@ybl",
+    "identifier_kind": "upi",
+    "complaint_ids": [
+      "cmp_01",
+      "cmp_05"
+    ],
+    "total_amount_inr": 3140000,
+    "victim_count": 42,
+    "first_seen_at": "2026-08-04T00:00:00+05:30",
+    "last_seen_at": "2026-08-25T19:42:00+05:30"
+  },
+  {
+    "id": "cc_02",
+    "identifier_sim": "gm.ventures@okaxis",
+    "identifier_kind": "upi",
+    "complaint_ids": [
+      "cmp_02"
+    ],
+    "total_amount_inr": 890000,
+    "victim_count": 17,
+    "first_seen_at": "2026-08-11T00:00:00+05:30",
+    "last_seen_at": "2026-08-18T09:22:00+05:30"
+  },
+  {
+    "id": "cc_03",
+    "identifier_sim": "+91 79045 11238",
+    "identifier_kind": "phone",
+    "complaint_ids": [
+      "cmp_01"
+    ],
+    "total_amount_inr": 0,
+    "victim_count": 96,
+    "first_seen_at": "2026-08-02T00:00:00+05:30",
+    "last_seen_at": "2026-08-25T19:31:00+05:30"
+  },
+  {
+    "id": "cc_04",
+    "identifier_sim": "https://quantx-pro.trade",
+    "identifier_kind": "url",
+    "complaint_ids": [
+      "cmp_02"
+    ],
+    "total_amount_inr": 1210000,
+    "victim_count": 23,
+    "first_seen_at": "2026-06-28T00:00:00+05:30",
+    "last_seen_at": "2026-08-18T09:22:00+05:30"
+  },
+  {
+    "id": "cc_05",
+    "identifier_sim": "0x7a3f…c19b (Ethereum)",
+    "identifier_kind": "crypto_wallet",
+    "complaint_ids": [],
+    "total_amount_inr": 760000,
+    "victim_count": 8,
+    "first_seen_at": "2026-07-19T00:00:00+05:30",
+    "last_seen_at": "2026-08-24T00:00:00+05:30"
+  }
+]

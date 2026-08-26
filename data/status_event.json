@@ -1,0 +1,282 @@
+[
+  {
+    "complaint_id": "cmp_01",
+    "id": "se_01a",
+    "status": "SUBMITTED",
+    "action_subtype": null,
+    "occurred_at": "2026-08-25T19:52:00+05:30",
+    "actor": "system"
+  },
+  {
+    "complaint_id": "cmp_01",
+    "id": "se_01b",
+    "status": "RECEIVED_BY_UNIT",
+    "action_subtype": null,
+    "occurred_at": "2026-08-25T19:53:00+05:30",
+    "actor": "system"
+  },
+  {
+    "complaint_id": "cmp_01",
+    "id": "se_01c",
+    "status": "ASSIGNED",
+    "action_subtype": null,
+    "occurred_at": "2026-08-25T20:01:00+05:30",
+    "actor": "officer"
+  },
+  {
+    "complaint_id": "cmp_01",
+    "id": "se_01d",
+    "status": "ACTION_TAKEN",
+    "action_subtype": "LIEN_REQUESTED",
+    "occurred_at": "2026-08-25T20:06:00+05:30",
+    "actor": "officer"
+  },
+  {
+    "complaint_id": "cmp_02",
+    "id": "se_02a",
+    "status": "SUBMITTED",
+    "action_subtype": null,
+    "occurred_at": "2026-08-18T14:10:00+05:30",
+    "actor": "system"
+  },
+  {
+    "complaint_id": "cmp_02",
+    "id": "se_02b",
+    "status": "RECEIVED_BY_UNIT",
+    "action_subtype": null,
+    "occurred_at": "2026-08-18T14:12:00+05:30",
+    "actor": "system"
+  },
+  {
+    "complaint_id": "cmp_02",
+    "id": "se_02c",
+    "status": "ASSIGNED",
+    "action_subtype": null,
+    "occurred_at": "2026-08-18T15:30:00+05:30",
+    "actor": "officer"
+  },
+  {
+    "complaint_id": "cmp_02",
+    "id": "se_02d",
+    "status": "ACTION_TAKEN",
+    "action_subtype": "LIEN_REQUESTED",
+    "occurred_at": "2026-08-18T17:02:00+05:30",
+    "actor": "officer"
+  },
+  {
+    "complaint_id": "cmp_02",
+    "id": "se_02e",
+    "status": "NEEDS_INFO",
+    "action_subtype": null,
+    "occurred_at": "2026-08-20T10:15:00+05:30",
+    "actor": "officer"
+  },
+  {
+    "complaint_id": "cmp_03",
+    "id": "se_03a",
+    "status": "SUBMITTED",
+    "action_subtype": null,
+    "occurred_at": "2026-08-22T12:05:00+05:30",
+    "actor": "system"
+  },
+  {
+    "complaint_id": "cmp_03",
+    "id": "se_03b",
+    "status": "RECEIVED_BY_UNIT",
+    "action_subtype": null,
+    "occurred_at": "2026-08-22T12:06:00+05:30",
+    "actor": "system"
+  },
+  {
+    "complaint_id": "cmp_03",
+    "id": "se_03c",
+    "status": "ASSIGNED",
+    "action_subtype": null,
+    "occurred_at": "2026-08-22T12:20:00+05:30",
+    "actor": "officer"
+  },
+  {
+    "complaint_id": "cmp_03",
+    "id": "se_03d",
+    "status": "ACTION_TAKEN",
+    "action_subtype": "LIEN_REQUESTED",
+    "occurred_at": "2026-08-22T12:44:00+05:30",
+    "actor": "officer"
+  },
+  {
+    "complaint_id": "cmp_03",
+    "id": "se_03e",
+    "status": "ACTION_TAKEN",
+    "action_subtype": "SUSPECT_TRACED",
+    "occurred_at": "2026-08-24T16:00:00+05:30",
+    "actor": "officer"
+  },
+  {
+    "complaint_id": "cmp_03",
+    "id": "se_03f",
+    "status": "FIR_REGISTERED",
+    "action_subtype": null,
+    "occurred_at": "2026-08-25T11:00:00+05:30",
+    "actor": "officer"
+  },
+  {
+    "complaint_id": "cmp_04",
+    "id": "se_04a",
+    "status": "SUBMITTED",
+    "action_subtype": null,
+    "occurred_at": "2026-08-24T08:30:00+05:30",
+    "actor": "system"
+  },
+  {
+    "complaint_id": "cmp_04",
+    "id": "se_04b",
+    "status": "RECEIVED_BY_UNIT",
+    "action_subtype": null,
+    "occurred_at": "2026-08-24T08:31:00+05:30",
+    "actor": "system"
+  },
+  {
+    "complaint_id": "cmp_04",
+    "id": "se_04c",
+    "status": "ASSIGNED",
+    "action_subtype": null,
+    "occurred_at": "2026-08-24T09:15:00+05:30",
+    "actor": "officer"
+  },
+  {
+    "complaint_id": "cmp_04",
+    "id": "se_04d",
+    "status": "ACTION_TAKEN",
+    "action_subtype": "LIEN_REQUESTED",
+    "occurred_at": "2026-08-24T09:40:00+05:30",
+    "actor": "officer"
+  },
+  {
+    "complaint_id": "cmp_05",
+    "id": "se_05a",
+    "status": "SUBMITTED",
+    "action_subtype": null,
+    "occurred_at": "2026-08-24T16:20:00+05:30",
+    "actor": "system"
+  },
+  {
+    "complaint_id": "cmp_05",
+    "id": "se_05b",
+    "status": "RECEIVED_BY_UNIT",
+    "action_subtype": null,
+    "occurred_at": "2026-08-24T16:21:00+05:30",
+    "actor": "system"
+  },
+  {
+    "complaint_id": "cmp_06",
+    "id": "se_06a",
+    "status": "SUBMITTED",
+    "action_subtype": null,
+    "occurred_at": "2026-08-19T21:40:00+05:30",
+    "actor": "system"
+  },
+  {
+    "complaint_id": "cmp_06",
+    "id": "se_06b",
+    "status": "RECEIVED_BY_UNIT",
+    "action_subtype": null,
+    "occurred_at": "2026-08-19T21:42:00+05:30",
+    "actor": "system"
+  },
+  {
+    "complaint_id": "cmp_06",
+    "id": "se_06c",
+    "status": "ASSIGNED",
+    "action_subtype": null,
+    "occurred_at": "2026-08-20T10:00:00+05:30",
+    "actor": "officer"
+  },
+  {
+    "complaint_id": "cmp_06",
+    "id": "se_06d",
+    "status": "ACTION_TAKEN",
+    "action_subtype": "TAKEDOWN_REQUESTED",
+    "occurred_at": "2026-08-20T12:30:00+05:30",
+    "actor": "officer"
+  },
+  {
+    "complaint_id": "cmp_07",
+    "id": "se_07a",
+    "status": "SUBMITTED",
+    "action_subtype": null,
+    "occurred_at": "2026-08-21T23:05:00+05:30",
+    "actor": "system"
+  },
+  {
+    "complaint_id": "cmp_07",
+    "id": "se_07b",
+    "status": "RECEIVED_BY_UNIT",
+    "action_subtype": null,
+    "occurred_at": "2026-08-21T23:06:00+05:30",
+    "actor": "system"
+  },
+  {
+    "complaint_id": "cmp_07",
+    "id": "se_07c",
+    "status": "ASSIGNED",
+    "action_subtype": null,
+    "occurred_at": "2026-08-22T09:00:00+05:30",
+    "actor": "officer"
+  },
+  {
+    "complaint_id": "cmp_08",
+    "id": "se_08a",
+    "status": "SUBMITTED",
+    "action_subtype": null,
+    "occurred_at": "2026-08-23T18:15:00+05:30",
+    "actor": "system"
+  },
+  {
+    "complaint_id": "cmp_08",
+    "id": "se_08b",
+    "status": "RECEIVED_BY_UNIT",
+    "action_subtype": null,
+    "occurred_at": "2026-08-23T18:20:00+05:30",
+    "actor": "system"
+  },
+  {
+    "complaint_id": "cmp_08",
+    "id": "se_08c",
+    "status": "ASSIGNED",
+    "action_subtype": null,
+    "occurred_at": "2026-08-24T11:00:00+05:30",
+    "actor": "officer"
+  },
+  {
+    "complaint_id": "cmp_09",
+    "id": "se_09a",
+    "status": "SUBMITTED",
+    "action_subtype": null,
+    "occurred_at": "2026-08-24T10:40:00+05:30",
+    "actor": "system"
+  },
+  {
+    "complaint_id": "cmp_09",
+    "id": "se_09b",
+    "status": "RECEIVED_BY_UNIT",
+    "action_subtype": null,
+    "occurred_at": "2026-08-24T10:41:00+05:30",
+    "actor": "system"
+  },
+  {
+    "complaint_id": "cmp_09",
+    "id": "se_09c",
+    "status": "ASSIGNED",
+    "action_subtype": null,
+    "occurred_at": "2026-08-24T12:00:00+05:30",
+    "actor": "officer"
+  },
+  {
+    "complaint_id": "cmp_09",
+    "id": "se_09d",
+    "status": "NEEDS_INFO",
+    "action_subtype": null,
+    "occurred_at": "2026-08-25T09:30:00+05:30",
+    "actor": "officer"
+  }
+]
