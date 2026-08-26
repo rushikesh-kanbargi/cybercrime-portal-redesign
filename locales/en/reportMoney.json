@@ -10,7 +10,7 @@
   "storageUnavailable": "We can't save your progress in this browser. Try to finish in one go.",
   "resumeBanner": {
     "title": "Continue where you left off?",
-    "body": "We saved a draft of a report you started earlier.",
+    "body": "We saved a draft of a report you started earlier at {savedAt}.",
     "continue": "Continue",
     "startOver": "Start over"
   },
@@ -75,6 +75,7 @@
     "helperText": "Images and PDFs, up to {maxSize} each, up to {maxFiles} files. Images are compressed on your device before upload.",
     "tooManyFiles": "You can attach up to {maxFiles} files.",
     "fileTooLarge": "“{name}” is too large (max {maxSize} per file).",
+    "unsupportedType": "“{name}” isn't an image or PDF. You can skip evidence and submit without it.",
     "scanNoticeTitle": "About the files you attach",
     "scanNoticeBody": "This is a hackathon prototype: files are checked and marked “simulated clean”, not scanned by a real anti-malware engine. Don't attach anything you wouldn't want stored on a demo system.",
     "back": "Back",

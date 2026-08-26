@@ -24,6 +24,7 @@ import {
   EVIDENCE_ACCEPT,
   EVIDENCE_MAX_FILES,
   EVIDENCE_MAX_RAW_INPUT_BYTES,
+  EVIDENCE_MIME_EXTENSIONS,
   formatBytes,
 } from "@/lib/evidence-limits";
 
@@ -80,6 +81,23 @@ function emptyDraft(): DraftState {
   };
 }
 
+function readStoredDraft(): DraftState | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(DRAFT_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw) as DraftState;
+  } catch {
+    return null;
+  }
+}
+
+function isAcceptedEvidenceFile(file: File): boolean {
+  if (file.type in EVIDENCE_MIME_EXTENSIONS) return true;
+  const name = file.name.toLowerCase();
+  return [".jpg", ".jpeg", ".png", ".webp", ".pdf"].some((extension) => name.endsWith(extension));
+}
+
 // §17.3.5 — ₹ with Indian digit grouping (₹1,80,000, not ₹180,000).
 // `en-IN` is about digit grouping, not translation, so it's correct even on
 // the Hindi page (verified: Intl.NumberFormat('en-IN', ...) produces the
@@ -119,23 +137,29 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
     () => !!(savedProfile?.state || savedProfile?.district),
   );
   const [factsInitialized, setFactsInitialized] = React.useState(false);
-  const [showResumeBanner, setShowResumeBanner] = React.useState(() => {
-    if (typeof window === "undefined") return false;
-    try {
-      const raw = window.localStorage.getItem(DRAFT_KEY);
-      if (!raw) return false;
-      const parsed: DraftState = JSON.parse(raw);
-      return parsed.narrative.trim().length > 0;
-    } catch {
-      return false;
+  // Both of these are synchronous, one-time reads of the environment (a
+  // stored draft, a storage write-then-remove probe) — computed via lazy
+  // useState initializers so the values are correct from the very first
+  // render, with no effect, no setState-in-effect lint violation, and no
+  // "has this been checked yet" race for the draft-saving effect below to
+  // guard against.
+  const [{ resumeSavedAt, showResumeBanner }, setResumeState] = React.useState<{
+    resumeSavedAt: number | null;
+    showResumeBanner: boolean;
+  }>(() => {
+    const stored = readStoredDraft();
+    if (stored?.narrative.trim()) {
+      return { resumeSavedAt: stored.savedAt, showResumeBanner: true };
     }
+    return { resumeSavedAt: null, showResumeBanner: false };
   });
+  function clearResumeSavedAt() {
+    setResumeState({ resumeSavedAt: null, showResumeBanner: false });
+  }
   // §28.2 failure case #8 — private-browsing/storage-disabled Safari often
   // still exposes `window.localStorage` but throws on the first real write,
   // not on access. A read-only existence check misses that; a real
-  // write-then-remove probe is the only reliable test. Lazy useState init
-  // (same pattern as showResumeBanner above) runs it once, synchronously,
-  // before the draft-saving effect ever tries for real.
+  // write-then-remove probe is the only reliable test.
   const [storageUnavailable] = React.useState(() => {
     if (typeof window === "undefined") return false;
     try {
@@ -190,33 +214,29 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
   const [otpStage, setOtpStage] = React.useState<"idle" | "sent" | "confirmed" | "skipped">("idle");
   const [otpError, setOtpError] = React.useState<string | null>(null);
   const [otpSubmitting, setOtpSubmitting] = React.useState(false);
+  const resumeSavedAtLabel = resumeSavedAt ? new Date(resumeSavedAt).toLocaleString(dateLocale) : "";
 
-  // Local-first draft, from the first keystroke (D16). Restore-on-load offer
-  // is computed via lazy useState above (SSR-safe, no effect needed). The
-  // key is not locale-scoped, so switching language mid-form (§17.3.3) keeps
-  // the draft intact.
+  // Local-first draft, from the first keystroke (D16). Saving is skipped
+  // while the resume banner is showing, so the initial empty draft doesn't
+  // overwrite a valid saved report before the citizen clicks "Continue".
   React.useEffect(() => {
+    if (showResumeBanner) return;
     if (step === "done") return;
     try {
       window.localStorage.setItem(DRAFT_KEY, JSON.stringify({ ...draft, savedAt: Date.now() }));
     } catch {
       // storage unavailable — nothing is lost that matters more than the flow continuing
     }
-  }, [draft, step]);
+  }, [draft, showResumeBanner, step]);
 
   function resumeDraft() {
-    try {
-      const raw = window.localStorage.getItem(DRAFT_KEY);
-      if (raw) {
-        const parsed: DraftState = JSON.parse(raw);
-        setDraft(parsed);
-        setFactsInitialized(true);
-        setAutofillFromProfile(false);
-      }
-    } catch {
-      // ignore
+    const stored = readStoredDraft();
+    if (stored) {
+      setDraft(stored);
+      setFactsInitialized(true);
+      setAutofillFromProfile(false);
     }
-    setShowResumeBanner(false);
+    clearResumeSavedAt();
   }
 
   function startOver() {
@@ -231,7 +251,7 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
     setDraft(base);
     setAutofillFromProfile(!!(savedProfile?.state || savedProfile?.district));
     setFactsInitialized(false);
-    setShowResumeBanner(false);
+    clearResumeSavedAt();
   }
 
   function dismissProfileAutofill() {
@@ -315,6 +335,11 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
     if (files.length > EVIDENCE_MAX_FILES) {
       setEvidenceError(t("evidence.tooManyFiles", { maxFiles: EVIDENCE_MAX_FILES }));
       files = files.slice(0, EVIDENCE_MAX_FILES);
+    }
+    const unsupported = files.find((f) => !isAcceptedEvidenceFile(f));
+    if (unsupported) {
+      setEvidenceError(t("evidence.unsupportedType", { name: unsupported.name }));
+      files = files.filter(isAcceptedEvidenceFile);
     }
     const oversized = files.find((f) => f.size > EVIDENCE_MAX_RAW_INPUT_BYTES);
     if (oversized) {
@@ -478,7 +503,7 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
           <AlertTitle>{t("resumeBanner.title")}</AlertTitle>
           <AlertDescription>
             <div className="flex flex-col gap-3">
-              <p>{t("resumeBanner.body")}</p>
+              <p>{t("resumeBanner.body", { savedAt: resumeSavedAtLabel })}</p>
               <div className="flex gap-2">
                 <Button size="sm" onClick={resumeDraft}>
                   {t("resumeBanner.continue")}
