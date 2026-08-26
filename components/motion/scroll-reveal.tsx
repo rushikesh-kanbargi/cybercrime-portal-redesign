@@ -24,14 +24,23 @@ export function ScrollReveal({
   delayMs?: number;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const [state, setState] = useState<"pending" | "in-view">("pending");
+  // Default to visible. Content already on screen at mount (which is most of
+  // this homepage's content, on most viewports) must never depend on a
+  // scroll event or an observer callback to appear — that was the actual bug:
+  // every section started hidden and stayed that way until an
+  // IntersectionObserver tick nobody could rely on. Only content genuinely
+  // BELOW the fold at mount gets pre-hidden, then revealed on scroll-into-view.
+  const [state, setState] = useState<"pending" | "in-view">("in-view");
 
   useEffect(() => {
     const el = ref.current;
-    if (!el || typeof IntersectionObserver === "undefined") {
-      setState("in-view");
-      return;
-    }
+    if (!el || typeof IntersectionObserver === "undefined") return;
+
+    const rect = el.getBoundingClientRect();
+    const alreadyVisible = rect.top < window.innerHeight * 0.85;
+    if (alreadyVisible) return; // stays "in-view", no animation needed
+
+    setState("pending");
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
     const observer = new IntersectionObserver(
       ([entry]) => {
