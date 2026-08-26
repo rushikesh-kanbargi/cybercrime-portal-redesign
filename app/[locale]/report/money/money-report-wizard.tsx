@@ -855,7 +855,7 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
 
       {step === "done" && result && (
         <div className="animate-enter flex flex-col gap-6">
-          <Card>
+          <Card className="border-2 border-primary/15">
             <CardHeader>
               <CardTitle as="h1" ref={stepHeadingRef} tabIndex={-1} className="outline-none focus-visible:ring-3 focus-visible:ring-ring/50 rounded-sm">
                 {t("done.idCardTitle")}
@@ -863,7 +863,7 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
               <CardDescription>{t("done.idCardDescription")}</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
-              <p className="rounded-lg border border-border bg-muted/40 px-4 py-6 text-center font-mono text-2xl font-semibold tracking-wide text-foreground select-all">
+              <p className="rounded-lg border border-primary/20 bg-primary/5 px-4 py-7 text-center font-mono text-3xl font-semibold tracking-wide text-foreground select-all sm:text-4xl">
                 {result.publicId}
               </p>
               <div className="flex flex-wrap gap-2">

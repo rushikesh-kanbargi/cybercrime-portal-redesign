@@ -1,6 +1,7 @@
 {
   "siteName": "Cybercrime Report & Track",
   "prototypeBanner": {
+    "label": "Prototype notice",
     "text": "Hackathon prototype, not an official government service.",
     "link": "What's real vs mocked"
   },

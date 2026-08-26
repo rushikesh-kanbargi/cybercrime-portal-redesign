@@ -32,7 +32,7 @@ export async function SiteFooter() {
             <p className="max-w-sm text-sm text-muted-foreground">{t("footer.tagline")}</p>
             <a
               href="tel:1930"
-              className="mt-1 inline-flex w-fit items-center gap-2 rounded-md border border-border bg-background px-3 py-2 text-sm font-medium text-foreground hover:border-primary/40 hover:text-primary"
+              className="mt-1 inline-flex w-fit items-center gap-2 rounded-md border border-border bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary/40 hover:text-primary"
             >
               <Phone className="size-3.5" aria-hidden="true" />
               {t("footer.callLabel")}
@@ -55,7 +55,7 @@ export async function SiteFooter() {
                   <li key={href}>
                     <Link
                       href={href}
-                      className="flex items-center gap-2 rounded-md px-2 py-1.5 -ml-2 text-sm text-muted-foreground hover:bg-muted hover:text-foreground"
+                      className="flex items-center gap-2 rounded-md px-2 py-1.5 -ml-2 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                     >
                       <Icon className="size-4 shrink-0 text-primary/70" aria-hidden="true" />
                       {t(`nav.resourcesItems.${key}`)}

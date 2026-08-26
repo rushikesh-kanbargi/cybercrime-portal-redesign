@@ -7,7 +7,11 @@ import { Link } from "@/i18n/navigation";
 export async function PrototypeBanner() {
   const t = await getTranslations("common");
   return (
-    <div className="bg-muted text-muted-foreground text-sm border-b border-border">
+    <div
+      role="region"
+      aria-label={t("prototypeBanner.label")}
+      className="bg-muted text-muted-foreground text-sm border-b border-border"
+    >
       <div className="mx-auto max-w-3xl px-4 py-1.5 text-center">
         {t("prototypeBanner.text")}{" "}
         <Link href="/whats-real" className="underline underline-offset-2 hover:text-foreground">

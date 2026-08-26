@@ -39,7 +39,7 @@ export default async function Home() {
     <div className="flex flex-1 flex-col gap-16 pb-16 sm:gap-20">
       <div className="mx-auto grid w-full max-w-5xl gap-10 px-4 pt-14 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:gap-8">
         <div className="animate-enter flex flex-col gap-6">
-          <h1 className="text-4xl font-semibold tracking-tight text-balance text-foreground sm:text-[2.75rem]">
+          <h1 className="text-4xl leading-[1.15] font-semibold tracking-tight text-balance text-foreground sm:text-[3.25rem] lg:text-[3.5rem]">
             {t("title")}
           </h1>
           <p className="max-w-[60ch] text-lg text-muted-foreground">{t("subtitle")}</p>
