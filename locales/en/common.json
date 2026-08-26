@@ -17,7 +17,7 @@
     "myComplaints": "My complaints",
     "resources": "Resources",
     "resourcesItems": {
-      "help": "It just happened — what to do now",
+      "help": "It just happened: what to do now",
       "safetyTips": "Cyber safety tips",
       "faq": "Frequently asked questions",
       "whatsReal": "What's real vs mocked",
@@ -29,8 +29,7 @@
     "tagline": "An independent hackathon prototype exploring a calmer, faster way to report cybercrime online.",
     "callLabel": "Call 1930",
     "linksHeading": "About this prototype",
-    "legal": "This is an independent hackathon prototype. It is not affiliated with, endorsed by, or connected to the Government of India, the Ministry of Home Affairs, or the Indian Cyber Crime Coordination Centre. If you need to report a real cybercrime, use the official portal at cybercrime.gov.in or call 1930.",
-    "copyright": "Built for Build What Moves India — an independent builder initiative, not a government hackathon."
+    "copyright": "Built for Build What Moves India, an independent builder initiative, not a government hackathon."
   },
   "languageSwitcher": {
     "label": "Language",

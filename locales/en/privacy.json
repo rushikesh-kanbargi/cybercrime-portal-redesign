@@ -1,12 +1,12 @@
 {
   "meta": {
-    "title": "Privacy notice — Cybercrime Report & Track",
+    "title": "Privacy notice: Cybercrime Report & Track",
     "description": "What we collect, what we deliberately don't, who would see it, how long we keep it, and how to delete it."
   },
   "title": "Privacy notice",
-  "subtitle": "Written in plain language, specific to this product — not a generic policy pasted in from somewhere else. Short enough to read even if you're here in distress.",
+  "subtitle": "Written in plain language, specific to this product, not a generic policy pasted in from somewhere else. Short enough to read even if you're here in distress.",
   "honestTitle": "The honest disclosure",
-  "honestBody": "This is a hackathon prototype. It handles mock and synthetic data. Nobody sees what you enter here except this prototype's own database — it is not connected to any real government system, and nothing you submit reaches a real bank, police unit, or NCRP/CFCFRMS. If you have actually been a victim of cybercrime, use the real portal at <link>cybercrime.gov.in</link> or call 1930. Full detail on what's real and what's mocked: <whatsRealLink>/whats-real</whatsRealLink>.",
+  "honestBody": "This is a hackathon prototype. It handles mock and synthetic data. Nobody sees what you enter here except this prototype's own database. It is not connected to any real government system, and nothing you submit reaches a real bank, police unit, or NCRP/CFCFRMS. If you have actually been a victim of cybercrime, use the real portal at <link>cybercrime.gov.in</link> or call 1930. Full detail on what's real and what's mocked: <whatsRealLink>/whats-real</whatsRealLink>.",
   "collectTitle": "What we collect, and why",
   "collectRows": [
     {
@@ -26,23 +26,23 @@
       "why": "So we can send you your Complaint ID and status updates, and so you can track your case later. You can file without one and still keep your Complaint ID."
     },
     {
-      "field": "Display name, State, District — saved to a profile (optional, only if you choose to keep updates)",
+      "field": "Display name, State, District: saved to a profile (optional, only if you choose to keep updates)",
       "why": "Purely so a returning visitor doesn't have to retype them. Nothing else is stored in a profile."
     },
     {
       "field": "Evidence files you choose to attach (optional)",
-      "why": "Screenshots, statements, chat exports — never required to submit a report."
+      "why": "Screenshots, statements, chat exports: never required to submit a report."
     }
   ],
   "notCollectTitle": "What we deliberately do not collect",
-  "notCollectBody": "<strong>No Aadhaar number, no PAN, no Father's/Mother's/Spouse's name, and no identity-document upload</strong> — there is no column for any of these anywhere in this product's database. We also don't ask for your date of birth, gender, nationality, full postal address, pin code, precise location, or any biometric data. Every one of these fails a simple test we apply to every field: does it help freeze the money, route the case, or reach you faster? If the answer is no, we don't ask for it — it would only be a liability with no benefit to you. This is also why an identity-theft or harassment victim is never asked to prove who they are before being heard.",
+  "notCollectBody": "<strong>No Aadhaar number, no PAN, no Father's/Mother's/Spouse's name, and no identity-document upload</strong>: there is no column for any of these anywhere in this product's database. We also don't ask for your date of birth, gender, nationality, full postal address, pin code, precise location, or any biometric data. Every one of these fails a simple test we apply to every field: does it help freeze the money, route the case, or reach you faster? If the answer is no, we don't ask for it: it would only be a liability with no benefit to you. This is also why an identity-theft or harassment victim is never asked to prove who they are before being heard.",
   "whoSeesTitle": "Who sees it",
-  "whoSeesBody": "<strong>Right now: nobody but this prototype.</strong> It is a hackathon build with synthetic data and no real reviewers on the other end. In a real production system built to this design, a complaint would be visible to the police unit it's routed to, and to no one else by default — every read of a case would be logged and reviewable, which we design for structurally but do not operate here.",
+  "whoSeesBody": "<strong>Right now: nobody but this prototype.</strong> It is a hackathon build with synthetic data and no real reviewers on the other end. In a real production system built to this design, a complaint would be visible to the police unit it's routed to, and to no one else by default. Every read of a case would be logged and reviewable, which we design for structurally but do not operate here.",
   "retentionTitle": "How long we keep it",
   "retention": [
     {
       "strong": "Drafts you haven't submitted",
-      "body": "are kept only in your browser and expire automatically after 7 days — stated on screen when you start."
+      "body": "are kept only in your browser and expire automatically after 7 days, stated on screen when you start."
     },
     {
       "strong": "A submitted complaint",
@@ -54,12 +54,12 @@
     }
   ],
   "deleteTitle": "How to delete it",
-  "deleteBody": "If you've opted in to updates, your profile — name, State, District — can be deleted in one action, independently of any complaint you've filed. Deleting your profile does not delete a complaint you've already submitted; a complaint is a record that a report was made, so it is de-linked from you rather than destroyed, the same way a real crime report would be.",
+  "deleteBody": "If you've opted in to updates, your profile (name, State, District) can be deleted in one action, independently of any complaint you've filed. Deleting your profile does not delete a complaint you've already submitted; a complaint is a record that a report was made, so it is de-linked from you rather than destroyed, the same way a real crime report would be.",
   "breachTitle": "What we'd tell you if we were breached",
-  "breachBody": "This is a template we design against, not a live capability — there is no real detection or incident-response pipeline behind a prototype with synthetic data. If this were a production system, what we would owe you is a specific, plain-language notice: what data was involved, when we found out, what we're doing about it, and what you should do — sent to you directly, not buried in a filing.",
+  "breachBody": "This is a template we design against, not a live capability: there is no real detection or incident-response pipeline behind a prototype with synthetic data. If this were a production system, what we would owe you is a specific, plain-language notice: what data was involved, when we found out, what we're doing about it, and what you should do, sent to you directly, not buried in a filing.",
   "dpdpTitle": "Building to a standard that isn't binding yet",
   "dpdpDescription": "Stated precisely, so it isn't overclaimed.",
-  "dpdpBody1": "India's Digital Personal Data Protection Rules were gazetted on 13 November 2025. As of today, only the definitional and Data Protection Board provisions are actually in force. The substantive obligations that this page is written around — notice, consent, security safeguards, breach notification, erasure, children's data, grievance redressal — come into force on <date1>13 May 2027</date1>; a separate rule on Consent Managers comes into force on <date2>13 November 2026</date2>.",
-  "dpdpBody2": "<strong>We are not saying this product is \"DPDP compliant\" — most of the law isn't legally binding yet, so that claim would be false.</strong> What we are saying is narrower and true: we designed the notice, consent, and erasure experience on this page to the shape that becomes binding in 2027, now, because it costs us very little at this scale and because it's the right way to ask for someone's data regardless of the legal deadline. Every screen that asks you for information states what we do with it, who sees it, whether it's required, and what happens if you say no — that pattern is the actual design contribution here, not a compliance badge.",
-  "footer": "Questions about a real complaint on the actual government portal go to the State/UT Nodal Cyber Cell Officer or Grievance Officer for your State, published on cybercrime.gov.in — this prototype has no live grievance-handling of its own. See <link>/whats-real</link> for the full honest scope of this build."
+  "dpdpBody1": "India's Digital Personal Data Protection Rules were gazetted on 13 November 2025. As of today, only the definitional and Data Protection Board provisions are actually in force. The substantive obligations that this page is written around (notice, consent, security safeguards, breach notification, erasure, children's data, grievance redressal) come into force on <date1>13 May 2027</date1>; a separate rule on Consent Managers comes into force on <date2>13 November 2026</date2>.",
+  "dpdpBody2": "<strong>We are not saying this product is \"DPDP compliant\": most of the law isn't legally binding yet, so that claim would be false.</strong> What we are saying is narrower and true: we designed the notice, consent, and erasure experience on this page to the shape that becomes binding in 2027, now, because it costs us very little at this scale and because it's the right way to ask for someone's data regardless of the legal deadline. Every screen that asks you for information states what we do with it, who sees it, whether it's required, and what happens if you say no; that pattern is the actual design contribution here, not a compliance badge.",
+  "footer": "Questions about a real complaint on the actual government portal go to the State/UT Nodal Cyber Cell Officer or Grievance Officer for your State, published on cybercrime.gov.in; this prototype has no live grievance-handling of its own. See <link>/whats-real</link> for the full honest scope of this build."
 }

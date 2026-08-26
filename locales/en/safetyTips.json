@@ -1,24 +1,24 @@
 {
   "meta": {
-    "title": "Cyber Safety Tips — Cybercrime Report & Track",
-    "description": "Practical, well-known guidance for staying safe from UPI, KYC, OTP and investment scams — and what to do if one just happened."
+    "title": "Cyber Safety Tips: Cybercrime Report & Track",
+    "description": "Practical, well-known guidance for staying safe from UPI, KYC, OTP and investment scams, and what to do if one just happened."
   },
   "title": "Cyber safety tips",
-  "subtitle": "None of this is specific to this prototype — it's the same common-sense guidance every bank and cyber cell publishes. Read what's relevant to you; nothing here needs to be memorised.",
+  "subtitle": "None of this is specific to this prototype. It's the same common-sense guidance every bank and cyber cell publishes. Read what's relevant to you; nothing here needs to be memorised.",
   "beforeItHappens": {
     "title": "Before it happens",
     "items": [
       {
         "title": "Never share an OTP, even with your own bank",
-        "body": "A real bank, wallet, or delivery agent never needs the OTP you receive — it's proof for you, not for them. Anyone asking for it on a call, SMS reply, or WhatsApp message is committing fraud, no exceptions."
+        "body": "A real bank, wallet, or delivery agent never needs the OTP you receive. It's proof for you, not for them. Anyone asking for it on a call, SMS reply, or WhatsApp message is committing fraud, no exceptions."
       },
       {
         "title": "Check a UPI request before you approve it",
-        "body": "A UPI \"collect\" request debits money from you when you accept it — it does not credit you. If someone asks you to \"accept\" a request to receive a refund, a prize, or a payment, that's the scam. Read the payee name and amount carefully before tapping approve."
+        "body": "A UPI \"collect\" request debits money from you when you accept it. It does not credit you. If someone asks you to \"accept\" a request to receive a refund, a prize, or a payment, that's the scam. Read the payee name and amount carefully before tapping approve."
       },
       {
         "title": "Banks and government departments never ask for your PIN, password, or CVV",
-        "body": "Not over a call, not over SMS, not through a link. If a caller already knows your name, last transaction, or partial card number, that doesn't make the request legitimate — it means your data was leaked elsewhere."
+        "body": "Not over a call, not over SMS, not through a link. If a caller already knows your name, last transaction, or partial card number, that doesn't make the request legitimate. It means your data was leaked elsewhere."
       },
       {
         "title": "Be wary of unsolicited links about KYC, SIM blocking, or account suspension",
@@ -30,13 +30,13 @@
       },
       {
         "title": "Keep your devices and apps updated",
-        "body": "Security updates patch the exact vulnerabilities scammers rely on. Install apps only from official app stores, and avoid sideloading APKs sent to you directly — a common vector for banking-trojan malware."
+        "body": "Security updates patch the exact vulnerabilities scammers rely on. Install apps only from official app stores, and avoid sideloading APKs sent to you directly, a common vector for banking-trojan malware."
       }
     ]
   },
   "ifItJustHappened": {
     "title": "If it just happened",
-    "body": "Money was taken, or you think you're being scammed right now — there's a dedicated page that walks through exactly what to do in the next few minutes, in order.",
+    "body": "Money was taken, or you think you're being scammed right now. There's a dedicated page that walks through exactly what to do in the next few minutes, in order.",
     "cta": "Go to \"It just happened\""
   },
   "commonScamPatterns": {
@@ -60,9 +60,9 @@
       },
       {
         "title": "The follow-up \"investigator\" call",
-        "body": "After a real fraud happens, victims are sometimes called again by someone posing as a police officer or cyber cell investigator, asking for Aadhaar, card, or OTP details \"to help recover the money.\" No real investigator asks for this over a call — verify only by calling 1930 yourself."
+        "body": "After a real fraud happens, victims are sometimes called again by someone posing as a police officer or cyber cell investigator, asking for Aadhaar, card, or OTP details \"to help recover the money.\" No real investigator asks for this over a call. Verify only by calling 1930 yourself."
       }
     ]
   },
-  "footer": "This page is general public-safety guidance, not personalised advice — see <link>what's real vs mocked</link> in this prototype for what this build actually does and doesn't do."
+  "footer": "This page is general public-safety guidance, not personalised advice. See <link>what's real vs mocked</link> in this prototype for what this build actually does and doesn't do."
 }

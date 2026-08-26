@@ -1,7 +1,7 @@
 {
-  "heroEyebrow": "Independent hackathon prototype — not a government site",
+  "heroEyebrow": "Independent hackathon prototype, not a government site",
   "title": "Something happened to you online.",
-  "subtitle": "Tell us what happened, in your own words. No account, no ID upload, no forms — just a calm way to get it reported.",
+  "subtitle": "Tell us what happened, in your own words. No account, no ID upload, no forms: just a calm way to get it reported.",
   "trust": [
     { "label": "No login needed to start" },
     { "label": "Report in under 90 seconds" },
@@ -24,7 +24,7 @@
     "steps": [
       {
         "title": "Tell us what happened",
-        "body": "Write it in your own words — there's no right way to say it, and no minimum length."
+        "body": "Write it in your own words. There's no right way to say it, and no minimum length."
       },
       {
         "title": "Confirm the facts",
@@ -32,7 +32,7 @@
       },
       {
         "title": "Filed instantly",
-        "body": "You get a Complaint ID the moment you submit — nothing to wait on, nothing to follow up for."
+        "body": "You get a Complaint ID the moment you submit: nothing to wait on, nothing to follow up for."
       },
       {
         "title": "Track anytime",
@@ -59,7 +59,7 @@
   },
   "liveActivity": {
     "text": "{count, plural, =0 {No reports filed on this prototype yet} =1 {1 report filed on this prototype so far} other {# reports filed on this prototype so far}}",
-    "caption": "Real activity on this demo build — not a national statistic. See <link>what's real vs mocked</link>."
+    "caption": "Real activity on this demo build, not a national statistic. See <link>what's real vs mocked</link>."
   },
   "learnMore": {
     "title": "Learn more",
@@ -79,6 +79,6 @@
   "emergency": {
     "text": "In immediate danger, or this is still happening?",
     "call": "Call 1930",
-    "suffix": "— it's faster than any form."
+    "suffix": "It's faster than any form."
   }
 }

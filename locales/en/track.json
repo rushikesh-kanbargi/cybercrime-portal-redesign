@@ -14,7 +14,7 @@
     "noContactTitle": "We can't verify this one online",
     "noContactBody": "This complaint has no mobile number on file, so we can't send a verification code for it. Contact your State/UT Grievance Officer with your Complaint ID.",
     "verifyTitle": "Verify to view this case",
-    "verifyDescription": "We'll send a code to the mobile number on file for this complaint. Two things together — this ID, and that code — are what let you see the details.",
+    "verifyDescription": "We'll send a code to the mobile number on file for this complaint. Two things together, this ID and that code, are what let you see the details.",
     "sendCode": "Send verification code",
     "mockedOtpTitle": "Prototype: OTP is mocked, not a real SMS",
     "mockedOtpBody": "Sent (mocked) to {maskedMobile}. Demo code: {code}. See <link>what's real vs mocked</link>.",
@@ -23,7 +23,7 @@
     "genericError": "That code didn't match. Try again.",
     "reportedOn": "Reported {date}",
     "anonymousBadge": "Anonymous report",
-    "noStatusYet": "No status updates yet. Check back soon — this page will show each step as it happens.",
+    "noStatusYet": "No status updates yet. Check back soon, this page will show each step as it happens.",
     "latestBadge": "Latest",
     "whatYouCanDoLabel": "What you can do now:",
     "notAnFirTitle": "This is not an FIR"
@@ -37,21 +37,21 @@
     "SENT_TO_BANK": {
       "label": "Sent to your bank",
       "meaning": "The transaction details were forwarded so the bank can attempt to freeze the funds.",
-      "whatYouCanDo": "Call your bank's fraud helpline directly too — don't rely on this alone."
+      "whatYouCanDo": "Call your bank's fraud helpline directly too. Don't rely on this alone."
     },
     "WITH_CYBER_CELL": {
       "label": "With Cyber Cell",
       "meaning": "Your case has been assigned to a police cyber cell for review.",
-      "whatYouCanDo": "No action needed. This can take time — that's normal."
+      "whatYouCanDo": "No action needed. This can take time, and that's normal."
     },
     "UNDER_INVESTIGATION": {
       "label": "Under investigation",
       "meaning": "An investigating officer is actively working your case.",
-      "whatYouCanDo": "Keep any new evidence (screenshots, messages) — you can add it to this case."
+      "whatYouCanDo": "Keep any new evidence (screenshots, messages). You can add it to this case."
     },
     "DISPOSED": {
       "label": "Handed to a police unit for investigation",
-      "meaning": "This does not mean your case is closed. \"Disposed\" is police-internal wording for \"assigned onward\" — it is not a rejection and it is not the end.",
+      "meaning": "This does not mean your case is closed. \"Disposed\" is police-internal wording for \"assigned onward\": it is not a rejection and it is not the end.",
       "whatYouCanDo": "Keep following up with your bank. If weeks pass with no update, use the grievance officer contact for your state."
     },
     "FIR_REGISTERED": {

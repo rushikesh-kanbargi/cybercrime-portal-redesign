@@ -12,11 +12,14 @@ const resourceIcons = {
 } as const;
 
 // Structural echo of the incumbent's dense footer (policy links, contact,
-// a credit line) — WITHOUT its content: no fake visitor counter, no
+// a credit line), WITHOUT its content: no fake visitor counter, no
 // "content managed by" government attribution (that would be impersonation,
 // see the hard constraint this task shipped under). Every link here points
 // at a page that actually exists (D25); the credit line is the honest
-// hackathon-prototype equivalent of "content managed by X".
+// hackathon-prototype equivalent of "content managed by X". The full
+// non-affiliation disclosure lives once in the persistent top banner
+// (prototype-banner.tsx) plus /whats-real and the FAQ; it is not repeated
+// here (D-dedupe-footer-disclosure).
 export async function SiteFooter() {
   const t = await getTranslations("common");
 
@@ -70,7 +73,6 @@ export async function SiteFooter() {
         <Separator />
 
         <div className="flex flex-col gap-3 text-xs text-muted-foreground">
-          <p>{t("footer.legal")}</p>
           <p>{t("footer.copyright")}</p>
         </div>
       </div>

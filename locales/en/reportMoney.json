@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "Money was taken from my account — Cybercrime Report & Track",
+    "title": "Money was taken from my account: Cybercrime Report & Track",
     "description": "Report financial fraud in under 90 seconds. No login required."
   },
   "progress": {
@@ -15,10 +15,10 @@
   },
   "narrate": {
     "title": "Tell us what happened",
-    "description": "Write it in your own words — there's no right way to say it, and no minimum length.",
+    "description": "Write it in your own words. There's no right way to say it, and no minimum length.",
     "narrativeLabel": "What happened",
     "narrativePlaceholder": "I got a call saying my KYC expired. They sent a link. ₹18,000 left my account.",
-    "narrativeError": "Tell us what happened — even a rough description helps.",
+    "narrativeError": "Tell us what happened; even a rough description helps.",
     "narrativeCount": "{count} / {max}",
     "smsLabel": "Paste your bank SMS (optional)",
     "smsPlaceholder": "Rs 18,000 debited from A/c XX1234 on 24-08-26. UPI Ref No 512345678901.",
@@ -69,13 +69,13 @@
   },
   "evidence": {
     "title": "Add evidence",
-    "description": "Completely optional — your report is already valid without it. Screenshots, bank statements (PDF is fine), call logs, chat exports — whatever you have.",
+    "description": "Completely optional, your report is already valid without it. Screenshots, bank statements (PDF is fine), call logs, chat exports: whatever you have.",
     "filesLabel": "Files",
     "helperText": "Images and PDFs, up to {maxSize} each, up to {maxFiles} files. Images are compressed on your device before upload.",
     "tooManyFiles": "You can attach up to {maxFiles} files.",
     "fileTooLarge": "“{name}” is too large (max {maxSize} per file).",
     "scanNoticeTitle": "About the files you attach",
-    "scanNoticeBody": "This is a hackathon prototype — files are checked and marked “simulated clean”, not scanned by a real anti-malware engine. Don't attach anything you wouldn't want stored on a demo system.",
+    "scanNoticeBody": "This is a hackathon prototype: files are checked and marked “simulated clean”, not scanned by a real anti-malware engine. Don't attach anything you wouldn't want stored on a demo system.",
     "back": "Back",
     "skip": "Skip",
     "continue": "Continue",
@@ -95,7 +95,7 @@
     "moneyLineInstrumentRef": "₹{amount} was taken on {date}, via {instrument}. Reference: {ref}.",
     "categoryLine": "We think this is {label}. Is that right?",
     "contactLine": "You're in {district}, {state}. We'll reach you at {mobile}.",
-    "evidenceNone": "No evidence attached. That's fine — it's optional.",
+    "evidenceNone": "No evidence attached. That's fine, it's optional.",
     "evidenceAttached": "{count, plural, one {# file} other {# files}} attached: {files}",
     "submitError": "Couldn't submit",
     "back": "Back",
@@ -108,25 +108,25 @@
     "copy": "Copy",
     "copied": "Copied",
     "download": "Download",
-    "smsPreviewLabel": "Here's the SMS we'd send you (simulated — nothing is actually sent)",
+    "smsPreviewLabel": "Here's the SMS we'd send you (simulated, nothing is actually sent)",
     "evidenceUploading": "Uploading your evidence…",
-    "evidenceDone": "Evidence attached and marked “simulated clean” — not a real virus scan.",
+    "evidenceDone": "Evidence attached and marked “simulated clean”: not a real virus scan.",
     "evidencePartial": "Some evidence files were attached; others couldn't be saved (unsupported type or too large). Your report itself was still filed.",
     "evidenceError": "Evidence couldn't be attached, but your report was still filed successfully.",
     "checklistTitle": "Do these 3 things in the next hour",
     "checklist1": "Call your bank's fraud helpline and ask them to flag the transaction.",
-    "checklist2": "Don't delete the messages, calls, or app related to this — they may be needed later.",
-    "checklist3": "Don't trust anyone who calls claiming to be police about this complaint — verify through 1930 first.",
+    "checklist2": "Don't delete the messages, calls, or app related to this; they may be needed later.",
+    "checklist3": "Don't trust anyone who calls claiming to be police about this complaint; verify through 1930 first.",
     "nextTitle": "What happens next",
-    "nextBody": "Your report has been received and is queued for review. This Complaint ID is not an FIR — it is a record that a report was made and is the reference your bank and the cyber cell will use.",
+    "nextBody": "Your report has been received and is queued for review. This Complaint ID is not an FIR: it is a record that a report was made and is the reference your bank and the cyber cell will use.",
     "updatesTitle": "Want updates?",
     "updatesDescription": "Optional. Verify your number and we'll link this report to it so you can check on it later. Skip if you'd rather not.",
     "updatesLinkedTitle": "Linked",
     "updatesLinkedBody": "Your number is verified and linked to this report.",
-    "updatesSkipped": "Skipped — your Complaint ID above still works on its own.",
+    "updatesSkipped": "Skipped: your Complaint ID above still works on its own.",
     "mobileLabel": "Mobile number",
     "demoCodeTitle": "Demo code: {code}",
-    "demoCodeBody": "This is a hackathon prototype — no real SMS is sent. In production this code would arrive by text.",
+    "demoCodeBody": "This is a hackathon prototype; no real SMS is sent. In production this code would arrive by text.",
     "otpLabel": "Enter the code",
     "confirm": "Confirm",
     "confirming": "Confirming…",
@@ -135,9 +135,9 @@
     "otpGenericError": "Something went wrong confirming that code. Please try again.",
     "backHome": "Back to home",
     "downloadFilename": "complaint-{publicId}.txt",
-    "downloadFileBody": "Cybercrime Report — Confirmation\n\nComplaint ID: {publicId}\n\nThis is NOT an FIR.\nKeep this ID safe — you will need it for any follow-up.\n"
+    "downloadFileBody": "Cybercrime Report: Confirmation\n\nComplaint ID: {publicId}\n\nThis is NOT an FIR.\nKeep this ID safe; you will need it for any follow-up.\n"
   },
-  "smsTemplate": "Your cybercrime report is filed. Complaint ID: {publicId}. This is NOT an FIR. Save this ID — you will need it for any follow-up.",
+  "smsTemplate": "Your cybercrime report is filed. Complaint ID: {publicId}. This is NOT an FIR. Save this ID; you will need it for any follow-up.",
   "genericSubmitError": "Something went wrong submitting your report. Please try again.",
   "states": {
     "Andhra Pradesh": "Andhra Pradesh",
@@ -192,7 +192,7 @@
       "card": "We think this because you mentioned a debit or credit card.",
       "upi": "We think this because you mentioned UPI, PhonePe, Google Pay, Paytm, or BHIM.",
       "netBanking": "We think this because you mentioned internet/net banking.",
-      "noPatternDetected": "We couldn't detect a specific pattern from what you told us — please confirm or change this."
+      "noPatternDetected": "We couldn't detect a specific pattern from what you told us; please confirm or change this."
     }
   }
 }

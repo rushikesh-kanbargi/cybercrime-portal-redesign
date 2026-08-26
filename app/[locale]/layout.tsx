@@ -27,9 +27,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Cybercrime Reporting Portal — Prototype",
+  title: "Cybercrime Reporting Portal: Prototype",
   description:
-    "A calmer, faster way to report cybercrime and track a complaint. Hackathon prototype — not an official government service.",
+    "A calmer, faster way to report cybercrime and track a complaint. Hackathon prototype, not an official government service.",
 };
 
 export function generateStaticParams() {

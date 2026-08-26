@@ -1,10 +1,10 @@
 {
   "meta": {
-    "title": "Frequently asked questions — Cybercrime Report & Track",
+    "title": "Frequently asked questions: Cybercrime Report & Track",
     "description": "Honest answers about what this prototype is, what it isn't, and what happens to your data."
   },
   "title": "Frequently asked questions",
-  "subtitle": "Straight answers about this specific build — not general legal advice.",
+  "subtitle": "Straight answers about this specific build, not general legal advice.",
   "items": [
     {
       "question": "Is this an official government site?",
@@ -18,23 +18,23 @@
     },
     {
       "question": "Is my complaint here the same as filing an FIR?",
-      "answerBody": "No. A complaint filed through this prototype — or through the real cybercrime.gov.in — is not an FIR. It's a cyber-crime complaint that can be forwarded to a bank for a freeze request and to a cyber cell for investigation. An FIR is a separate, formal criminal-procedure document filed at a police station; a cyber cell can advise on this, but this build does not create one."
+      "answerBody": "No. A complaint filed through this prototype, or through the real cybercrime.gov.in, is not an FIR. It's a cyber-crime complaint that can be forwarded to a bank for a freeze request and to a cyber cell for investigation. An FIR is a separate, formal criminal-procedure document filed at a police station; a cyber cell can advise on this, but this build does not create one."
     },
     {
       "question": "What happens to my data?",
-      "answerBody": "Only what's needed to process the report is collected — no Aadhaar, no PAN, no ID upload, no biometrics. What's stored, for how long, and who it's shared with is documented in full on the privacy page.",
+      "answerBody": "Only what's needed to process the report is collected: no Aadhaar, no PAN, no ID upload, no biometrics. What's stored, for how long, and who it's shared with is documented in full on the privacy page.",
       "linkLabel": "Read the privacy notice",
       "linkHref": "/privacy"
     },
     {
       "question": "Is the OTP real?",
-      "answerBody": "No, it's mocked. This prototype doesn't have a contract with an SMS gateway, so no message actually leaves the system — the code is shown directly on screen instead of being sent. The session and account mechanics behind it are built the same way a production system would be; only the delivery is simulated.",
+      "answerBody": "No, it's mocked. This prototype doesn't have a contract with an SMS gateway, so no message actually leaves the system; the code is shown directly on screen instead of being sent. The session and account mechanics behind it are built the same way a production system would be; only the delivery is simulated.",
       "linkLabel": "See what else is mocked vs real",
       "linkHref": "/whats-real"
     },
     {
       "question": "What if I don't have all the details, like a transaction ID?",
-      "answerBody": "You can still file. Every field beyond the essentials is optional — describe what happened in your own words and add whatever details you do have. You can always come back and add more later using your Complaint ID."
+      "answerBody": "You can still file. Every field beyond the essentials is optional: describe what happened in your own words and add whatever details you do have. You can always come back and add more later using your Complaint ID."
     }
   ],
   "footer": "Still unsure what's real in this build? <link>See the full breakdown</link>."
