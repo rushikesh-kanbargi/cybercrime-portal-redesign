@@ -4,6 +4,8 @@ import { Link } from "@/i18n/navigation";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { PageIcon } from "@/components/illustrations/page-icon";
+import { Eye } from "lucide-react";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("whatsReal.meta");
@@ -44,6 +46,7 @@ export default async function WhatsRealPage() {
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-10 px-4 py-12">
       <div className="animate-enter flex flex-col gap-3">
+        <PageIcon icon={Eye} size="lg" />
         <h1 className="text-3xl font-semibold tracking-tight text-foreground">{t("title")}</h1>
         <p className="text-lg text-muted-foreground">{t.rich("intro", richStrong)}</p>
       </div>

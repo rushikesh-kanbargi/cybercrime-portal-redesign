@@ -13,6 +13,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { PageIcon } from "@/components/illustrations/page-icon";
+import { Search } from "lucide-react";
 
 // §9.2 /track — Complaint ID → plain-language status timeline. Entry screen
 // only; the lookup/OTP/timeline state machine lives at /track/[publicId] so
@@ -33,7 +35,12 @@ export default function TrackEntryPage() {
     <div className="mx-auto flex w-full max-w-xl flex-1 flex-col gap-6 px-4 py-10">
       <Card className="animate-enter">
         <CardHeader>
-          <CardTitle as="h1">{t("title")}</CardTitle>
+          <div className="mb-1 flex items-center gap-3">
+            <PageIcon icon={Search} size="lg" />
+          </div>
+          <CardTitle as="h1" className="text-xl">
+            {t("title")}
+          </CardTitle>
           <CardDescription>{t("description")}</CardDescription>
         </CardHeader>
         <CardContent>

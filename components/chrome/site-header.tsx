@@ -1,7 +1,8 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { Phone, ShieldCheck, ChevronDown, Menu } from "lucide-react";
+import { Phone, ChevronDown, Menu } from "lucide-react";
 import { LanguageSwitcher } from "./language-switcher";
+import { SiteMark } from "./site-mark";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -34,12 +35,7 @@ export async function SiteHeader() {
           href="/"
           className="flex shrink-0 items-center gap-2 text-base font-semibold tracking-tight text-foreground"
         >
-          <span
-            aria-hidden="true"
-            className="inline-flex size-8 items-center justify-center rounded-md bg-primary/10 text-primary"
-          >
-            <ShieldCheck className="size-4.5" />
-          </span>
+          <SiteMark className="size-7 text-primary" />
           {t("siteName")}
         </Link>
 

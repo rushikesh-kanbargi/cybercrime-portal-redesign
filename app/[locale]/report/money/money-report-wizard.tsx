@@ -11,7 +11,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { Info, Phone, Copy, Download, Check, ShieldCheck } from "lucide-react";
+import { Info, Phone, Copy, Download, Check, ShieldCheck, MessageSquareText } from "lucide-react";
+import { PageIcon } from "@/components/illustrations/page-icon";
 import { cn } from "@/lib/utils";
 import { extractFacts, type ExtractedField } from "@/lib/extract";
 import { classifyFraud, FRAUD_SUBCATEGORIES, type FraudSubCategoryCode } from "@/lib/classify";
@@ -483,6 +484,9 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
       {step === "narrate" && (
         <Card className="animate-enter">
           <CardHeader>
+            <div className="mb-1">
+              <PageIcon icon={MessageSquareText} />
+            </div>
             <CardTitle as="h1" ref={stepHeadingRef} tabIndex={-1} className="outline-none focus-visible:ring-3 focus-visible:ring-ring/50 rounded-sm">
               {t("narrate.title")}
             </CardTitle>

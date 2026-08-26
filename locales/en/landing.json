@@ -6,11 +6,54 @@
     { "label": "Report in under 90 seconds" },
     { "label": "Nothing you submit is sold or shared" }
   ],
+  "hero": {
+    "reportLabel": "Report",
+    "protectedLabel": "Confirmed"
+  },
   "moneyCard": {
     "eyebrow": "The one journey this prototype builds end-to-end",
     "title": "Money was taken from my account",
     "body": "Report it in under 90 seconds. We'll ask for the essentials only.",
     "cta": "Start now"
+  },
+  "howItWorks": {
+    "title": "How it works",
+    "subtitle": "Four steps. No forms, no wait to find out what happens next.",
+    "steps": [
+      {
+        "title": "Tell us what happened",
+        "body": "Write it in your own words — there's no right way to say it, and no minimum length."
+      },
+      {
+        "title": "Confirm the facts",
+        "body": "We pull out the amount, date and reference automatically. You check it and confirm."
+      },
+      {
+        "title": "Filed instantly",
+        "body": "You get a Complaint ID the moment you submit — nothing to wait on, nothing to follow up for."
+      },
+      {
+        "title": "Track anytime",
+        "body": "Come back with your Complaint ID whenever you want to see exactly where your case stands."
+      }
+    ]
+  },
+  "trustSection": {
+    "title": "Why this is safe to use right now",
+    "items": [
+      {
+        "title": "No login needed to start",
+        "body": "Start typing immediately. Creating an account is optional, only if you want to come back and track later."
+      },
+      {
+        "title": "Report in under 90 seconds",
+        "body": "One question at a time, in plain language. We only ask for what's actually needed."
+      },
+      {
+        "title": "Nothing you submit is sold or shared",
+        "body": "Your report goes only to the process that handles it. Nothing more."
+      }
+    ]
   },
   "emergency": {
     "text": "In immediate danger, or this is still happening?",
