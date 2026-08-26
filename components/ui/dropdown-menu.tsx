@@ -34,7 +34,13 @@ function DropdownMenuContent({
         data-slot="dropdown-menu-content"
         sideOffset={sideOffset}
         className={cn(
-          "z-50 min-w-48 overflow-hidden rounded-lg bg-popover p-1 text-sm text-popover-foreground ring-1 ring-foreground/10 duration-100 outline-none data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
+          // Feedback curve (--ease-feedback), not the entrance curve: an
+          // open/close is a fast UI-state transition, not a one-time page
+          // reveal, so it reuses the same token as the Card hover-lift
+          // rather than the 380ms --ease-standard entrance token. 150ms
+          // sits in the 150-300ms micro-interaction range instead of the
+          // prior generic 100ms default.
+          "z-50 min-w-48 overflow-hidden rounded-lg bg-popover p-1 text-sm text-popover-foreground ring-1 ring-foreground/10 outline-none duration-150 ease-[var(--ease-feedback)] data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
           className
         )}
         {...props}
@@ -51,7 +57,7 @@ function DropdownMenuItem({
     <DropdownMenuPrimitive.Item
       data-slot="dropdown-menu-item"
       className={cn(
-        "flex cursor-pointer items-center rounded-md px-2.5 py-2 text-sm text-foreground outline-none select-none focus:bg-muted focus:text-foreground data-highlighted:bg-muted",
+        "flex cursor-pointer items-center rounded-md px-2.5 py-2 text-sm text-foreground outline-none transition-colors select-none focus:bg-muted focus:text-foreground data-highlighted:bg-muted",
         className
       )}
       {...props}

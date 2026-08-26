@@ -34,7 +34,7 @@ export default async function ContactPage() {
       </a>
       <p className="-mt-4 text-sm text-muted-foreground">{t("helplineBody")}</p>
 
-      <Card>
+      <Card className="transition-[box-shadow,transform] duration-200 ease-[var(--ease-feedback)] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:shadow-md">
         <CardHeader className="flex flex-row items-start gap-3 space-y-0">
           <PageIcon icon={Globe} />
           <CardTitle className="text-base">{t("portalTitle")}</CardTitle>
@@ -44,7 +44,7 @@ export default async function ContactPage() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="transition-[box-shadow,transform] duration-200 ease-[var(--ease-feedback)] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:shadow-md">
         <CardHeader className="flex flex-row items-start gap-3 space-y-0">
           <PageIcon icon={ShieldQuestion} />
           <CardTitle className="text-base">{t("noDirectoryTitle")}</CardTitle>
@@ -54,7 +54,7 @@ export default async function ContactPage() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="transition-[box-shadow,transform] duration-200 ease-[var(--ease-feedback)] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:shadow-md">
         <CardHeader className="flex flex-row items-start gap-3 space-y-0">
           <PageIcon icon={Info} />
           <CardTitle className="text-base">{t("aboutThisPrototypeTitle")}</CardTitle>

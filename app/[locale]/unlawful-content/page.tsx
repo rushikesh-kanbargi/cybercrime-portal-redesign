@@ -37,7 +37,10 @@ export default async function UnlawfulContentPage() {
         <h2 className="text-xl font-semibold tracking-tight text-foreground">{t("categoriesTitle")}</h2>
         <div className="flex flex-col gap-4">
           {categoriesItems.map((item) => (
-            <Card key={item.title}>
+            <Card
+              key={item.title}
+              className="transition-[box-shadow,transform] duration-200 ease-[var(--ease-feedback)] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:shadow-md"
+            >
               <CardHeader>
                 <CardTitle className="text-base">{item.title}</CardTitle>
               </CardHeader>
@@ -65,7 +68,10 @@ export default async function UnlawfulContentPage() {
         <h2 className="text-xl font-semibold tracking-tight text-foreground">{t("whatToDoTitle")}</h2>
         <div className="flex flex-col gap-4">
           {whatToDoItems.map((item) => (
-            <Card key={item.title}>
+            <Card
+              key={item.title}
+              className="transition-[box-shadow,transform] duration-200 ease-[var(--ease-feedback)] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:shadow-md"
+            >
               <CardHeader>
                 <CardTitle className="text-base">{item.title}</CardTitle>
               </CardHeader>

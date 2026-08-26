@@ -34,7 +34,10 @@ export default async function CyberAwarenessPage() {
         <h2 className="text-xl font-semibold tracking-tight text-foreground">{t("termsTitle")}</h2>
         <div className="grid gap-4 sm:grid-cols-2">
           {terms.map((item) => (
-            <Card key={item.title}>
+            <Card
+              key={item.title}
+              className="transition-[box-shadow,transform] duration-200 ease-[var(--ease-feedback)] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:shadow-md"
+            >
               <CardHeader>
                 <CardTitle className="text-base">{item.title}</CardTitle>
               </CardHeader>

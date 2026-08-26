@@ -150,7 +150,10 @@ export default async function NotBuiltCategoryPage({
         </a>
 
         {steps.map((step, i) => (
-          <Card key={step.title}>
+          <Card
+            key={step.title}
+            className="transition-[box-shadow,transform] duration-200 ease-[var(--ease-feedback)] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:shadow-md"
+          >
             <CardHeader>
               <CardTitle className="text-base">
                 {i + 1}. {step.title}
