@@ -81,6 +81,12 @@ export async function SiteHeader() {
                 <Link href="/help/just-happened">{t("nav.resourcesItems.help")}</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
+                <Link href="/safety-tips">{t("nav.resourcesItems.safetyTips")}</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/faq">{t("nav.resourcesItems.faq")}</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
                 <Link href="/whats-real">{t("nav.resourcesItems.whatsReal")}</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
@@ -121,6 +127,12 @@ export async function SiteHeader() {
               ) : null}
               <DropdownMenuItem asChild>
                 <Link href="/help/just-happened">{t("nav.resourcesItems.help")}</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/safety-tips">{t("nav.resourcesItems.safetyTips")}</Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/faq">{t("nav.resourcesItems.faq")}</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href="/whats-real">{t("nav.resourcesItems.whatsReal")}</Link>

@@ -18,6 +18,8 @@
     "resources": "Resources",
     "resourcesItems": {
       "help": "It just happened — what to do now",
+      "safetyTips": "Cyber safety tips",
+      "faq": "Frequently asked questions",
       "whatsReal": "What's real vs mocked",
       "accessibility": "Accessibility statement",
       "privacy": "Privacy notice"

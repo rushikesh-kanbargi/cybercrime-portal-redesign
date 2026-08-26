@@ -55,6 +55,25 @@
       }
     ]
   },
+  "liveActivity": {
+    "text": "{count, plural, =0 {No reports filed on this prototype yet} =1 {1 report filed on this prototype so far} other {# reports filed on this prototype so far}}",
+    "caption": "Real activity on this demo build — not a national statistic. See <link>what's real vs mocked</link>."
+  },
+  "learnMore": {
+    "title": "Learn more",
+    "items": [
+      {
+        "title": "Cyber safety tips",
+        "body": "Practical, well-known guidance on OTPs, UPI requests, and how common scams actually work.",
+        "cta": "Read the tips"
+      },
+      {
+        "title": "Frequently asked questions",
+        "body": "Honest answers about what this build is, what it isn't, and what happens to your data.",
+        "cta": "See the FAQ"
+      }
+    ]
+  },
   "emergency": {
     "text": "In immediate danger, or this is still happening?",
     "call": "Call 1930",
