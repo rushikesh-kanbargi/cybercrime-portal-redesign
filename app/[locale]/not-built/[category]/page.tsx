@@ -6,8 +6,6 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PageIcon } from "@/components/illustrations/page-icon";
 import {
-  ShieldAlert,
-  KeyRound,
   Phone,
   ArrowLeft,
   Search,
@@ -36,9 +34,13 @@ import {
 // volunteer-account; Photo/Video/Radio Gallery -> media-gallery; RTI +
 // CPGRAMS notices -> public-notices) rather than multiplying near-duplicate
 // pages.
+//
+// D-new — "harassment" and "hacked" dropped from this list: both now have
+// real, working end-to-end flows at /report/harassment and /report/hacked,
+// so the honest-stub version of D25 no longer applies to them (D25's actual
+// rule, not D53's override of it) — leaving the stub reachable once a real
+// flow exists would be the "disable" half of "remove, don't disable".
 const CATEGORIES = [
-  "harassment",
-  "hacked",
   "check-suspect",
   "report-suspect",
   "volunteer-account",
@@ -50,9 +52,7 @@ const CATEGORIES = [
 ] as const;
 type Category = (typeof CATEGORIES)[number];
 
-const categoryIcons: Record<Category, typeof ShieldAlert> = {
-  harassment: ShieldAlert,
-  hacked: KeyRound,
+const categoryIcons: Record<Category, typeof Search> = {
   "check-suspect": Search,
   "report-suspect": Flag,
   "volunteer-account": UserRoundPlus,

@@ -9,6 +9,8 @@ const NAMESPACES = [
   "common",
   "landing",
   "reportMoney",
+  "reportHarassment",
+  "reportHacked",
   "track",
   "auth",
   "whatsReal",

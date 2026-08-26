@@ -82,3 +82,119 @@ export function classifyFraud(narrative: string): CategorySuggestion {
     confidence: "low",
   };
 }
+
+// ---------------------------------------------------------------------------
+// Harassment / threats / blackmail — same rules-floor pattern as money fraud
+// above (D8): deterministic, keyword-based, a suggestion the citizen must
+// confirm or change (D10), never silently applied.
+// ---------------------------------------------------------------------------
+
+export const HARASSMENT_CATEGORY_CODE = "HARASSMENT";
+
+export const HARASSMENT_SUBCATEGORIES = [
+  { code: "SEXTORTION_BLACKMAIL" },
+  { code: "THREATS_INTIMIDATION" },
+  { code: "STALKING" },
+  { code: "IMPERSONATION" },
+  { code: "OTHER_HARASSMENT" },
+] as const;
+
+export type HarassmentSubCategoryCode = (typeof HARASSMENT_SUBCATEGORIES)[number]["code"];
+
+export interface HarassmentCategorySuggestion {
+  categoryCode: string;
+  subCategoryCode: HarassmentSubCategoryCode;
+  reasonKey: string;
+}
+
+const HARASSMENT_RULES: Array<{
+  subCategoryCode: HarassmentSubCategoryCode;
+  pattern: RegExp;
+  reasonKey: string;
+}> = [
+  {
+    subCategoryCode: "SEXTORTION_BLACKMAIL",
+    pattern: /\b(blackmail|extort|nude|sextort|leak.*(photo|video|pic)|pay.*or.*(post|send|share))\b/i,
+    reasonKey: "sextortion",
+  },
+  {
+    subCategoryCode: "THREATS_INTIMIDATION",
+    pattern: /\b(threat(en|ened|ening)?|kill you|hurt you|come after)\b/i,
+    reasonKey: "threats",
+  },
+  {
+    subCategoryCode: "STALKING",
+    pattern: /\b(stalk(ing|er)?|follow(ing|ed)? me|shows up|keeps? (finding|watching))\b/i,
+    reasonKey: "stalking",
+  },
+  {
+    subCategoryCode: "IMPERSONATION",
+    pattern: /\b(fake (account|profile)|pretending to be|impersonat)\b/i,
+    reasonKey: "impersonation",
+  },
+];
+
+export function classifyHarassment(narrative: string): HarassmentCategorySuggestion {
+  for (const rule of HARASSMENT_RULES) {
+    if (rule.pattern.test(narrative)) {
+      return { categoryCode: HARASSMENT_CATEGORY_CODE, subCategoryCode: rule.subCategoryCode, reasonKey: rule.reasonKey };
+    }
+  }
+  return { categoryCode: HARASSMENT_CATEGORY_CODE, subCategoryCode: "OTHER_HARASSMENT", reasonKey: "noPatternDetected" };
+}
+
+// ---------------------------------------------------------------------------
+// Hacked / compromised account — same pattern again.
+// ---------------------------------------------------------------------------
+
+export const ACCOUNT_COMPROMISE_CATEGORY_CODE = "ACCOUNT_COMPROMISE";
+
+export const ACCOUNT_COMPROMISE_SUBCATEGORIES = [
+  { code: "SOCIAL_MEDIA_HACKED" },
+  { code: "EMAIL_HACKED" },
+  { code: "DEVICE_COMPROMISED" },
+  { code: "OTHER_ACCOUNT_COMPROMISE" },
+] as const;
+
+export type AccountCompromiseSubCategoryCode = (typeof ACCOUNT_COMPROMISE_SUBCATEGORIES)[number]["code"];
+
+export interface AccountCompromiseCategorySuggestion {
+  categoryCode: string;
+  subCategoryCode: AccountCompromiseSubCategoryCode;
+  reasonKey: string;
+}
+
+const ACCOUNT_COMPROMISE_RULES: Array<{
+  subCategoryCode: AccountCompromiseSubCategoryCode;
+  pattern: RegExp;
+  reasonKey: string;
+}> = [
+  {
+    subCategoryCode: "EMAIL_HACKED",
+    pattern: /\b(email|gmail|outlook|yahoo mail)\b/i,
+    reasonKey: "email",
+  },
+  {
+    subCategoryCode: "SOCIAL_MEDIA_HACKED",
+    pattern: /\b(instagram|facebook|whatsapp|twitter|\bx\b|snapchat|telegram|social media)\b/i,
+    reasonKey: "socialMedia",
+  },
+  {
+    subCategoryCode: "DEVICE_COMPROMISED",
+    pattern: /\b(phone (was |is )?hacked|device|malware|virus|remote access|screen.?shar)\b/i,
+    reasonKey: "device",
+  },
+];
+
+export function classifyAccountCompromise(narrative: string): AccountCompromiseCategorySuggestion {
+  for (const rule of ACCOUNT_COMPROMISE_RULES) {
+    if (rule.pattern.test(narrative)) {
+      return { categoryCode: ACCOUNT_COMPROMISE_CATEGORY_CODE, subCategoryCode: rule.subCategoryCode, reasonKey: rule.reasonKey };
+    }
+  }
+  return {
+    categoryCode: ACCOUNT_COMPROMISE_CATEGORY_CODE,
+    subCategoryCode: "OTHER_ACCOUNT_COMPROMISE",
+    reasonKey: "noPatternDetected",
+  };
+}
