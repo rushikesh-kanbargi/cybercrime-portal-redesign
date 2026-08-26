@@ -1,0 +1,1051 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>CCube — Cyber crime complaints</title>
+<style>
+:root{
+  --bg:#f7f8fa; --card:#fff; --ink:#101317; --sub:#5a6472; --dim:#8b94a3;
+  --line:#e6e9ef; --hair:#f0f2f6;
+  --pri:#2f5bea; --pri-dk:#2246c2; --pri-bg:#eef2fe;
+  --red:#d13b1f; --red-bg:#fdf1ee; --red-line:#f5cec4;
+  --grn:#0f7a4a; --grn-bg:#e9f7f0;
+  --amb:#96660b; --amb-bg:#fdf6e6;
+  --r:14px; --tap:52px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased}
+body.big{font-size:18.5px}
+h1,h2,h3,h4{margin:0;line-height:1.2;letter-spacing:-.021em;font-weight:640}
+p{margin:0 0 14px}
+a{color:var(--pri-dk);text-underline-offset:2px}
+button{font:inherit}
+:focus-visible{outline:2.5px solid var(--pri);outline-offset:2px;border-radius:8px}
+.hide{display:none!important}
+svg{display:block;flex:0 0 auto}
+
+/* ── header ── */
+header{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.86);
+  backdrop-filter:saturate(180%) blur(14px);border-bottom:1px solid var(--line)}
+.hin{max-width:940px;margin:0 auto;padding:0 20px;height:60px;display:flex;align-items:center;gap:14px}
+.brand{display:flex;align-items:center;gap:10px;border:0;background:0;cursor:pointer;padding:8px 0;color:var(--ink)}
+.brand .mk{width:30px;height:30px;border-radius:9px;background:var(--pri);display:grid;place-items:center;color:#fff}
+.brand b{font-size:16.5px;font-weight:680;letter-spacing:-.025em}
+.brand i{font-style:normal;font-size:12.5px;color:var(--dim);font-weight:540;margin-left:1px;
+  display:block;line-height:1;margin-top:2px;letter-spacing:0}
+.brand .tx{display:flex;flex-direction:column;align-items:flex-start;line-height:1.05}
+.back{border:1px solid var(--line);background:var(--card);color:var(--sub);height:34px;width:34px;
+  border-radius:9px;cursor:pointer;display:grid;place-items:center;padding:0;flex:0 0 auto}
+.back:hover{border-color:var(--pri);color:var(--pri-dk)}
+.back[hidden]{display:none}
+.hnav{margin-left:auto;display:flex;align-items:center;gap:2px}
+.hnav button{border:0;background:0;color:var(--sub);font-size:14.5px;font-weight:560;
+  padding:8px 12px;border-radius:9px;cursor:pointer;min-height:38px}
+.hnav button:hover{background:var(--hair);color:var(--ink)}
+.hnav button.on{background:var(--pri-bg);color:var(--pri-dk);font-weight:620}
+.acct{display:flex;align-items:center;gap:9px;padding-left:12px;margin-left:6px;border-left:1px solid var(--line)}
+.av{width:30px;height:30px;border-radius:50%;background:var(--pri-bg);color:var(--pri-dk);
+  display:grid;place-items:center;font-size:12.5px;font-weight:700}
+.acct span.nm{font-size:14px;color:var(--sub);font-weight:540}
+.mini{border:1px solid var(--line);background:var(--card);color:var(--sub);font-size:12.5px;
+  font-weight:620;height:32px;padding:0 11px;border-radius:8px;cursor:pointer}
+.mini:hover{border-color:var(--pri);color:var(--pri-dk)}
+
+/* ── layout ── */
+.page{max-width:940px;margin:0 auto;padding:34px 20px 96px}
+.page.mid{max-width:660px}
+.view{display:none}
+.view.on{display:block;animation:fade .24s cubic-bezier(.2,.7,.3,1)}
+@keyframes fade{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.eyebrow{font-size:12.5px;font-weight:660;letter-spacing:.07em;text-transform:uppercase;color:var(--dim);margin-bottom:10px}
+h1.t{font-size:29px;margin-bottom:10px;letter-spacing:-.028em}
+h2.t{font-size:21px;margin-bottom:10px}
+h3.t{font-size:13px;font-weight:660;letter-spacing:.07em;text-transform:uppercase;color:var(--dim);margin:32px 0 12px}
+.lede{color:var(--sub);font-size:16.5px;margin-bottom:26px;max-width:56ch}
+.sm{font-size:14px;color:var(--sub)}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin-bottom:14px}
+
+/* ── buttons ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:var(--tap);
+  border:0;border-radius:12px;cursor:pointer;font-size:16.5px;font-weight:620;letter-spacing:-.011em;
+  background:var(--pri);color:#fff;padding:13px 20px;transition:background .16s,transform .08s}
+.btn:hover{background:var(--pri-dk)}
+.btn:active{transform:scale(.988)}
+.btn[disabled]{background:#c9cfd9;cursor:not-allowed}
+.btn.sec{background:var(--card);color:var(--ink);border:1.5px solid var(--line)}
+.btn.sec:hover{border-color:var(--pri);color:var(--pri-dk);background:var(--card)}
+.btn.txt{background:0;color:var(--sub);font-weight:580;font-size:15px;min-height:44px}
+.btn.txt:hover{background:var(--hair);color:var(--ink)}
+.btn+.btn{margin-top:10px}
+
+/* ── tiles ── */
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(min-width:860px){.tiles{grid-template-columns:repeat(3,1fr)}}
+.tiles .tile{padding:18px}
+.tiles .tile .ic{width:36px;height:36px;margin-bottom:12px}
+.tiles .tile b{font-size:16px}
+.tiles .tile small{font-size:13.5px;margin-top:4px}
+@media(max-width:620px){.tiles{grid-template-columns:1fr}}
+.tile{display:flex;flex-direction:column;align-items:flex-start;text-align:left;
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;
+  cursor:pointer;transition:border-color .16s,box-shadow .16s,transform .12s}
+.tile:hover{border-color:#c9d3ea;box-shadow:0 6px 20px rgba(16,19,23,.06);transform:translateY(-1px)}
+.tile .ic{width:40px;height:40px;border-radius:11px;background:var(--pri-bg);color:var(--pri);
+  display:grid;place-items:center;margin-bottom:14px}
+.tile.urgent .ic{background:var(--red-bg);color:var(--red)}
+.tile.urgent:hover{border-color:var(--red-line)}
+.tile b{font-size:17px;font-weight:640;letter-spacing:-.016em}
+.tile small{display:block;color:var(--sub);font-size:14px;line-height:1.45;margin-top:5px}
+.big2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:620px){.big2{grid-template-columns:1fr}}
+.big2 .tile{padding:24px}
+.big2 .tile .ic{width:44px;height:44px}
+
+/* ── rows ── */
+.rows{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.row{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:0;border:0;
+  border-bottom:1px solid var(--hair);padding:16px 18px;cursor:pointer;transition:background .13s;color:var(--ink)}
+.rows .row:last-child{border-bottom:0}
+.row:hover{background:var(--pri-bg)}
+.row .gr{flex:1;min-width:0}
+.row b{display:block;font-size:16.5px;font-weight:600;letter-spacing:-.014em}
+.row small{display:block;color:var(--sub);font-size:14px;margin-top:3px;line-height:1.4}
+.row .chev{color:var(--dim)}
+.row .amt{font-size:16.5px;font-weight:660;white-space:nowrap;letter-spacing:-.02em}
+.row .ref{display:block;font:600 12.5px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--dim);margin-bottom:3px}
+
+.tag{display:inline-block;font-size:12px;font-weight:640;padding:3.5px 9px;border-radius:7px}
+.tag.b{background:var(--pri-bg);color:var(--pri-dk)}
+.tag.g{background:var(--grn-bg);color:var(--grn)}
+.tag.r{background:var(--red-bg);color:var(--red)}
+.tag.y{background:var(--amb-bg);color:var(--amb)}
+.tag.n{background:var(--hair);color:var(--sub)}
+
+/* ── forms ── */
+.fset{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px;margin-bottom:14px}
+.fset > h4{font-size:16px;font-weight:640;margin-bottom:3px;letter-spacing:-.015em}
+.fset > .sm{margin-bottom:18px}
+.f{margin-bottom:19px}
+.f:last-child{margin-bottom:0}
+.f > label{display:block;font-size:15px;font-weight:580;margin-bottom:7px;letter-spacing:-.007em}
+.f .hlp{font-size:13.5px;color:var(--sub);margin:-3px 0 8px;line-height:1.45}
+.f .opt{font-size:12.5px;color:var(--dim);font-weight:500}
+input.i,textarea.i,select.i{width:100%;font:inherit;font-size:16.5px;color:var(--ink);background:var(--card);
+  border:1.5px solid var(--line);border-radius:11px;padding:13px 14px;min-height:var(--tap);
+  transition:border-color .15s,box-shadow .15s;appearance:none}
+select.i{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%238b94a3' stroke-width='2' stroke-linecap='round'><path d='M6 9l6 6 6-6'/></svg>");
+  background-repeat:no-repeat;background-position:right 13px center;padding-right:42px}
+input.i:focus,textarea.i:focus,select.i:focus{border-color:var(--pri);outline:0;box-shadow:0 0 0 3.5px var(--pri-bg)}
+input.i::placeholder,textarea.i::placeholder{color:#aeb6c3}
+textarea.i{min-height:132px;resize:vertical;line-height:1.55}
+.money-in{position:relative}
+.money-in span{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--sub);font-size:16.5px;pointer-events:none}
+.money-in input{padding-left:32px}
+.seg{display:flex;gap:8px}
+.seg button{flex:1;min-height:48px;border:1.5px solid var(--line);background:var(--card);border-radius:11px;
+  font-size:15.5px;font-weight:580;color:var(--sub);cursor:pointer;transition:.14s}
+.seg button:hover{border-color:#c9d3ea}
+.seg button.on{border-color:var(--pri);background:var(--pri-bg);color:var(--pri-dk);font-weight:640}
+.more{border:0;background:0;color:var(--pri-dk);font-size:14.5px;font-weight:600;cursor:pointer;
+  padding:10px 0 0;display:flex;align-items:center;gap:6px}
+.txn{border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:11px;position:relative}
+.txn .no{font-size:12.5px;font-weight:660;color:var(--dim);letter-spacing:.05em;text-transform:uppercase;margin-bottom:13px}
+.txn .del{position:absolute;top:12px;right:12px;border:0;background:0;color:var(--dim);cursor:pointer;
+  font-size:13px;font-weight:600;padding:5px 8px;border-radius:7px}
+.txn .del:hover{background:var(--red-bg);color:var(--red)}
+.total{display:flex;justify-content:space-between;align-items:baseline;padding:15px 18px;
+  background:var(--pri-bg);border-radius:12px;margin-bottom:12px}
+.total .l{font-size:14.5px;color:var(--pri-dk);font-weight:580}
+.total .v{font-size:23px;font-weight:700;color:var(--pri-dk);letter-spacing:-.025em}
+
+/* ── evidence ── */
+.drop{border:1.5px dashed #c8d0dd;border-radius:12px;padding:22px 18px;text-align:center;cursor:pointer;
+  transition:.15s;background:#fbfcfe;display:block}
+.drop:hover{border-color:var(--pri);background:var(--pri-bg)}
+.drop .t2{font-size:15.5px;font-weight:600;margin-top:9px}
+.drop .s2{font-size:13.5px;color:var(--sub);margin-top:3px}
+.drop input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.flist{margin-top:12px;display:flex;flex-direction:column;gap:8px}
+.fitem{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:11px;padding:10px 12px}
+.fitem .th{width:42px;height:42px;border-radius:9px;background:var(--pri-bg);color:var(--pri);
+  display:grid;place-items:center;overflow:hidden;flex:0 0 auto}
+.fitem .th img{width:100%;height:100%;object-fit:cover}
+.fitem .fn{flex:1;min-width:0}
+.fitem .fn b{display:block;font-size:14.5px;font-weight:580;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;letter-spacing:-.01em}
+.fitem .fn span{font-size:12.5px;color:var(--dim)}
+.fitem .rm{border:0;background:0;color:var(--dim);cursor:pointer;font-size:13px;font-weight:600;
+  padding:6px 9px;border-radius:7px;flex:0 0 auto}
+.fitem .rm:hover{background:var(--red-bg);color:var(--red)}
+
+/* ── outstanding items ── */
+.need{background:var(--amb-bg);border:1px solid #ecd9a4;border-radius:var(--r);padding:18px;margin-bottom:16px}
+.need h4{font-size:16px;font-weight:640;color:#7a5408;margin-bottom:4px}
+.need .cd{font:700 15px ui-monospace,Menlo,monospace;color:var(--amb);font-variant-numeric:tabular-nums}
+.need ul{margin:14px 0 0;padding:0;list-style:none}
+.need li{padding:11px 0;border-top:1px solid #efe0b9;font-size:14.5px;color:#6d4c07}
+.need li b{display:block;font-weight:640;color:#5c3f05;margin-bottom:2px}
+.done{display:flex;align-items:center;gap:11px;background:var(--grn-bg);border:1px solid #c3e3d1;
+  border-radius:var(--r);padding:15px 18px;margin-bottom:16px;font-size:14.5px;color:#0d5c39}
+.done b{font-weight:640}
+
+/* ── 1930 ── */
+.call{display:flex;align-items:center;gap:15px;background:var(--red);color:#fff;border-radius:var(--r);
+  padding:16px 20px;text-decoration:none;margin-bottom:16px;min-height:70px}
+.call:hover{background:#b6321a}
+.call .n{font-size:25px;font-weight:700;letter-spacing:-.025em;line-height:1.05}
+.call small{display:block;opacity:.93;font-size:13.5px;margin-top:3px;line-height:1.4}
+
+.prog{display:flex;gap:6px;margin-bottom:26px}
+.prog i{flex:1;height:3px;border-radius:2px;background:var(--line);transition:background .3s}
+.prog i.on{background:var(--pri)}
+
+.kv{display:flex;justify-content:space-between;gap:18px;padding:13px 0;border-bottom:1px solid var(--hair);font-size:15.5px}
+.kv:first-child{padding-top:0}
+.kv:last-child{border-bottom:0;padding-bottom:0}
+.kv .k{color:var(--sub);flex:0 0 auto}
+.kv .v{font-weight:600;text-align:right;letter-spacing:-.01em}
+
+/* ── timeline ── */
+.tl{list-style:none;margin:0;padding:0}
+.tl li{position:relative;padding:0 0 26px 34px;border-left:2px solid var(--hair);margin-left:6px}
+.tl li:last-child{border-left-color:transparent;padding-bottom:0}
+.tl li::before{content:"";position:absolute;left:-8px;top:2px;width:14px;height:14px;border-radius:50%;
+  background:var(--card);border:2.5px solid var(--line)}
+.tl li.done::before{background:var(--grn);border-color:var(--grn)}
+.tl li.now::before{background:var(--pri);border-color:var(--pri);box-shadow:0 0 0 5px var(--pri-bg)}
+.tl li.need::before{background:var(--amb);border-color:var(--amb);box-shadow:0 0 0 5px var(--amb-bg)}
+.tl .when{font-size:12px;color:var(--dim);font-weight:640;letter-spacing:.05em;text-transform:uppercase}
+.tl .what{font-weight:620;font-size:16.5px;margin:3px 0 4px;letter-spacing:-.014em}
+.tl .mean{font-size:14.5px;color:var(--sub);line-height:1.5}
+.tl .todo{font-size:14.5px;margin-top:9px;padding:11px 14px;background:var(--pri-bg);border-radius:10px;
+  color:var(--pri-dk);font-weight:580;line-height:1.45}
+.tl li.pend .what,.tl li.pend .mean{opacity:.42}
+
+.clock{display:flex;align-items:center;gap:14px;background:var(--red-bg);border:1px solid var(--red-line);
+  border-radius:var(--r);padding:16px 18px;margin-bottom:16px}
+.clock .t{font:700 26px/1 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--red);font-variant-numeric:tabular-nums}
+.clock .l{font-size:13.5px;color:#8f3018;line-height:1.45}
+
+pre.code{background:#12161c;color:#dfe5ee;border-radius:12px;padding:18px;overflow-x:auto;
+  font:12.5px/1.65 ui-monospace,SFMono-Regular,Menlo,monospace;margin:0}
+pre.code .k{color:#8fb6ff}pre.code .s{color:#a3e3ae}
+table.tb{width:100%;border-collapse:collapse;font-size:14.5px}
+table.tb th,table.tb td{text-align:left;padding:11px 10px;border-bottom:1px solid var(--hair)}
+table.tb tr:last-child td{border-bottom:0}
+table.tb th{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--dim);font-weight:660}
+table.tb td.n{font-family:ui-monospace,Menlo,monospace;font-size:13px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:760px){.two{grid-template-columns:1fr}}
+
+/* ── login ── */
+.auth{max-width:400px;margin:6vh auto 0}
+.auth .mk{width:52px;height:52px;border-radius:15px;background:var(--pri);display:grid;place-items:center;
+  margin-bottom:22px;color:#fff}
+input.otp{font:700 26px/1 ui-monospace,Menlo,monospace;letter-spacing:.32em;text-align:center;padding:17px 14px 17px 22px}
+
+/* ── presenter bar ── */
+.dbar{position:fixed;left:0;right:0;bottom:0;z-index:60;background:#12161c;color:#e7ebf1;
+  padding:9px 20px calc(9px + env(safe-area-inset-bottom))}
+.dbar .in{max-width:940px;margin:0 auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.dbar .lbl{font-size:12px;font-weight:660;letter-spacing:.07em;text-transform:uppercase;color:#7d8798}
+.dbar button{border:1px solid #333a45;background:#1c222b;color:#e7ebf1;font-size:13.5px;font-weight:580;
+  height:34px;padding:0 13px;border-radius:8px;cursor:pointer}
+.dbar button:hover{background:#262d38;border-color:#48515f}
+.dbar button[disabled]{opacity:.35;cursor:not-allowed}
+.dbar .sp{margin-left:auto}
+
+footer{border-top:1px solid var(--line);background:var(--card)}
+.fin{max-width:940px;margin:0 auto;padding:22px 20px 96px;color:var(--dim);font-size:13.5px}
+.fin button{border:0;background:0;color:var(--sub);font-size:13.5px;font-weight:560;cursor:pointer;padding:8px 16px 8px 0}
+.fin button:hover{color:var(--pri-dk)}
+</style>
+</head>
+<body>
+
+<header><div class="hin">
+  <button class="back" id="back" hidden onclick="back()" aria-label="Back"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+  <button class="brand" onclick="go('home')"><span class="mk"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5"/><path d="M12 12v10"/></svg></span>
+    <span class="tx"><b>CCube</b><i>Cyber crime complaints</i></span></button>
+  <nav class="hnav" id="hnav">
+    <button data-v="home" onclick="go('home')">Home</button>
+    <button data-v="track" onclick="go('track')">My reports</button>
+    <button data-v="unit" onclick="go('unit')">Cyber cell view</button>
+  </nav>
+  <div class="acct" id="acct">
+    <span class="av" id="av">—</span><span class="nm" id="nm">Not signed in</span>
+    <button class="mini" onclick="signOut()">Sign out</button>
+  </div>
+  <button class="mini" onclick="document.body.classList.toggle('big')" title="Larger text">A+</button>
+</div></header>
+
+<div class="page" id="page">
+
+<!-- ════ LOGIN ════ -->
+<section class="view on" id="v-login"><div class="auth">
+  <div class="mk"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 3 7v10l9 5 9-5V7z"/><path d="M3 7l9 5 9-5"/><path d="M12 12v10"/></svg></div>
+  <h1 class="t">Sign in to CCube</h1>
+  <p class="lede">One account per person. Your name and date of birth come from your ID — you never type them.</p>
+  <div id="l1">
+    <div class="f"><label for="aad">Aadhaar number</label>
+      <input class="i" id="aad" inputmode="numeric" maxlength="14" placeholder="0000 0000 0000" autocomplete="off"></div>
+    <button class="btn" onclick="sendOtp()">Continue</button>
+    <button class="btn txt" onclick="fillDemo()">Use a demo identity</button>
+  </div>
+  <div id="l2" class="hide">
+    <p class="lede" id="otpTo"></p>
+    <div class="f"><label for="otp">Six-digit code</label>
+      <input class="i otp" id="otp" inputmode="numeric" maxlength="6" placeholder="······" autocomplete="one-time-code"></div>
+    <button class="btn" onclick="verifyOtp()">Verify</button>
+    <button class="btn txt" onclick="showStep('l1')">Use a different number</button>
+  </div>
+</div></section>
+
+<!-- ════ HOME ════ -->
+<section class="view" id="v-home">
+  <h1 class="t" id="greet">Welcome</h1>
+  <p class="lede">What would you like to do?</p>
+  <div class="big2">
+    <button class="tile urgent" onclick="startReport()">
+      <span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></span>
+      <b>Report an incident</b><small>A fraud, a threat, a hacked account, a suspicious link.</small>
+    </button>
+    <button class="tile" onclick="go('track')">
+      <span class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg></span>
+      <b>Track my reports</b><small><span id="cnt">No</span> filed. See where each has reached and who is handling it.</small>
+    </button>
+  </div>
+  <a class="call" href="tel:1930" style="margin-top:22px">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>
+    <span><span class="n">Call 1930</span><small>If money has just left your account, call before you finish the form. It starts the bank request soonest.</small></span></a>
+  <div id="recent"></div>
+</section>
+
+<!-- ════ CATEGORY ════ -->
+<section class="view" id="v-cat">
+  <div class="prog"><i class="on"></i><i></i><i></i><i></i></div>
+  <div class="eyebrow">Step 1 of 4</div>
+  <h1 class="t">What happened?</h1>
+  <p class="lede">Pick whichever is closest to what happened. You can change it at any point.</p>
+  <div class="tiles" id="cats"></div>
+</section>
+
+<!-- ════ SCENARIO ════ -->
+<section class="view" id="v-scen">
+  <div class="prog"><i class="on"></i><i class="on"></i><i></i><i></i></div>
+  <div class="eyebrow">Step 2 of 4</div>
+  <h1 class="t" id="scenH">Which is closest?</h1>
+  <p class="lede">Not sure? Pick anything close. The officer sees your own words either way.</p>
+  <div class="rows" id="scens"></div>
+  <button class="btn txt" style="margin-top:16px" onclick="go('cat')">Choose a different category</button>
+</section>
+
+<!-- ════ FORM ════ -->
+<section class="view" id="v-form">
+  <div class="prog"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
+  <div class="eyebrow">Step 3 of 4</div>
+  <h1 class="t" id="formH">Tell us what happened</h1>
+  <p class="lede" id="formQ"></p>
+  <a class="call hide" href="tel:1930" id="formCall">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></svg>
+    <span><span class="n">Call 1930 now</span><small>Do this first. You can come back and finish — nothing is lost.</small></span></a>
+  <div id="formBody"></div>
+  <button class="btn" onclick="toReview()">Review my report</button>
+  <button class="btn txt" onclick="go('scen')">Back</button>
+</section>
+
+<!-- ════ REVIEW ════ -->
+<section class="view" id="v-review">
+  <div class="prog"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></div>
+  <div class="eyebrow">Step 4 of 4</div>
+  <h1 class="t">Check and send</h1>
+  <p class="lede">Anything blank can still be added after you send.</p>
+  <div id="reviewBody"></div>
+  <button class="btn" onclick="submitReport()">Send to the cyber cell</button>
+  <button class="btn txt" onclick="go('form')">Go back and edit</button>
+</section>
+
+<!-- ════ TRACK ════ -->
+<section class="view" id="v-track">
+  <h1 class="t">My reports</h1>
+  <p class="lede" id="trackLede">Every report you have filed, and what each is waiting on.</p>
+  <button class="btn sec" style="margin-bottom:22px" onclick="startReport()">Report something new</button>
+  <div id="caseList"></div>
+</section>
+
+<!-- ════ CASE ════ -->
+<section class="view" id="v-case">
+  <div id="caseHead"></div>
+  <div id="caseClock"></div>
+  <h3 class="t">Progress</h3>
+  <ul class="tl" id="caseTl"></ul>
+  <h3 class="t">Who is handling it</h3>
+  <div class="card" id="caseWho"></div>
+  <div id="caseTx"></div>
+  <div id="caseEv"></div>
+  <h3 class="t">What you told us</h3>
+  <div class="card" id="caseDetail"></div>
+  <h3 class="t">If nothing moves</h3>
+  <div class="card">
+    <div class="kv"><span class="k">After 24 hours</span><span class="v">Call your officer directly</span></div>
+    <div class="kv"><span class="k">After 3 days</span><span class="v">Write to the duty officer</span></div>
+    <div class="kv"><span class="k">After 7 days</span><span class="v">Escalate to the district Nodal Officer</span></div>
+  </div>
+  <button class="btn sec" style="margin-top:20px" onclick="go('track')">Back to my reports</button>
+</section>
+
+<!-- ════ UNIT ════ -->
+<section class="view" id="v-unit">
+  <h1 class="t">What the cyber cell receives</h1>
+  <p class="lede">The same report as it arrives at the other end.</p>
+  <div class="two">
+    <div><h3 class="t" style="margin-top:0">Written as prose</h3>
+      <div class="card" style="font-style:italic;color:var(--sub);font-size:15px">
+      "Respected sir, I am writing to inform that on yesterday date I received one call from unknown
+      number saying my account will be closed and after that some amount has been deducted from my
+      account which I came to know later…"
+      <div style="font-style:normal;margin-top:14px;font-size:13.5px;color:var(--dim)">Someone has to read
+      this and re-type every number before anything can be asked of a bank.</div></div></div>
+    <div><h3 class="t" style="margin-top:0">The same report, structured</h3>
+      <pre class="code" id="payload"></pre>
+      <p class="sm" style="margin-top:10px">From <b id="unitRef">—</b></p></div>
+  </div>
+  <h3 class="t">Reports that share a counterparty</h3>
+  <div class="card"><table class="tb" id="cluster"></table>
+    <p class="sm" style="margin:14px 0 0">One account, many victims. Filed separately these are unrelated
+    tickets; joined on the counterparty they are a single case.</p></div>
+</section>
+
+<!-- ════ ABOUT ════ -->
+<section class="view" id="v-about">
+  <h1 class="t">About CCube</h1>
+  <p class="lede">A faster path from "my money is gone" to a report the cyber cell can act on.</p>
+  <div class="card">
+    <h2 class="t" style="font-size:17px">The argument</h2>
+    <p class="sm" style="margin:0">MHA's own instructions list <b>seven data points</b> as enough for police
+    to begin the bank request. The form that exists asks for roughly <b>forty-five fields across eight
+    steps</b> before it will accept anything. Reporting a suspicious call takes three taps; reporting an
+    actual loss takes forty-five fields. Severity is inverted against usability.</p>
+  </div>
+  <div class="card">
+    <h2 class="t" style="font-size:17px">Sources</h2>
+    <div class="kv"><span class="k">Seven data points start the bank request</span><span class="v">MHA CFCFRMS instructions</span></div>
+    <div class="kv"><span class="k">~45 fields across 8 steps</span><span class="v">MHA Citizen Manual v10 §5.2.4</span></div>
+    <div class="kv"><span class="k">24-hour completion rule</span><span class="v">CFCFRMS §iv</span></div>
+    <div class="kv"><span class="k">Father / spouse name and ID upload required</span><span class="v">Citizen Manual, Step 6</span></div>
+    <div class="kv"><span class="k">Victim must name the suspect's police station</span><span class="v">Citizen Manual, Step 5</span></div>
+  </div>
+  <div class="card">
+    <h2 class="t" style="font-size:17px">How it behaves</h2>
+    <p class="sm" style="margin:0">Sample data, held in your browser. Nothing is sent to any bank, police or
+    government system, and no account is frozen — police examine a report and make that request themselves.
+    The only outbound link is the phone call to 1930.</p>
+  </div>
+</section>
+
+</div>
+
+<footer><div class="fin">
+  <button onclick="go('about')">About</button>
+  <button onclick="go('unit')">Cyber cell view</button>
+  <p style="margin:14px 0 0">CCube — cyber crime complaints</p>
+</div></footer>
+
+<div class="dbar"><div class="in">
+  <span class="lbl">Presenter</span>
+  <button id="dAdv" onclick="advance()">Advance this case</button>
+  <button onclick="quickLogin()">Sign in</button>
+  <button onclick="fillSample()">Fill the form</button>
+  <button class="sp" onclick="resetAll()">Reset</button>
+</div></div>
+
+<script src="seed.js"></script>
+<script>
+var USER=null, current=null, pending=null, cases=[], tick=null, seq=4182, D={};
+
+function by(l,k,v){ return l.filter(function(r){ return r[k]===v; }); }
+function one(l,k,v){ return by(l,k,v)[0]||null; }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function inr(n){ n=String(n); if(n.length<4) return n;
+  var l=n.slice(-3), r=n.slice(0,-3);
+  return r.replace(/\B(?=(\d{2})+(?!\d))/g,',')+','+l; }
+function rs(n){ return n?'₹'+inr(n):''; }
+function num(x){ return parseInt(String(x==null?'':x).replace(/\D/g,''),10)||0; }
+function when(iso){ var d=new Date(iso); if(isNaN(d)) return iso||'';
+  return d.toLocaleDateString('en-IN',{day:'numeric',month:'short'})+', '+
+         d.toLocaleTimeString('en-IN',{hour:'numeric',minute:'2-digit'}); }
+function skey(e){ return e.action_subtype? e.status+':'+e.action_subtype : e.status; }
+function cp(k){ return DB.status_copy[k]||{title:k,means:'',do:'',sla_days:0}; }
+function el(id){ return document.getElementById(id); }
+
+var TAG={SUBMITTED:'b',RECEIVED_BY_UNIT:'b',ASSIGNED:'b',ACTION_TAKEN:'b',
+         NEEDS_INFO:'y',FIR_REGISTERED:'g',CLOSED:'g',WITHDRAWN:'n'};
+var L_MONEY=['SUBMITTED','RECEIVED_BY_UNIT','ASSIGNED','ACTION_TAKEN:LIEN_REQUESTED',
+             'NEEDS_INFO','ACTION_TAKEN:SUSPECT_TRACED','FIR_REGISTERED','CLOSED'];
+var L_OTHER=['SUBMITTED','RECEIVED_BY_UNIT','ASSIGNED','ACTION_TAKEN:TAKEDOWN_REQUESTED',
+             'NEEDS_INFO','ACTION_TAKEN:NOTICE_ISSUED','FIR_REGISTERED','CLOSED'];
+function ladder(c){ return c.txns.length? L_MONEY : L_OTHER; }
+
+var ICON={
+ C:'<path d="M6 4h11M6 9h11M9 14h5a5 5 0 0 0 0-10"/><path d="M9 14l7 7"/><path d="M9 4v10"/>',
+ B:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 9v4M12 16h.01"/>',
+ A:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+ D:'<path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/>',
+ E:'<rect x="2" y="7" width="20" height="12" rx="4"/><path d="M7 11v4M5 13h4M16 12h.01M18.5 14.5h.01"/>',
+ F:'<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M2 20h20"/>'};
+function svg(n){ return '<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" '+
+  'stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round">'+(CI[n]||CI.alert)+'</svg>'; }
+var CHEV='<svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" '+
+  'stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>';
+var CI={
+ phone:'<path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/>',
+ card:'<rect x="2" y="5" width="20" height="14" rx="2.5"/><path d="M2 10h20M6 15h4"/>',
+ chart:'<path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/>',
+ alert:'<path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/>',
+ badge:'<path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5z"/><path d="M9 12l2 2 4-4"/>',
+ shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 9v4M12 16h.01"/>',
+ briefcase:'<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M2 13h20"/>',
+ user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+ message:'<path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.1A8.4 8.4 0 0 1 12 3a8.4 8.4 0 0 1 9 8.5z"/>',
+ lock:'<rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+ link:'<path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/>',
+ game:'<rect x="2" y="7" width="20" height="12" rx="4"/><path d="M7 11v4M5 13h4M16 12h.01M18.5 14.5h.01"/>',
+ file:'<path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7z"/><path d="M14 2v5h5M9 13h6M9 17h4"/>'};
+var MODNAME={complaint_money:'Where the money left from', financial_transaction:'The payments',
+  communication_event:'How they contacted you', online_identity:'The account involved',
+  web_artifact:'The link, post or app', threat_record:'The threat', device_event:'The device'};
+var MODSUB={complaint_money:'Your side of the transfer, not theirs.',
+  communication_event:'The first question decides what we show you next.',
+  web_artifact:'If it is still up, police can ask for it to be taken down.',
+  threat_record:'A deadline moves this to the front of the queue.',
+  online_identity:'A rupee value matters — without one this gets treated as trivial.'};
+
+/* ══ hydrate ══ */
+function hydrate(){
+  cases = DB.complaint.map(function(c){
+    var rt=one(DB.routing,'complaint_id',c.id);
+    var ofc=rt?one(DB.officer,'id',rt.officer_id):null;
+    var off=ofc?one(DB.cyber_office,'id',ofc.office_id):null;
+    var acc=one(DB.citizen_account,'id',c.account_id);
+    var who=acc?one(DB.aadhaar_record_sim,'aadhaar_sim',acc.aadhaar_sim):null;
+    var tx=by(DB.financial_transaction,'complaint_id',c.id);
+    var ev=by(DB.status_event,'complaint_id',c.id).sort(function(a,b){
+      return a.occurred_at<b.occurred_at?-1:1; });
+    var sc=one(DB.scenario,'id',c.scenario_ids[0]);
+    return {id:c.id, ref:c.reference_no, ids:c.scenario_ids, scen:sc,
+      kind:sc?sc.title:'Report', band:c.victim_age_band, rel:c.reporter_relationship,
+      story:c.narrative_raw, filed:new Date(c.submitted_at).getTime(),
+      prot:c.is_protected_identity, holder:who, officer:ofc, office:off,
+      money:one(DB.complaint_money,'complaint_id',c.id), txns:tx, events:ev,
+      notes:by(DB.complaint_note,'complaint_id',c.id),
+      atts:by(DB.attachment,'complaint_id',c.id),
+      total:tx.reduce(function(s,t){ return s+t.amount_inr; },0)};
+  });
+}
+function mine(){ return USER? cases.filter(function(c){
+  return c.holder && c.holder.aadhaar_sim===USER.aadhaar_sim; }) : []; }
+
+/* ══ routing ══ */
+var hist=[];
+function back(){ var p=hist.pop(); if(p) go(p,false); }
+function go(v,push){
+  if(!USER && ['login','about'].indexOf(v)<0){ pending=v; v='login'; }
+  var cur=document.querySelector('.view.on');
+  if(push!==false && cur && cur.id!=='v-'+v && cur.id!=='v-login') hist.push(cur.id.slice(2));
+  if(v==='home'||v==='login') hist=[];
+  document.querySelectorAll('.view').forEach(function(s){ s.classList.toggle('on','v-'+v===s.id); });
+  document.querySelectorAll('#hnav button').forEach(function(b){ b.classList.toggle('on',b.dataset.v===v); });
+  el('page').classList.toggle('mid',['login','scen','form','review','case','about'].indexOf(v)>-1);
+  el('hnav').classList.toggle('hide',!USER);
+  el('acct').classList.toggle('hide',!USER);
+  el('dAdv').disabled=(v!=='case');
+  el('back').hidden=!hist.length;
+  window.scrollTo(0,0);
+  if(v==='home') drawHome();
+  if(v==='track') drawTrack();
+  if(v==='case') drawCase();
+  if(v==='unit') drawUnit();
+}
+
+/* ══ auth ══ */
+function showStep(id){ el('l1').classList.toggle('hide',id!=='l1'); el('l2').classList.toggle('hide',id!=='l2'); }
+function fillDemo(){ el('aad').value='0000 1234 5678'; sendOtp(); }
+var tryAad='000012345678';
+function sendOtp(){
+  var v=el('aad').value.replace(/\D/g,''), rec=one(DB.aadhaar_record_sim,'aadhaar_sim',v);
+  if(v.length!==12){ alert('Please enter all 12 digits.'); return; }
+  if(!rec){ alert('No record found for that number.\n\nTry 0000 1234 5678.'); return; }
+  tryAad=v;
+  el('otpTo').textContent='We sent a code to '+rec.mobile_sim+' and to '+rec.email_sim+
+    '. Either works — if your SIM is blocked or swapped, use the email.';
+  showStep('l2'); el('otp').focus();
+}
+function verifyOtp(){
+  if(el('otp').value.replace(/\D/g,'').length<4){ alert('Enter the six-digit code.'); return; }
+  signIn(tryAad);
+}
+function quickLogin(){ signIn('000012345678'); }
+function signIn(a){
+  USER=one(DB.aadhaar_record_sim,'aadhaar_sim',a||'000012345678');
+  el('av').textContent=USER.name.split(' ').map(function(w){ return w[0]; }).join('').slice(0,2);
+  el('nm').textContent=USER.name;
+  var to=pending; pending=null; go(to||'home');
+}
+function signOut(){ USER=null; el('av').textContent='—'; el('nm').textContent='Not signed in';
+  showStep('l1'); el('aad').value=''; el('otp').value=''; go('login'); }
+
+/* ══ home + track ══ */
+function drawHome(){
+  var list=mine();
+  el('greet').textContent=USER? USER.name.split(' ')[0]+', what do you need?' : 'Welcome';
+  el('cnt').textContent=list.length||'No';
+  var open=list.filter(function(c){
+    var l=c.events[c.events.length-1]; return !l||['CLOSED','WITHDRAWN'].indexOf(l.status)<0; });
+  el('recent').innerHTML=open.length
+    ? '<h3 class="t">In progress</h3><div class="rows">'+open.slice(0,3).map(rowFor).join('')+'</div>' : '';
+}
+function rowFor(c){
+  var l=c.events[c.events.length-1]||{status:'SUBMITTED'};
+  return '<button class="row" onclick="openCase(\''+c.id+'\')"><span class="gr">'+
+    '<span class="ref">'+esc(c.ref)+'</span><b>'+esc(c.kind)+'</b>'+
+    '<span style="display:block;margin-top:7px"><span class="tag '+(TAG[l.status]||'b')+'">'+esc(cp(skey(l)).title)+'</span>'+
+    (c.prot?' <span class="tag n">Identity protected</span>':'')+'</span></span>'+
+    (c.total?'<span class="amt">'+rs(c.total)+'</span>':'')+CHEV+'</button>';
+}
+function drawTrack(){
+  var list=mine();
+  el('trackLede').textContent=list.length
+    ? 'Every report you have filed, and what each is waiting on.' : 'You have not filed anything yet.';
+  el('caseList').innerHTML=list.length
+    ? '<div class="rows">'+list.map(rowFor).join('')+'</div>'
+    : '<div class="card sm">Reports you file will appear here.</div>';
+}
+function openCase(id){ current=id; go('case'); }
+
+/* ══ report ══ */
+function startReport(){
+  D={ids:[],scen:null,story:'',modules:{},txns:[{}],files:[],caption:'',pincode:'',paid:''};
+  if(!USER){ pending='cat'; go('login'); return; }
+  drawCats(); go('cat');
+}
+function drawCats(){
+  el('cats').innerHTML=DB.category.map(function(c){
+    return '<button class="tile'+(c.urgent?' urgent':'')+'" onclick="pickCat(\''+c.id+'\')">'+
+      '<span class="ic">'+svg(c.icon)+'</span><b>'+esc(c.title)+'</b>'+
+      '<small>'+esc(c.blurb)+'</small></button>';
+  }).join('');
+}
+function pickCat(id){
+  var c=one(DB.category,'id',id); D.cat=c;
+  var list=c.scenario_ids.map(function(i){ return one(DB.scenario,'id',i); }).filter(Boolean);
+  if(list.length===1){ pickScen(list[0].id); return; }      /* one option — do not ask */
+  el('scenH').textContent=c.title;
+  el('scens').innerHTML=list.map(function(s){
+    return '<button class="row" onclick="pickScen(\''+s.id+'\')"><span class="gr">'+
+      '<b>'+esc(s.title)+'</b><small>'+esc(s.first_question)+'</small></span>'+CHEV+'</button>';
+  }).join('');
+  go('scen');
+}
+function pickScen(id){
+  D.scen=one(DB.scenario,'id',id); D.ids=[id]; D.modules={}; D.txns=[{}]; D.paid='';
+  buildForm(); go('form'); previewRoute();
+}
+function moneyOn(){ return D.scen.money==='required' || (D.scen.money==='optional' && D.paid==='Yes'); }
+function setPaid(v){ D.paid=v; buildForm(); }
+function buildForm(){
+  var s=D.scen;
+  el('formH').textContent=s.title;
+  el('formQ').textContent=s.first_question;
+  el('formCall').classList.toggle('hide',!moneyOn());
+  var h='<div class="fset"><h4>In your own words</h4>'+
+    '<p class="sm">Any language. Do not worry about spelling or the order things happened.</p>'+
+    '<div class="f"><textarea class="i" id="story" placeholder="Start anywhere — what you remember first is fine.">'+esc(D.story)+'</textarea></div></div>';
+  if(s.money==='optional'){
+    h+='<div class="fset"><h4>Did any money actually leave your account?</h4>'+
+       '<p class="sm">Plenty of people report this before paying anything. That is still worth reporting — '+
+       'it is how the same number gets stopped for the next person.</p><div class="f"><div class="seg">'+
+       ['Yes','No','Not sure'].map(function(o){
+         return '<button type="button" class="'+(D.paid===o?'on':'')+'" onclick="setPaid(\''+o+'\')">'+o+'</button>';
+       }).join('')+'</div></div></div>';
+  }
+  s.modules.forEach(function(m){
+    if((m==='complaint_money'||m==='financial_transaction') && !moneyOn()) return;
+    if(m==='financial_transaction'){ h+=txnBlock(); return; }
+    var fields=DB.form_field[m]; if(!fields) return;
+    var req=fields.filter(function(f){ return !f.optional; });
+    var opt=fields.filter(function(f){ return f.optional; });
+    h+='<div class="fset"><h4>'+MODNAME[m]+'</h4>'+(MODSUB[m]?'<p class="sm">'+MODSUB[m]+'</p>':'')+
+       req.map(function(f){ return field(m,f); }).join('');
+    if(opt.length) h+='<div class="hide" id="opt-'+m+'">'+opt.map(function(f){ return field(m,f); }).join('')+'</div>'+
+      '<button class="more" onclick="toggleOpt(\''+m+'\',this)"><svg width="15" height="15" viewBox="0 0 24 24" '+
+      'fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>'+
+      'Add '+opt.length+' more detail'+(opt.length>1?'s':'')+' (optional)</button>';
+    h+='</div>';
+  });
+  h+=evidenceBlock()+locationBlock();
+  el('formBody').innerHTML=h;
+  el('story').addEventListener('input',function(){ D.story=this.value; });
+  syncTotal(); renderFiles();
+}
+
+/* ── evidence ── */
+var FI={image:'<rect x="3" y="3" width="18" height="18" rx="2.5"/><circle cx="8.5" cy="8.5" r="1.6"/><path d="m21 15-5-5L5 21"/>',
+ audio:'<path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4M8 22h8"/>',
+ video:'<rect x="2" y="5" width="14" height="14" rx="2.5"/><path d="m22 8-6 4 6 4z"/>',
+ doc:'<path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7z"/><path d="M14 2v5h5M9 13h6M9 17h4"/>'};
+function ftype(t){ return /^image\//.test(t)?'image': /^audio\//.test(t)?'audio':
+                          /^video\//.test(t)?'video':'doc'; }
+function fsize(b){ return b<1024?b+' B': b<1048576?(b/1024).toFixed(0)+' KB':(b/1048576).toFixed(1)+' MB'; }
+function evidenceBlock(){
+  var f=DB.form_field.attachment;
+  return '<div class="fset"><h4>Anything you can attach <span class="opt">optional</span></h4>'+
+   '<p class="sm">'+esc(f[0].help)+'</p>'+
+   '<label class="drop"><input type="file" id="filein" multiple '+
+   'accept="image/*,audio/*,video/*,application/pdf,.pdf" onchange="addFiles(this)">'+
+   '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--pri)" stroke-width="1.8" '+
+   'stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>'+
+   '<path d="M7 9l5-5 5 5M12 4v12"/></svg>'+
+   '<div class="t2">Add a screenshot, photo, recording or document</div>'+
+   '<div class="s2">Images, audio, video or PDF · as many as you like</div></label>'+
+   '<div class="flist" id="flist"></div>'+
+   '<div class="f" style="margin-top:16px">'+
+   '<label for="attcap">'+esc(f[1].label)+' <span class="opt">optional</span></label>'+
+   '<div class="hlp">'+esc(f[1].help)+'</div>'+
+   '<input class="i" id="attcap" value="'+esc(D.caption||'')+'" oninput="D.caption=this.value"></div></div>';
+}
+function addFiles(input){
+  [].forEach.call(input.files,function(f){
+    D.files.push({name:f.name,size:f.size,type:f.type||'application/octet-stream',
+      url:/^image\//.test(f.type)?URL.createObjectURL(f):null});
+  });
+  input.value=''; renderFiles();
+}
+function rmFile(i){ D.files.splice(i,1); renderFiles(); }
+function renderFiles(){
+  var box=el('flist'); if(!box) return;
+  box.innerHTML=D.files.map(function(f,i){
+    var k=ftype(f.type);
+    return '<div class="fitem"><span class="th">'+
+      (f.url?'<img src="'+f.url+'" alt="">':
+       '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" '+
+       'stroke-linecap="round" stroke-linejoin="round">'+FI[k]+'</svg>')+'</span>'+
+      '<span class="fn"><b>'+esc(f.name)+'</b><span>'+k+' · '+fsize(f.size)+'</span></span>'+
+      '<button class="rm" onclick="rmFile('+i+')">Remove</button></div>';
+  }).join('');
+}
+/* ── where you are now ── */
+function locationBlock(){
+  var f=DB.form_field.location[0];
+  if(!D.pincode) D.pincode=USER?USER.address_pincode:'';
+  return '<div class="fset"><h4>Where you are now</h4>'+
+   '<div class="f" style="margin-bottom:0"><label for="pin">'+esc(f.label)+'</label>'+
+   '<div class="hlp">'+esc(f.help)+'</div>'+
+   '<input class="i" id="pin" inputmode="numeric" maxlength="6" value="'+esc(D.pincode)+'" '+
+   'oninput="D.pincode=this.value;previewRoute()"><div class="hlp" id="routeTo" style="margin:8px 0 0"></div></div></div>';
+}
+function officeFor(pin){
+  return DB.cyber_office.filter(function(o){ return o.jurisdiction_pincodes.indexOf(pin)>-1; })[0]||null;
+}
+function previewRoute(){
+  var t=el('routeTo'); if(!t) return;
+  var o=officeFor((D.pincode||'').trim());
+  t.innerHTML = o ? 'Goes to <b>'+esc(o.name)+'</b>.'
+    : (D.pincode||'').length===6 ? 'No unit listed for that PIN code — it will go to the nearest one.' : '';
+}
+function field(m,f,idx){
+  var id=(idx==null?'':'t'+idx+'-')+m+'-'+f.name;
+  var v=(idx==null?(D.modules[m]||{})[f.name]:(D.txns[idx]||{})[f.name])||'';
+  var lab='<label for="'+id+'">'+esc(f.label)+(f.optional?' <span class="opt">optional</span>':'')+'</label>'+
+    (f.help?'<div class="hlp">'+esc(f.help)+'</div>':'');
+  var set='set(\''+m+'\','+(idx==null?'null':idx)+',\''+f.name+'\',';
+  var inp;
+  if(f.kind==='bool'){
+    inp='<div class="seg">'+['Yes','No','Not sure'].map(function(o){
+      return '<button type="button" class="'+(v===o?'on':'')+'" onclick="'+set+'\''+o+'\');pressSeg(this)">'+o+'</button>';
+    }).join('')+'</div>';
+  } else if(f.kind==='select'){
+    inp='<select class="i" id="'+id+'" onchange="'+set+'this.value)"><option value="">Choose one</option>'+
+      f.options.map(function(o){ return '<option'+(v===o?' selected':'')+'>'+esc(o)+'</option>'; }).join('')+'</select>';
+  } else if(f.kind==='textarea'){
+    inp='<textarea class="i" id="'+id+'" style="min-height:96px" oninput="'+set+'this.value)">'+esc(v)+'</textarea>';
+  } else if(f.kind==='money'){
+    inp='<div class="money-in"><span>₹</span><input class="i" id="'+id+'" inputmode="numeric" value="'+esc(v)+
+      '" oninput="'+set+'this.value);syncTotal()" placeholder="0"></div>';
+  } else if(f.kind==='datetime'){
+    inp='<input class="i" id="'+id+'" type="datetime-local" value="'+esc(v)+'" onchange="'+set+'this.value)">';
+  } else {
+    inp='<input class="i" id="'+id+'" type="'+(f.kind==='url'?'url':'text')+'" '+
+      (f.kind==='number'?'inputmode="numeric" ':'')+'value="'+esc(v)+'" oninput="'+set+'this.value)">';
+  }
+  return '<div class="f">'+lab+inp+'</div>';
+}
+function set(m,idx,k,v){ if(idx==null){ (D.modules[m]=D.modules[m]||{})[k]=v; } else { D.txns[idx][k]=v; } }
+function pressSeg(b){ [].forEach.call(b.parentNode.children,function(x){ x.classList.remove('on'); }); b.classList.add('on'); }
+function toggleOpt(m,btn){ el('opt-'+m).classList.remove('hide'); btn.classList.add('hide'); }
+function txnBlock(){
+  var f=DB.form_field.financial_transaction;
+  var h='<div class="fset"><h4>The payments</h4><p class="sm">Add every payment you made, even small ones. '+
+    'The total is what decides how urgently this is picked up.</p><div id="txns">';
+  D.txns.forEach(function(t,i){
+    h+='<div class="txn"><div class="no">Payment '+(i+1)+'</div>'+
+      (D.txns.length>1?'<button class="del" onclick="delTxn('+i+')">Remove</button>':'')+
+      f.map(function(x){ return field('financial_transaction',x,i); }).join('')+'</div>';
+  });
+  return h+'</div><div class="total"><span class="l">Total so far</span><span class="v" id="totalV">₹0</span></div>'+
+    '<button class="btn sec" onclick="addTxn()">Add another payment</button></div>';
+}
+function addTxn(){ D.txns.push({}); buildForm(); }
+function delTxn(i){ D.txns.splice(i,1); if(!D.txns.length) D.txns=[{}]; buildForm(); }
+function total(){ return D.txns.reduce(function(s,x){ return s+num(x.amount_inr); },0); }
+function syncTotal(){ var t=el('totalV'); if(t) t.textContent=rs(total())||'₹0'; }
+
+/* ══ review ══ */
+function v(m,k){ return (D.modules[m]||{})[k]||''; }
+function toReview(){
+  if(!D.story.trim()){ alert('Please describe what happened in your own words first — even one line is enough.'); return; }
+  var money=D.scen.modules.indexOf('financial_transaction')>-1, h='';
+  if(money){
+    var SEVEN=[['Your mobile number',USER.mobile_sim],
+      ['Bank or wallet the money left',v('complaint_money','from_bank_wallet_sim')],
+      ['Account it left from',v('complaint_money','from_account_last4_sim')],
+      ['Transaction ID',D.txns[0].txn_id_utr_sim],
+      ['When it happened',D.txns[0].txn_at?when(D.txns[0].txn_at):''],
+      ['Card number',v('complaint_money','card_last4_sim')],
+      ['Screenshot or proof','You can add this later']];
+    h+='<div class="card"><h2 class="t" style="font-size:16px">What starts the bank request</h2>'+
+      '<p class="sm" style="margin-bottom:16px">These seven are all police need to begin. Blanks do not stop the report going.</p>'+
+      SEVEN.map(function(r){ return '<div class="kv"><span class="k">'+r[0]+'</span><span class="v">'+
+        (r[1]?esc(r[1]):'<span style="color:var(--dim);font-weight:500">Not given</span>')+'</span></div>'; }).join('')+'</div>';
+    if(total()) h+='<div class="total"><span class="l">Total across '+D.txns.length+' payment'+
+      (D.txns.length>1?'s':'')+'</span><span class="v">'+rs(total())+'</span></div>';
+  }
+  h+='<div class="card"><h2 class="t" style="font-size:16px">'+esc(D.scen.title)+'</h2>'+
+     '<div class="kv"><span class="k">Category</span><span class="v">'+esc(D.scen.group_name)+'</span></div>'+
+     '<div class="kv"><span class="k">Priority</span><span class="v">'+esc(D.scen.urgency)+'</span></div>'+
+     '<div style="margin-top:15px;font-size:15px;color:var(--sub);line-height:1.55">'+esc(D.story)+'</div></div>';
+  Object.keys(D.modules).forEach(function(m){
+    var rows=Object.keys(D.modules[m]).filter(function(k){ return D.modules[m][k]; });
+    if(!rows.length) return;
+    h+='<div class="card"><h2 class="t" style="font-size:16px">'+MODNAME[m]+'</h2>'+
+      rows.map(function(k){ var f=one(DB.form_field[m],'name',k);
+        return '<div class="kv"><span class="k">'+esc(f?f.label:k)+'</span><span class="v">'+esc(D.modules[m][k])+'</span></div>';
+      }).join('')+'</div>';
+  });
+  if(D.files.length) h+='<div class="card"><h2 class="t" style="font-size:16px">Attached evidence</h2>'+
+    D.files.map(function(f){ return '<div class="kv"><span class="k">'+esc(f.name)+'</span>'+
+      '<span class="v">'+ftype(f.type)+' · '+fsize(f.size)+'</span></div>'; }).join('')+
+    (D.caption?'<p class="sm" style="margin:14px 0 0">'+esc(D.caption)+'</p>':'')+'</div>';
+  var off=officeFor((D.pincode||'').trim())||DB.cyber_office[0];
+  h+='<div class="card"><h2 class="t" style="font-size:16px">Where it goes</h2>'+
+    '<div class="kv"><span class="k">Your PIN code</span><span class="v">'+esc(D.pincode||'—')+'</span></div>'+
+    '<div class="kv"><span class="k">Unit</span><span class="v">'+esc(off.name)+'</span></div></div>';
+  el('reviewBody').innerHTML=h;
+  go('review');
+}
+function submitReport(){
+  seq++;
+  var id='cmp_'+seq, now=new Date().toISOString();
+  var acc=one(DB.citizen_account,'aadhaar_sim',USER.aadhaar_sim);
+  var pin=(D.pincode||USER.address_pincode).trim();
+  var off=officeFor(pin)||DB.cyber_office[0];
+  var ofc=one(DB.officer,'office_id',off.id);
+  DB.complaint.unshift({id:id, reference_no:'CCR-'+String(seq).padStart(6,'0'), account_id:acc.id,
+    reporter_relationship:'self',
+    victim_age_band: USER.dob<'1966'?'senior':(USER.dob>'2008'?'minor':'adult'),
+    victim_display_name:null, narrative_raw:D.story, scenario_ids:D.ids,
+    submitted_at:now, is_protected_identity:['A4','B1'].indexOf(D.ids[0])>-1});
+  DB.routing.push({complaint_id:id,id:'rt_'+seq,office_id:off.id,officer_id:ofc.id,
+    routed_at:now,routed_by_rule:'current_pincode',is_cross_state:pin!==USER.address_pincode});
+  if(D.modules.complaint_money)
+    DB.complaint_money.push(Object.assign({complaint_id:id,noticed_at:now},D.modules.complaint_money));
+  D.txns.forEach(function(t,i){
+    if(!num(t.amount_inr) && !t.txn_id_utr_sim) return;
+    DB.financial_transaction.push({complaint_id:id,id:'txn_'+seq+'_'+i,amount_inr:num(t.amount_inr),
+      rail:(t.rail||'UPI').toLowerCase(), txn_id_utr_sim:t.txn_id_utr_sim||null,
+      txn_at:t.txn_at||now, to_identifier_sim:t.to_identifier_sim||null,
+      to_identifier_kind:(t.to_identifier_kind||'').toLowerCase().replace(/ /g,'_')||null});
+  });
+  ['communication_event','online_identity','web_artifact','threat_record','device_event'].forEach(function(m){
+    if(D.modules[m]) DB[m].push(Object.assign({complaint_id:id,id:m+'_'+seq},D.modules[m]));
+  });
+  D.files.forEach(function(f,i){
+    DB.attachment.push({complaint_id:id,id:'att_'+seq+'_'+i,filename:f.name,mime:f.type,
+      capture_method:'upload',sha256:null,scan_status:'clean',
+      what_it_shows:D.caption||ftype(f.type)+' evidence',uploaded_at:now});
+  });
+  DB.status_event.push({complaint_id:id,id:'se_'+seq,status:'SUBMITTED',action_subtype:null,
+    occurred_at:now,actor:'system'});
+  hydrate(); current=id; go('case');
+}
+
+/* ══ case ══ */
+function drawCase(){
+  var c=one(cases,'id',current); if(!c){ go('track'); return; }
+  var last=c.events[c.events.length-1]||{status:'SUBMITTED'}, lk=skey(last), s=c.scen;
+  el('caseHead').innerHTML='<div class="eyebrow">'+esc(c.ref)+'</div><h1 class="t">'+esc(c.kind)+'</h1>'+
+    '<p style="margin-bottom:24px"><span class="tag '+(TAG[last.status]||'b')+'">'+esc(cp(lk).title)+'</span> '+
+    (s?'<span class="tag '+(s.urgency.indexOf('P0')===0?'r':s.urgency.indexOf('P1')===0?'y':'n')+'">'+esc(s.urgency)+'</span> ':'')+
+    (c.prot?'<span class="tag n">Identity protected</span> ':'')+
+    (c.total?'<span style="margin-left:6px;font-weight:660;font-size:17px">'+rs(c.total)+'</span>':'')+'</p>';
+
+  clearInterval(tick);
+  var gaps=missingFrom(c), settled=['FIR_REGISTERED','CLOSED'].indexOf(last.status)>-1;
+  var dl=c.filed+864e5, left=dl-Date.now();
+  if(gaps.length && !settled && left>0){
+    el('caseClock').innerHTML='<div class="need"><h4>Still needed from you</h4>'+
+      '<p class="sm" style="margin:0;color:#7a5408">A report missing these can be closed without action '+
+      'after 24 hours, because the unit has nothing concrete to act on. Add them and that stops being a risk. '+
+      '<span class="cd" id="cd">--:--:--</span> left.</p><ul>'+
+      gaps.map(function(g){ return '<li><b>'+esc(g.what)+'</b>'+esc(g.why)+'</li>'; }).join('')+'</ul></div>';
+    tick=setInterval(function(){ var d=Math.max(0,dl-Date.now()), x=el('cd');
+      if(!x){ clearInterval(tick); return; }
+      x.textContent=String(Math.floor(d/36e5)).padStart(2,'0')+':'+String(Math.floor(d%36e5/6e4)).padStart(2,'0')+
+        ':'+String(Math.floor(d%6e4/1e3)).padStart(2,'0'); },1000);
+  } else if(!gaps.length && !settled){
+    el('caseClock').innerHTML='<div class="done">'+
+      '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" '+
+      'stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>'+
+      '<span><b>Your report is complete.</b> Nothing is needed from you — the unit has everything it needs to act.</span></div>';
+  } else el('caseClock').innerHTML='';
+
+  var seen=c.events.map(skey), steps=ladder(c).slice();
+  c.events.forEach(function(e){ if(steps.indexOf(skey(e))<0) steps.push(skey(e)); });
+  el('caseTl').innerHTML=steps.map(function(k){
+    var t=cp(k), i=seen.indexOf(k), ev=i>-1?c.events[i]:null, isL=(k===lk);
+    return '<li class="'+(!ev?'pend':isL?(ev.status==='NEEDS_INFO'?'need':'now'):'done')+'">'+
+      '<div class="when">'+(ev?when(ev.occurred_at):'Waiting')+'</div><div class="what">'+esc(t.title)+'</div>'+
+      '<div class="mean">'+esc(t.means)+'</div>'+(isL&&t.do?'<div class="todo">'+esc(t.do)+'</div>':'')+'</li>';
+  }).join('');
+
+  el('caseWho').innerHTML=c.office?
+    '<div class="kv"><span class="k">Unit</span><span class="v">'+esc(c.office.name)+'</span></div>'+
+    '<div class="kv"><span class="k">Address</span><span class="v">'+esc(c.office.address)+'</span></div>'+
+    '<div class="kv"><span class="k">Officer</span><span class="v">'+esc(c.officer.name)+'</span></div>'+
+    '<div class="kv"><span class="k">Speaks</span><span class="v">'+esc(c.officer.languages.join(', '))+'</span></div>'+
+    '<div class="kv"><span class="k">Phone</span><span class="v">'+esc(c.officer.phone)+'</span></div>'+
+    '<p class="sm" style="margin:14px 0 0">Routed from PIN code '+esc(c.holder?c.holder.address_pincode:'—')+
+    ' — never a dropdown you pick, because a wrong pick is how cases get misrouted.</p>':'';
+
+  var tx='';
+  if(c.txns.length){
+    tx='<table class="tb"><tr><th>When</th><th>How</th><th>To</th><th style="text-align:right">Amount</th></tr>'+
+      c.txns.map(function(t){ return '<tr><td>'+esc(when(t.txn_at))+'</td><td>'+esc(t.rail)+'</td>'+
+        '<td class="n">'+esc(t.to_identifier_sim||'—')+'</td><td style="text-align:right;font-weight:640">'+
+        rs(t.amount_inr)+'</td></tr>'; }).join('')+
+      '<tr><td colspan="3" style="font-weight:700">Total</td><td style="text-align:right;font-weight:700">'+
+      rs(c.total)+'</td></tr></table>'+
+      (c.txns.length>1?'<p class="sm" style="margin:14px 0 0">'+c.txns.length+
+        ' payments. A single-transaction form would have recorded this as '+rs(c.txns[0].amount_inr)+'.</p>':'');
+  }
+  el('caseTx').innerHTML=tx?'<h3 class="t">The money</h3><div class="card">'+tx+'</div>':'';
+
+  var ev='';
+  c.atts.forEach(function(a){
+    var q=a.scan_status==='quarantined';
+    ev+='<div class="kv"><span class="k">'+esc(a.filename)+'<br><span style="font-size:13px;color:var(--dim)">'+
+      esc(a.what_it_shows)+'</span></span><span class="v"><span class="tag '+(q?'r':'g')+'">'+esc(a.scan_status)+'</span></span></div>';
+  });
+  if(c.atts.some(function(a){ return a.scan_status==='quarantined'; }))
+    ev+='<p class="sm" style="margin:14px 0 0"><b>Quarantined does not mean rejected.</b> A malicious file is '+
+        'often the evidence itself. It is kept, flagged and passed to the forensic team.</p>';
+  c.notes.forEach(function(n){
+    ev+='<div class="kv"><span class="k">'+esc(n.author)+' · '+esc(when(n.created_at))+
+      '</span><span class="v" style="font-weight:450;max-width:62%">'+esc(n.body)+'</span></div>';
+  });
+  el('caseEv').innerHTML=ev?'<h3 class="t">Evidence and notes</h3><div class="card">'+ev+'</div>':'';
+
+  el('caseDetail').innerHTML=
+    '<div class="kv"><span class="k">Category</span><span class="v">'+esc(s?s.group_name:'—')+'</span></div>'+
+    '<div class="kv"><span class="k">Filed by</span><span class="v">'+esc(c.rel.replace(/_/g,' '))+'</span></div>'+
+    (c.money?'<div class="kv"><span class="k">Money left</span><span class="v">'+esc(c.money.from_bank_wallet_sim)+
+      ' · '+esc(c.money.from_account_last4_sim)+'</span></div>':'')+
+    '<div style="margin-top:15px;font-size:15px;color:var(--sub);line-height:1.55">'+esc(c.story)+'</div>';
+}
+function missingFrom(c){
+  var g=[];
+  if(c.txns.length && !c.txns.some(function(t){ return t.txn_id_utr_sim; }))
+    g.push({what:'Transaction ID or UTR — ',why:'without it the bank cannot locate the payment, so a hold cannot be requested.'});
+  if(c.txns.length && !c.money)
+    g.push({what:'Which account the money left — ',why:'the request has to name the account being asked about.'});
+  if(!c.atts.length)
+    g.push({what:'A screenshot or recording — ',why:'not required, but it is what turns a statement into evidence.'});
+  return g;
+}
+function advance(){
+  var c=one(cases,'id',current); if(!c){ alert('Open a report first.'); return; }
+  var seen=c.events.map(skey);
+  var next=ladder(c).filter(function(k){ return seen.indexOf(k)<0; })[0];
+  if(!next){ alert('This case has reached the end of the timeline.'); return; }
+  var p=next.split(':');
+  DB.status_event.push({complaint_id:c.id,id:'se_a'+DB.status_event.length,status:p[0],
+    action_subtype:p[1]||null,occurred_at:new Date().toISOString(),actor:'officer'});
+  hydrate(); drawCase();
+}
+
+/* ══ cyber cell view ══ */
+function drawUnit(){
+  var c=one(cases,'id',current)||cases.filter(function(x){ return x.txns.length; })[0];
+  var pl={reference_no:c.ref, scenario_ids:c.ids, victim_age_band:c.band, is_protected_identity:c.prot,
+    money:c.money?{from_bank_wallet_sim:c.money.from_bank_wallet_sim,
+      from_account_last4_sim:c.money.from_account_last4_sim,
+      transactions:c.txns.map(function(t){ return {amount_inr:t.amount_inr,rail:t.rail,
+        txn_id_utr_sim:t.txn_id_utr_sim,txn_at:t.txn_at,
+        to_identifier_sim:t.to_identifier_sim,to_identifier_kind:t.to_identifier_kind}; })}:null};
+  el('payload').innerHTML=esc(JSON.stringify(pl,null,2))
+    .replace(/&quot;([a-z_]+)&quot;:/g,'<span class="k">&quot;$1&quot;</span>:')
+    .replace(/: (&quot;[^&]*&quot;)/g,': <span class="s">$1</span>');
+  el('unitRef').textContent=c.ref+' · '+c.kind;
+  el('cluster').innerHTML='<tr><th>Counterparty</th><th>Kind</th><th>Reports</th><th>Total</th></tr>'+
+    DB.counterparty_cluster.map(function(k){
+      return '<tr><td class="n">'+esc(k.identifier_sim)+'</td><td>'+esc(k.identifier_kind)+'</td><td>'+
+        k.victim_count+'</td><td>'+(k.total_amount_inr?rs(k.total_amount_inr):'—')+'</td></tr>'; }).join('');
+}
+
+/* ══ presenter ══ */
+var SAMPLE={
+ C1:{story:"Got a call from someone saying he was from my bank and my account would be blocked today. He knew my name. He asked for the OTP and I gave it. ₹80,000 went out on UPI around 7:40 pm.",
+     complaint_money:{from_bank_wallet_sim:'State Bank',from_account_last4_sim:'4471'},
+     communication_event:{still_ongoing:'No',medium:'Phone call',direction:'They contacted me'},
+     txns:[{amount_inr:'80000',rail:'UPI',txn_id_utr_sim:'441922078853',to_identifier_sim:'raj.k@ybl',to_identifier_kind:'UPI ID'}]},
+ C5:{story:"I joined a WhatsApp group about share trading. The app showed my profit going up. I paid four times. When I tried to withdraw they asked for a tax payment and removed me from the group.",
+     complaint_money:{from_bank_wallet_sim:'HDFC',from_account_last4_sim:'8820'},
+     web_artifact:{kind:'An app',is_live:'Yes',is_public:'Anyone can see it',credentials_entered:'No',depicts_victim:'No'},
+     txns:[{amount_inr:'5000',rail:'UPI'},{amount_inr:'25000',rail:'IMPS or NEFT'},
+           {amount_inr:'120000',rail:'Net banking'},{amount_inr:'200000',rail:'Net banking'}]}};
+function fillSample(){
+  if(document.querySelector('.view.on').id!=='v-form'){ alert('Open a report form first.'); return; }
+  var s=SAMPLE[D.scen.id]||SAMPLE.C1;
+  D.story=s.story;
+  D.txns=(s.txns||[{}]).map(function(t){ return Object.assign({},t); });
+  D.modules={};
+  Object.keys(s).forEach(function(k){ if(k!=='story'&&k!=='txns') D.modules[k]=Object.assign({},s[k]); });
+  buildForm();
+}
+function resetAll(){
+  if(window.PRISTINE) window.DB=JSON.parse(window.PRISTINE);
+  USER=null; current=null; pending=null; seq=4182; clearInterval(tick);
+  el('av').textContent='—'; el('nm').textContent='Not signed in';
+  showStep('l1'); el('aad').value=''; el('otp').value='';
+  hydrate(); go('login');
+}
+
+/* ══ boot ══ */
+if(typeof DB==='undefined'){
+  document.body.innerHTML='<div style="padding:48px;font:16px/1.6 system-ui;max-width:560px;margin:0 auto">'+
+    '<h1 style="margin-bottom:12px">seed.js did not load</h1><p>This page needs <code>seed.js</code> beside it. '+
+    'Regenerate with <code>python3 data/generate.py</code>.</p></div>';
+} else {
+  window.PRISTINE=JSON.stringify(DB);
+  hydrate(); go('login');
+}
+</script>
+</body>
+</html>
