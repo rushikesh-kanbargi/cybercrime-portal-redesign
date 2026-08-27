@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { PhotoBanner } from "@/components/illustrations/photo-banner";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -18,10 +19,22 @@ export default async function JustHappenedPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 px-4 py-12">
-      <div className="animate-enter flex flex-col gap-3">
-        <PageIcon icon={LifeBuoy} size="lg" />
-        <h1 className="text-3xl font-semibold tracking-tight text-foreground">{t("title")}</h1>
-        <p className="text-lg text-muted-foreground">{t("subtitle")}</p>
+      {/* Merged into the header row (not a block after the CTA): the image
+          is a small side column, so it adds almost no extra height and the
+          tel:1930 button below still lands immediately — this page's whole
+          point is the fastest path to 1930. */}
+      <div className="flex items-start justify-between gap-4">
+        <div className="animate-enter flex flex-col gap-3">
+          <PageIcon icon={LifeBuoy} size="lg" />
+          <h1 className="text-3xl font-semibold tracking-tight text-foreground">{t("title")}</h1>
+          <p className="text-lg text-muted-foreground">{t("subtitle")}</p>
+        </div>
+        <PhotoBanner
+          src="https://images.unsplash.com/photo-1764831138635-35873bdd671e?fm=jpg&q=80&w=1600&auto=format&fit=crop"
+          alt={t("heroImageAlt")}
+          tone="primary"
+          className="hidden aspect-square w-24 shrink-0 sm:block"
+        />
       </div>
 
       <a

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { PhotoBanner } from "@/components/illustrations/photo-banner";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -20,10 +21,26 @@ export default async function SafetyTipsPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-12 px-4 py-16">
-      <div className="animate-enter flex flex-col gap-4">
-        <PageIcon icon={ShieldCheck} size="lg" />
-        <h1 className="text-4xl font-semibold tracking-tight text-foreground">{t("title")}</h1>
-        <p className="text-lg text-muted-foreground">{t("subtitle")}</p>
+      {/* Real photography merged into the header itself (a grid column next
+          to the title), not a separate block below it — same idea as the
+          homepage hero's own text+illustration split. Licensed free to use
+          (Unsplash License); this project deliberately avoids stock
+          hacker/crime-scene imagery (see
+          components/illustrations/report-flow.tsx), so this stays calm and
+          literal: someone at a keyboard, not a threat. */}
+      <div className="grid items-center gap-6 lg:grid-cols-[1.3fr_1fr]">
+        <div className="animate-enter flex flex-col gap-4">
+          <PageIcon icon={ShieldCheck} size="lg" />
+          <h1 className="text-4xl font-semibold tracking-tight text-foreground">{t("title")}</h1>
+          <p className="text-lg text-muted-foreground">{t("subtitle")}</p>
+        </div>
+        <PhotoBanner
+          src="https://images.unsplash.com/photo-1772115428479-9045bc0c2a3d?fm=jpg&q=80&w=1600&auto=format&fit=crop"
+          alt={t("heroImageAlt")}
+          tone="primary"
+          accentIcon={ShieldCheck}
+          priority
+        />
       </div>
 
       <div className="flex flex-col gap-4">

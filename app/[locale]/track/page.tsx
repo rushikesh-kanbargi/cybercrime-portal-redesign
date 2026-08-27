@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { useTranslations } from "next-intl";
+import { PhotoBanner } from "@/components/illustrations/photo-banner";
 import { useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,13 +44,25 @@ export default function TrackEntryPage() {
     <div className="mx-auto flex w-full max-w-xl flex-1 flex-col gap-8 px-4 py-10 sm:py-16">
       <Card className="animate-enter border-primary/20 bg-gradient-to-br from-primary/8 via-card to-card">
         <CardHeader>
-          <div className="mb-1 flex items-center gap-3">
-            <PageIcon icon={Search} size="lg" />
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex flex-col gap-1">
+              <div className="mb-1 flex items-center gap-3">
+                <PageIcon icon={Search} size="lg" />
+              </div>
+              <CardTitle as="h1" className="text-xl">
+                {t("title")}
+              </CardTitle>
+              <CardDescription>{t("description")}</CardDescription>
+            </div>
+            {/* Real photography merged into the card's own header, not a
+                trailing block — a small thumbnail beside the title. */}
+            <PhotoBanner
+              src="https://images.unsplash.com/photo-1743796055664-3473eedab36e?fm=jpg&q=80&w=1600&auto=format&fit=crop"
+              alt={t("heroImageAlt")}
+              tone="gold"
+              className="aspect-square w-20 shrink-0 sm:w-24"
+            />
           </div>
-          <CardTitle as="h1" className="text-xl">
-            {t("title")}
-          </CardTitle>
-          <CardDescription>{t("description")}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">

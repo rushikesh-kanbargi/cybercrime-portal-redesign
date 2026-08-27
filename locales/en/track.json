@@ -5,7 +5,8 @@
     "idLabel": "Complaint ID",
     "idPlaceholder": "e.g. CYB2026AB12CD",
     "continue": "Continue",
-    "stagesPreviewTitle": "What you'll see once you're verified"
+    "stagesPreviewTitle": "What you'll see once you're verified",
+    "heroImageAlt": "A magnifying glass resting beside a laptop on a marble surface."
   },
   "case": {
     "heading": "Complaint {publicId}",
@@ -27,7 +28,8 @@
     "noStatusYet": "No status updates yet. Check back soon, this page will show each step as it happens.",
     "latestBadge": "Latest",
     "whatYouCanDoLabel": "What you can do now:",
-    "notAnFirTitle": "This is not an FIR"
+    "notAnFirTitle": "This is not an FIR",
+    "heroImageAlt": "A simple black desk clock."
   },
   "status": {
     "RECEIVED": {

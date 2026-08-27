@@ -5,6 +5,7 @@
   },
   "title": "Privacy notice",
   "subtitle": "Written in plain language, specific to this product, not a generic policy pasted in from somewhere else. Short enough to read even if you're here in distress.",
+  "heroImageAlt": "A padlock and bank cards resting on a laptop keyboard.",
   "honestTitle": "The honest disclosure",
   "honestBody": "This is a hackathon prototype. It handles mock and synthetic data. Nobody sees what you enter here except this prototype's own database. It is not connected to any real government system, and nothing you submit reaches a real bank, police unit, or NCRP/CFCFRMS. If you have actually been a victim of cybercrime, use the real portal at <link>cybercrime.gov.in</link> or call 1930. Full detail on what's real and what's mocked: <whatsRealLink>/whats-real</whatsRealLink>.",
   "collectTitle": "What we collect, and why",

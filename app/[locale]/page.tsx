@@ -23,6 +23,7 @@ import { PageIcon } from "@/components/illustrations/page-icon";
 import { StepGlyph } from "@/components/illustrations/step-glyph";
 import { LiveActivity } from "@/components/chrome/live-activity";
 import { ScrollReveal } from "@/components/motion/scroll-reveal";
+import { PhotoBanner } from "@/components/illustrations/photo-banner";
 import { HeroEntrance, HeroEntranceItem } from "@/components/motion/hero-entrance";
 import { Press } from "@/components/motion/press";
 
@@ -247,11 +248,23 @@ export default async function Home() {
       </ScrollReveal>
 
       {/* Trust / reassurance — same three true claims as the inline strip
-          above, given fuller visual weight as a bento section. */}
+          above, given fuller visual weight as a bento section. Real
+          photography (the hero and every step icon stay hand-illustrated
+          SVG on purpose — this is the one supporting real photo on the
+          homepage) merged into the section's own heading row, not a
+          separate block below the grid. */}
       <ScrollReveal className="mx-auto w-full max-w-5xl px-4">
-        <h2 className="text-3xl font-semibold tracking-tight text-foreground">
-          {t("trustSection.title")}
-        </h2>
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="text-3xl font-semibold tracking-tight text-foreground">
+            {t("trustSection.title")}
+          </h2>
+          <PhotoBanner
+            src="https://images.unsplash.com/photo-1752650735119-8929e5f7d1ec?fm=jpg&q=80&w=1600&auto=format&fit=crop"
+            alt={t("trustImageAlt")}
+            tone="gold"
+            className="hidden aspect-square w-24 shrink-0 sm:block"
+          />
+        </div>
         <div className="mt-10 grid gap-5 sm:grid-cols-3">
           {trustSectionItems.map((item, i) => {
             const Icon = trustIcons[i];

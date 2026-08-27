@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { PhotoBanner } from "@/components/illustrations/photo-banner";
 import { Link } from "@/i18n/navigation";
 import {
   Card,
@@ -24,10 +25,19 @@ export default async function PrivacyPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-10 px-4 py-12">
-      <div className="animate-enter flex flex-col gap-3">
-        <PageIcon icon={Lock} size="lg" />
-        <h1 className="text-3xl font-semibold tracking-tight text-foreground">{t("title")}</h1>
-        <p className="text-lg text-muted-foreground">{t("subtitle")}</p>
+      <div className="grid items-center gap-6 lg:grid-cols-[1.3fr_1fr]">
+        <div className="animate-enter flex flex-col gap-3">
+          <PageIcon icon={Lock} size="lg" />
+          <h1 className="text-3xl font-semibold tracking-tight text-foreground">{t("title")}</h1>
+          <p className="text-lg text-muted-foreground">{t("subtitle")}</p>
+        </div>
+        <PhotoBanner
+          src="https://images.unsplash.com/photo-1633265486064-086b219458ec?fm=jpg&q=80&w=1600&auto=format&fit=crop"
+          alt={t("heroImageAlt")}
+          tone="gold"
+          accentIcon={Lock}
+          priority
+        />
       </div>
 
       <Card className="border-primary/20 bg-gradient-to-br from-primary/8 via-card to-card">

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { PhotoBanner } from "@/components/illustrations/photo-banner";
 import { Link } from "@/i18n/navigation";
 import { Info } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
@@ -11,6 +12,10 @@ export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("profile.meta");
   return { title: t("title"), description: t("description") };
 }
+
+// The real, working categories (matches track/[publicId]/page.tsx's own
+// list) — anything else falls back to the raw code rather than a wrong label.
+const KNOWN_CATEGORY_CODES = ["ONLINE_FINANCIAL_FRAUD", "HARASSMENT", "ACCOUNT_COMPROMISE"];
 
 // §7.2 #16 — "a list, not a dashboard": Complaint ID, category, status,
 // filed date, linking to /track/[publicId]. No charts, no counts, no
@@ -25,7 +30,16 @@ export default async function ProfilePage() {
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-4 py-10">
-      <h1 className="animate-enter text-lg font-semibold text-foreground">{t("heading")}</h1>
+      <div className="flex items-center gap-4">
+        <h1 className="animate-enter text-lg font-semibold text-foreground">{t("heading")}</h1>
+        <PhotoBanner
+          src="https://images.unsplash.com/photo-1641247597421-52f47b939ff8?fm=jpg&q=80&w=1600&auto=format&fit=crop"
+          alt={t("heroImageAlt")}
+          tone="primary"
+          className="ml-auto aspect-square w-16 shrink-0 sm:w-20"
+          priority
+        />
+      </div>
 
       {myComplaints === null ? (
         <Alert>
@@ -55,10 +69,9 @@ export default async function ProfilePage() {
                       </Link>
                       <p className="text-sm text-muted-foreground">
                         {t("complaints.row", {
-                          category:
-                            c.categoryCode === "ONLINE_FINANCIAL_FRAUD"
-                              ? tTrack("categoryLabels.ONLINE_FINANCIAL_FRAUD")
-                              : c.categoryCode,
+                          category: KNOWN_CATEGORY_CODES.includes(c.categoryCode)
+                            ? tTrack(`categoryLabels.${c.categoryCode}`)
+                            : c.categoryCode,
                           status: tTrack(`status.${c.statusCode}.label`),
                           date: new Date(c.filedAt).toLocaleDateString("en-IN", { dateStyle: "medium" }),
                         })}

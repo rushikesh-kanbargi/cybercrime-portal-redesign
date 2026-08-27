@@ -5,6 +5,7 @@
   },
   "title": "Accessibility statement",
   "subtitle": "What we're building toward, what's actually implemented, exactly what was tested and how, and what's still open. We'd rather tell you the honest, narrower truth than claim a conformance level we haven't tested.",
+  "heroImageAlt": "A close-up of hands typing on a laptop keyboard outdoors.",
   "targetTitle": "Our target",
   "targetBody": "<strong>WCAG 2.1 Level AA</strong>, scoped to the journeys we've actually shipped, not the whole site, and not a claim we haven't walked ourselves. As of this page, that's:",
   "targetScope": [

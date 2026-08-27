@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import { PhotoBanner } from "@/components/illustrations/photo-banner";
 import { Link } from "@/i18n/navigation";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -21,10 +22,19 @@ export default async function AccessibilityPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 px-4 py-12">
-      <div className="animate-enter flex flex-col gap-3">
-        <PageIcon icon={Accessibility} size="lg" />
-        <h1 className="text-3xl font-semibold tracking-tight text-foreground">{t("title")}</h1>
-        <p className="text-lg text-muted-foreground">{t("subtitle")}</p>
+      <div className="grid items-center gap-6 lg:grid-cols-[1.3fr_1fr]">
+        <div className="animate-enter flex flex-col gap-3">
+          <PageIcon icon={Accessibility} size="lg" />
+          <h1 className="text-3xl font-semibold tracking-tight text-foreground">{t("title")}</h1>
+          <p className="text-lg text-muted-foreground">{t("subtitle")}</p>
+        </div>
+        <PhotoBanner
+          src="https://images.unsplash.com/photo-1647154933795-422ba6b3034e?fm=jpg&q=80&w=1600&auto=format&fit=crop"
+          alt={t("heroImageAlt")}
+          tone="gold"
+          accentIcon={Accessibility}
+          priority
+        />
       </div>
 
       <Card className="border-primary/20 bg-gradient-to-br from-primary/8 via-card to-card">

@@ -2,6 +2,7 @@
 
 import { use, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { PhotoBanner } from "@/components/illustrations/photo-banner";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -133,8 +134,17 @@ export default function TrackCasePage({
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-4 py-10">
-      <div className="animate-enter flex items-center gap-2">
-        <h1 className="text-lg font-semibold text-foreground">{t("case.heading", { publicId })}</h1>
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="animate-enter text-lg font-semibold text-foreground">
+          {t("case.heading", { publicId })}
+        </h1>
+        <PhotoBanner
+          src="https://images.unsplash.com/photo-1590656114831-9be3b832eec7?fm=jpg&q=80&w=1600&auto=format&fit=crop"
+          alt={t("case.heroImageAlt")}
+          tone="gold"
+          className="aspect-square w-16 shrink-0 sm:w-20"
+          priority
+        />
       </div>
 
       {stage.name === "loading" ? (

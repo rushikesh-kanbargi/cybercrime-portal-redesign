@@ -5,7 +5,8 @@
     "idLabel": "शिकायत आईडी",
     "idPlaceholder": "जैसे CYB2026AB12CD",
     "continue": "आगे बढ़ें",
-    "stagesPreviewTitle": "सत्यापन के बाद आप यह देखेंगे"
+    "stagesPreviewTitle": "सत्यापन के बाद आप यह देखेंगे",
+    "heroImageAlt": "संगमरमर की सतह पर लैपटॉप के पास रखा एक आवर्धक लेंस।"
   },
   "case": {
     "heading": "शिकायत {publicId}",
@@ -27,7 +28,8 @@
     "noStatusYet": "अभी तक कोई स्थिति अपडेट नहीं है। जल्द ही वापस देखें, यह पेज हर कदम को होते ही दिखाएगा।",
     "latestBadge": "नवीनतम",
     "whatYouCanDoLabel": "आप अभी क्या कर सकते हैं:",
-    "notAnFirTitle": "यह FIR नहीं है"
+    "notAnFirTitle": "यह FIR नहीं है",
+    "heroImageAlt": "एक साधारण काली डेस्क घड़ी।"
   },
   "status": {
     "RECEIVED": {
