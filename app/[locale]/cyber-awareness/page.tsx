@@ -33,7 +33,7 @@ export default async function CyberAwarenessPage() {
           <p className="text-lg text-muted-foreground">{t("subtitle")}</p>
         </div>
         <PhotoBanner
-          src="https://images.unsplash.com/photo-1563986768609-322da13575f3?fm=jpg&q=80&w=1600&auto=format&fit=crop"
+          src="/images/photo-banner/cyber-awareness.jpg"
           alt={t("heroImageAlt")}
           tone="gold"
           accentIcon={BookOpen}

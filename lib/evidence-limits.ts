@@ -13,8 +13,13 @@ export const EVIDENCE_MAX_RAW_INPUT_BYTES = 40 * 1024 * 1024; // 40 MB
 // MIME allow-list, each mapped to its magic-byte signature checked
 // server-side (§23 "MIME allow-list + magic-byte check"). Client `accept`
 // attribute is UX only — the server never trusts a client-supplied MIME
-// type (§18.2 trust-boundary rule).
-export const EVIDENCE_ACCEPT = "image/jpeg,image/png,image/webp,application/pdf";
+// type (§18.2 trust-boundary rule). Extensions are listed alongside their
+// MIME types (not just the MIME types) because some browsers/OSes report an
+// empty or generic `file.type` for certain files — FileUpload's own
+// accept-matching (components/ui/file-upload.tsx) falls back to the
+// extension the same way this list does.
+export const EVIDENCE_ACCEPT =
+  "image/jpeg,image/png,image/webp,application/pdf,.jpg,.jpeg,.png,.webp,.pdf";
 
 export const EVIDENCE_MIME_EXTENSIONS: Record<string, string> = {
   "image/jpeg": "jpg",
@@ -27,12 +32,4 @@ export function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
-
-// Client-side pre-check mirroring the allow-list above — was duplicated
-// byte-for-byte across all three report wizards (money/harassment/hacked).
-export function isAcceptedEvidenceFile(file: File): boolean {
-  if (file.type in EVIDENCE_MIME_EXTENSIONS) return true;
-  const name = file.name.toLowerCase();
-  return [".jpg", ".jpeg", ".png", ".webp", ".pdf"].some((extension) => name.endsWith(extension));
 }

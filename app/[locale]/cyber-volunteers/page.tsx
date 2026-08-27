@@ -35,7 +35,7 @@ export default async function CyberVolunteersPage() {
           <p className="text-lg text-muted-foreground">{t("subtitle")}</p>
         </div>
         <PhotoBanner
-          src="https://images.unsplash.com/photo-1745847768380-2caeadbb3b71?fm=jpg&q=80&w=1600&auto=format&fit=crop"
+          src="/images/photo-banner/cyber-volunteers.jpg"
           alt={t("heroImageAlt")}
           tone="primary"
           accentIcon={Users}

@@ -23,6 +23,7 @@ export function UpdatesOptIn({
   onOtpCodeChange,
   otpError,
   otpSubmitting,
+  onSendCode,
   onConfirm,
   onSkip,
   demoCode,
@@ -35,9 +36,14 @@ export function UpdatesOptIn({
   onOtpCodeChange: (value: string) => void;
   otpError: string | null;
   otpSubmitting: boolean;
+  // Sends a real, freshly generated OTP for `wantMobile` (§lib/otp.ts) and
+  // moves otpStage from "idle" to "sent" on success.
+  onSendCode: () => void;
   onConfirm: () => void;
   onSkip: () => void;
-  demoCode: string;
+  // Only set once otpStage is "sent" — there is no fixed code to show
+  // before the citizen has told us which mobile number to send it to.
+  demoCode: string | null;
 }) {
   return (
     <Card>
@@ -54,23 +60,15 @@ export function UpdatesOptIn({
           </Alert>
         ) : otpStage === "skipped" ? (
           <p className="text-sm text-muted-foreground">{t("done.updatesSkipped")}</p>
-        ) : (
+        ) : otpStage === "sent" ? (
           <>
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="want-mobile">{t("done.mobileLabel")}</Label>
-              <Input
-                id="want-mobile"
-                type="tel"
-                inputMode="tel"
-                value={wantMobile}
-                onChange={(e) => onWantMobileChange(e.target.value)}
-              />
-            </div>
-            <Alert>
-              <Info />
-              <AlertTitle>{t("done.demoCodeTitle", { code: demoCode })}</AlertTitle>
-              <AlertDescription>{t("done.demoCodeBody")}</AlertDescription>
-            </Alert>
+            {demoCode ? (
+              <Alert>
+                <Info />
+                <AlertTitle>{t("done.demoCodeTitle", { code: demoCode })}</AlertTitle>
+                <AlertDescription>{t("done.demoCodeBody")}</AlertDescription>
+              </Alert>
+            ) : null}
             <div className="flex flex-col gap-2">
               <Label htmlFor="otp-code">{t("done.otpLabel")}</Label>
               <Input
@@ -85,6 +83,28 @@ export function UpdatesOptIn({
             <div className="flex gap-2">
               <Button size="sm" onClick={onConfirm} disabled={otpSubmitting || otpCode.length === 0}>
                 {otpSubmitting ? t("done.confirming") : t("done.confirm")}
+              </Button>
+              <Button size="sm" variant="ghost" onClick={onSkip}>
+                {t("done.skip")}
+              </Button>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="want-mobile">{t("done.mobileLabel")}</Label>
+              <Input
+                id="want-mobile"
+                type="tel"
+                inputMode="tel"
+                value={wantMobile}
+                onChange={(e) => onWantMobileChange(e.target.value)}
+              />
+            </div>
+            {otpError && <p className="text-sm text-destructive">{otpError}</p>}
+            <div className="flex gap-2">
+              <Button size="sm" onClick={onSendCode} disabled={otpSubmitting || wantMobile.trim().length === 0}>
+                {otpSubmitting ? t("done.sendingCode") : t("done.sendCode")}
               </Button>
               <Button size="sm" variant="ghost" onClick={onSkip}>
                 {t("done.skip")}

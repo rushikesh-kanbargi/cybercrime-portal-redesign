@@ -53,7 +53,7 @@ export default async function WhatsRealPage() {
           <p className="text-lg text-muted-foreground">{t.rich("intro", richStrong)}</p>
         </div>
         <PhotoBanner
-          src="https://images.unsplash.com/photo-1689023542268-fc743293acc8?fm=jpg&q=80&w=1600&auto=format&fit=crop"
+          src="/images/photo-banner/whats-real.jpg"
           alt={t("heroImageAlt")}
           tone="primary"
           accentIcon={Eye}

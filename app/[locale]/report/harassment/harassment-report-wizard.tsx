@@ -34,7 +34,7 @@ import {
   type HarassmentSubCategoryCode,
 } from "@/lib/classify";
 import { INDIAN_STATES } from "@/lib/india-states";
-import { submitHarassmentReport, confirmUpdatesOptIn, uploadEvidence } from "./actions";
+import { submitHarassmentReport, confirmUpdatesOptIn, requestUpdatesOtp, uploadEvidence } from "./actions";
 import { FileUpload } from "@/components/ui/file-upload";
 import { compressImageFile } from "@/lib/compress-image";
 import { StepProgress } from "@/components/tracking/step-progress";
@@ -49,11 +49,9 @@ import {
   EVIDENCE_MAX_FILES,
   EVIDENCE_MAX_RAW_INPUT_BYTES,
   formatBytes,
-  isAcceptedEvidenceFile,
 } from "@/lib/evidence-limits";
 
 const DRAFT_KEY = "cc-harassment-draft-v1";
-const DEMO_OTP_CODE = "123456";
 
 const selectClassName =
   "h-8 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm dark:bg-input/30";
@@ -200,6 +198,7 @@ export function HarassmentReportWizard({ savedProfile }: { savedProfile?: SavedP
   const [wantMobile, setWantMobile] = React.useState("");
   const [otpCode, setOtpCode] = React.useState("");
   const [otpStage, setOtpStage] = React.useState<"idle" | "sent" | "confirmed" | "skipped">("idle");
+  const [otpDemoCode, setOtpDemoCode] = React.useState<string | null>(null);
   const [otpError, setOtpError] = React.useState<string | null>(null);
   const [otpSubmitting, setOtpSubmitting] = React.useState(false);
   const resumeSavedAtLabel = resumeSavedAt ? new Date(resumeSavedAt).toLocaleString(dateLocale) : "";
@@ -295,16 +294,15 @@ export function HarassmentReportWizard({ savedProfile }: { savedProfile?: SavedP
     setStep("evidence");
   }
 
+  function handleRejectedEvidenceFiles(rejected: File[]) {
+    setEvidenceError(t("evidence.unsupportedType", { name: rejected[0].name }));
+  }
+
   function handleEvidenceFilesChange(files: File[]) {
     setEvidenceError(null);
     if (files.length > EVIDENCE_MAX_FILES) {
       setEvidenceError(t("evidence.tooManyFiles", { maxFiles: EVIDENCE_MAX_FILES }));
       files = files.slice(0, EVIDENCE_MAX_FILES);
-    }
-    const unsupported = files.find((f) => !isAcceptedEvidenceFile(f));
-    if (unsupported) {
-      setEvidenceError(t("evidence.unsupportedType", { name: unsupported.name }));
-      files = files.filter(isAcceptedEvidenceFile);
     }
     const oversized = files.find((f) => f.size > EVIDENCE_MAX_RAW_INPUT_BYTES);
     if (oversized) {
@@ -407,6 +405,24 @@ export function HarassmentReportWizard({ savedProfile }: { savedProfile?: SavedP
     a.download = t("done.downloadFilename", { publicId: result.publicId });
     a.click();
     URL.revokeObjectURL(url);
+  }
+
+  async function handleSendOtp() {
+    setOtpSubmitting(true);
+    setOtpError(null);
+    try {
+      const res = await requestUpdatesOtp({ mobile: wantMobile.trim(), locale });
+      if (res.ok) {
+        setOtpDemoCode(res.demoCode ?? null);
+        setOtpStage("sent");
+      } else {
+        setOtpError(res.error ?? t("done.otpGenericError"));
+      }
+    } catch {
+      setOtpError(t("done.otpGenericError"));
+    } finally {
+      setOtpSubmitting(false);
+    }
   }
 
   async function handleConfirmOtp() {
@@ -783,6 +799,7 @@ export function HarassmentReportWizard({ savedProfile }: { savedProfile?: SavedP
               accept={EVIDENCE_ACCEPT}
               files={evidenceFiles}
               onFilesChange={handleEvidenceFilesChange}
+              onRejectedFiles={handleRejectedEvidenceFiles}
               dragPrompt={t("evidence.dragPrompt")}
               chooseFilesLabel={t("evidence.chooseFiles")}
               removeFileLabel={(name) => t("evidence.removeFile", { name })}
@@ -957,9 +974,10 @@ export function HarassmentReportWizard({ savedProfile }: { savedProfile?: SavedP
             onOtpCodeChange={setOtpCode}
             otpError={otpError}
             otpSubmitting={otpSubmitting}
+            onSendCode={handleSendOtp}
             onConfirm={handleConfirmOtp}
             onSkip={() => setOtpStage("skipped")}
-            demoCode={DEMO_OTP_CODE}
+            demoCode={otpDemoCode}
           />
 
           <Button variant="outline" className="min-h-11" onClick={() => router.push("/")}>

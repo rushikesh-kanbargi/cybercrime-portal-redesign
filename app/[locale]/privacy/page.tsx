@@ -32,7 +32,7 @@ export default async function PrivacyPage() {
           <p className="text-lg text-muted-foreground">{t("subtitle")}</p>
         </div>
         <PhotoBanner
-          src="https://images.unsplash.com/photo-1633265486064-086b219458ec?fm=jpg&q=80&w=1600&auto=format&fit=crop"
+          src="/images/photo-banner/privacy.jpg"
           alt={t("heroImageAlt")}
           tone="gold"
           accentIcon={Lock}

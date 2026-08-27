@@ -36,7 +36,7 @@ export default async function UnlawfulContentPage() {
           <p className="text-lg text-muted-foreground">{t("subtitle")}</p>
         </div>
         <PhotoBanner
-          src="https://images.unsplash.com/photo-1759505210684-7e9bbdecbd40?fm=jpg&q=80&w=1600&auto=format&fit=crop"
+          src="/images/photo-banner/unlawful-content.jpg"
           alt={t("heroImageAlt")}
           tone="gold"
           accentIcon={Scale}

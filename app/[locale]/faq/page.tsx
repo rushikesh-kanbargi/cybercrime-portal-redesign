@@ -36,7 +36,7 @@ export default async function FaqPage() {
           <p className="text-lg text-muted-foreground">{t("subtitle")}</p>
         </div>
         <PhotoBanner
-          src="https://images.unsplash.com/photo-1636108527049-45e262910f45?fm=jpg&q=80&w=1600&auto=format&fit=crop"
+          src="/images/photo-banner/faq.jpg"
           alt={t("heroImageAlt")}
           tone="gold"
           accentIcon={CircleHelp}

@@ -10,8 +10,10 @@ import { HARASSMENT_CATEGORY_CODE } from "@/lib/classify";
 import {
   uploadEvidence as sharedUploadEvidence,
   confirmUpdatesOptIn as sharedConfirmUpdatesOptIn,
+  requestUpdatesOtp as sharedRequestUpdatesOtp,
   type UploadEvidenceResult,
   type ConfirmUpdatesResult,
+  type RequestUpdatesOtpResult,
 } from "../money/actions";
 
 // Same shape as report/money/actions.ts's submit schema, minus the
@@ -119,4 +121,10 @@ export async function confirmUpdatesOptIn(
   input: Parameters<typeof sharedConfirmUpdatesOptIn>[0],
 ): Promise<ConfirmUpdatesResult> {
   return sharedConfirmUpdatesOptIn(input);
+}
+
+export async function requestUpdatesOtp(
+  input: Parameters<typeof sharedRequestUpdatesOtp>[0],
+): Promise<RequestUpdatesOtpResult> {
+  return sharedRequestUpdatesOtp(input);
 }

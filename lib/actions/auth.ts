@@ -6,7 +6,7 @@
 
 import { eq, and, isNull, desc } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { users, otpChallenges, complaints, consents } from "@/lib/db/schema";
+import { users, otpChallenges, complaints, consents, profiles } from "@/lib/db/schema";
 import { generateOtpCode, hashOtpCode, otpMatches } from "@/lib/otp";
 import { createSession } from "@/lib/session";
 import { writeAudit } from "@/lib/audit";
@@ -30,6 +30,10 @@ export async function verifyLoginOtp(
   code: string,
   complaintId: string | undefined,
   ipHash: string | null,
+  // Optional — only the report-flow "want updates?" upgrade collects
+  // state/district alongside the mobile number. Plain login/track OTP
+  // verification never passes this.
+  newUserProfile?: { state?: string; district?: string },
 ): Promise<
   | { ok: true; userId: string; mobile: string }
   // `code` — stable discriminator for the client to pick a translated string
@@ -81,6 +85,13 @@ export async function verifyLoginOtp(
       .insert(users)
       .values({ mobile, mobileVerifiedAt: new Date() })
       .returning();
+    if (newUserProfile) {
+      await db.insert(profiles).values({
+        userId: user.id,
+        state: newUserProfile.state,
+        district: newUserProfile.district,
+      });
+    }
   } else if (!user.mobileVerifiedAt) {
     [user] = await db
       .update(users)

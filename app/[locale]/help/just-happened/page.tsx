@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { PhotoBanner } from "@/components/illustrations/photo-banner";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { ArrowRight, Phone, LifeBuoy } from "lucide-react";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { ArrowRight, Phone, LifeBuoy, Clock } from "lucide-react";
 import { PageIcon } from "@/components/illustrations/page-icon";
+import { ReadAloudButton } from "@/components/accessibility/read-aloud-button";
 import { cn } from "@/lib/utils";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -16,25 +17,31 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function JustHappenedPage() {
   const t = await getTranslations("help");
   const steps = t.raw("steps") as Array<{ title: string; body: string }>;
+  const readAloudText = [
+    t("title"),
+    t("subtitle"),
+    ...steps.map((step, i) => `${i + 1}. ${step.title}. ${step.body}`),
+    t("deadlineTitle"),
+    t("deadlineBody"),
+  ].join(" ");
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 px-4 py-12">
-      {/* Merged into the header row (not a block after the CTA): the image
-          is a small side column, so it adds almost no extra height and the
-          tel:1930 button below still lands immediately — this page's whole
-          point is the fastest path to 1930. */}
-      <div className="flex items-start justify-between gap-4">
-        <div className="animate-enter flex flex-col gap-3">
-          <PageIcon icon={LifeBuoy} size="lg" />
-          <h1 className="text-3xl font-semibold tracking-tight text-foreground">{t("title")}</h1>
-          <p className="text-lg text-muted-foreground">{t("subtitle")}</p>
+      {/* No hero photo on this page, deliberately — this is the fastest path
+          to 1930, and a third-party image CDN call has no business being on
+          the critical path for a page a panicking victim opens first. */}
+      <div className="animate-enter flex flex-col gap-3">
+        <PageIcon icon={LifeBuoy} size="lg" />
+        <h1 className="text-3xl font-semibold tracking-tight text-foreground">{t("title")}</h1>
+        <p className="text-lg text-muted-foreground">{t("subtitle")}</p>
+        <div>
+          <ReadAloudButton
+            text={readAloudText}
+            label={t("readAloud")}
+            stopLabel={t("readAloudStop")}
+            unsupportedLabel={t("readAloudUnsupported")}
+          />
         </div>
-        <PhotoBanner
-          src="https://images.unsplash.com/photo-1764831138635-35873bdd671e?fm=jpg&q=80&w=1600&auto=format&fit=crop"
-          alt={t("heroImageAlt")}
-          tone="primary"
-          className="hidden aspect-square w-24 shrink-0 sm:block"
-        />
       </div>
 
       <a
@@ -66,6 +73,12 @@ export default async function JustHappenedPage() {
           </Card>
         ))}
       </div>
+
+      <Alert className="border-warning/30 bg-warning/8">
+        <Clock />
+        <AlertTitle>{t("deadlineTitle")}</AlertTitle>
+        <AlertDescription>{t("deadlineBody")}</AlertDescription>
+      </Alert>
 
       <Card className="border-2 border-brand-gold/25 bg-gradient-to-br from-brand-gold/8 to-transparent">
         <CardContent className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

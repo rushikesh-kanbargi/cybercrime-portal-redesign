@@ -139,7 +139,7 @@ export default function TrackCasePage({
           {t("case.heading", { publicId })}
         </h1>
         <PhotoBanner
-          src="https://images.unsplash.com/photo-1590656114831-9be3b832eec7?fm=jpg&q=80&w=1600&auto=format&fit=crop"
+          src="/images/photo-banner/track-detail.jpg"
           alt={t("case.heroImageAlt")}
           tone="gold"
           className="aspect-square w-16 shrink-0 sm:w-20"

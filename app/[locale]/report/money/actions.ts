@@ -8,20 +8,19 @@ import {
   complaintStatuses,
   auditLogs,
   notifications,
-  users,
-  profiles,
-  consents,
   evidence,
 } from "@/lib/db/schema";
 import { generatePublicComplaintId } from "@/lib/complaint-id";
 import { z } from "zod";
 import { extractedFieldSchema } from "@/lib/types";
 import { getTranslations } from "next-intl/server";
-import { createSession } from "@/lib/session";
 import { routing } from "@/i18n/routing";
 import crypto from "node:crypto";
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { headers } from "next/headers";
+import { checkRateLimit, getClientIp, hashIp } from "@/lib/rate-limit";
+import { requestLoginOtp, verifyLoginOtp } from "@/lib/actions/auth";
 import {
   EVIDENCE_MAX_FILES,
   EVIDENCE_MAX_FILE_BYTES,
@@ -133,8 +132,40 @@ export async function submitMoneyReport(
   return { publicId, complaintId, smsPreview };
 }
 
-// D5 — OTP is mocked with a fixed, on-screen demo code. No SMS gateway.
-const DEMO_OTP_CODE = "123456";
+// D5 — OTP is mocked (no SMS gateway), but the code itself is real: freshly
+// generated, hashed, and time-boxed via the same lib/otp.ts + otp_challenges
+// primitives every other OTP surface in this app uses (/api/auth/otp/*,
+// /track). A hardcoded constant that always authenticates is a real
+// backdoor even in a prototype — see lib/otp.ts's own header comment — so
+// this flow no longer has one.
+const requestUpdatesOtpSchema = z.object({
+  mobile: z.string().trim().regex(/^[0-9+ ]{7,15}$/),
+  locale: z.enum(routing.locales).optional().default(routing.defaultLocale),
+});
+
+export interface RequestUpdatesOtpResult {
+  ok: boolean;
+  demoCode?: string;
+  expiresInSeconds?: number;
+  error?: string;
+}
+
+export async function requestUpdatesOtp(
+  input: z.infer<typeof requestUpdatesOtpSchema>,
+): Promise<RequestUpdatesOtpResult> {
+  const parsed = requestUpdatesOtpSchema.parse(input);
+  const tErrors = await getTranslations({ locale: parsed.locale, namespace: "errors" });
+
+  const ip = getClientIp(await headers());
+  const ipLimit = checkRateLimit(`otp-request:ip:${ip}`, 10, 10 * 60 * 1000);
+  const mobileLimit = checkRateLimit(`otp-request:mobile:${parsed.mobile}`, 5, 10 * 60 * 1000);
+  if (!ipLimit.allowed || !mobileLimit.allowed) {
+    return { ok: false, error: tErrors("OTP_REQUEST_RATE_LIMITED") };
+  }
+
+  const { code, expiresInSeconds } = await requestLoginOtp(parsed.mobile);
+  return { ok: true, demoCode: code, expiresInSeconds };
+}
 
 const confirmUpdatesSchema = z.object({
   complaintId: z.string().uuid(),
@@ -155,74 +186,31 @@ export async function confirmUpdatesOptIn(
 ): Promise<ConfirmUpdatesResult> {
   const parsed = confirmUpdatesSchema.parse(input);
   const tErrors = await getTranslations({ locale: parsed.locale, namespace: "errors" });
-  if (parsed.code !== DEMO_OTP_CODE) {
-    return { ok: false, error: tErrors("OTP_MISMATCH") };
+
+  const ip = getClientIp(await headers());
+  const limit = checkRateLimit(`otp-verify:ip:${ip}`, 20, 10 * 60 * 1000);
+  if (!limit.allowed) {
+    return { ok: false, error: tErrors("OTP_VERIFY_RATE_LIMITED") };
   }
 
-  const linkedUserId = await db.transaction(async (tx) => {
-    let [user] = await tx
-      .select({ id: users.id })
-      .from(users)
-      .where(eq(users.mobile, parsed.mobile))
-      .limit(1);
+  const result = await verifyLoginOtp(parsed.mobile, parsed.code, parsed.complaintId, hashIp(ip), {
+    state: parsed.state,
+    district: parsed.district,
+  });
+  if (!result.ok) {
+    return { ok: false, error: tErrors(result.code) };
+  }
 
-    if (!user) {
-      [user] = await tx
-        .insert(users)
-        .values({ mobile: parsed.mobile, mobileVerifiedAt: new Date() })
-        .returning({ id: users.id });
-      await tx.insert(profiles).values({
-        userId: user.id,
-        state: parsed.state,
-        district: parsed.district,
-      });
-    } else {
-      await tx.update(users).set({ mobileVerifiedAt: new Date(), lastSeenAt: new Date() }).where(eq(users.id, user.id));
-    }
-
-    const [existing] = await tx
-      .select({ userId: complaints.userId })
-      .from(complaints)
-      .where(eq(complaints.id, parsed.complaintId))
-      .limit(1);
-
-    if (!existing) {
-      throw new Error("Complaint not found.");
-    }
-    if (existing.userId !== null && existing.userId !== user.id) {
-      throw new Error("This complaint is already linked to a different account.");
-    }
-
-    await tx
-      .update(complaints)
-      .set({ userId: user.id })
-      .where(eq(complaints.id, parsed.complaintId));
-
-    await tx.insert(consents).values({
-      userId: user.id,
-      complaintId: parsed.complaintId,
-      purposeKey: "status_updates",
-      noticeVersion: "v1",
-      grantedAt: new Date(),
-      method: "implicit_flow_step",
-    });
-
-    await tx.insert(auditLogs).values({
-      actorType: "citizen",
-      action: "updates_opt_in_confirmed",
-      targetType: "complaint",
-      targetId: parsed.complaintId,
-    });
-
-    return user.id;
+  await db.insert(auditLogs).values({
+    actorType: "citizen",
+    action: "updates_opt_in_confirmed",
+    targetType: "complaint",
+    targetId: parsed.complaintId,
   });
 
-  // Real, server-side session (§18.2) behind the mocked OTP — without this
-  // the account upgrade above created a User + Profile but left the citizen
-  // with no way to prove it's them on a later visit, which is what
-  // /profile and the complaint list (§7.2 #16) need.
-  await createSession(linkedUserId);
-
+  // verifyLoginOtp already opened a real, server-side session (§18.2) for
+  // the now-linked account — /profile and the complaint list (§7.2 #16)
+  // read that session, nothing further to do here.
   return { ok: true };
 }
 

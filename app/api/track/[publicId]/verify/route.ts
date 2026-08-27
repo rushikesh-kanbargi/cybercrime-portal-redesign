@@ -22,7 +22,7 @@ export async function POST(
     );
   }
 
-  const ip = getClientIp(request);
+  const ip = getClientIp(request.headers);
   const limit = checkRateLimit(`track-verify:ip:${ip}`, 20, 10 * 60 * 1000);
   if (!limit.allowed) {
     return NextResponse.json(

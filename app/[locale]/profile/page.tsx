@@ -33,7 +33,7 @@ export default async function ProfilePage() {
       <div className="flex items-center gap-4">
         <h1 className="animate-enter text-lg font-semibold text-foreground">{t("heading")}</h1>
         <PhotoBanner
-          src="https://images.unsplash.com/photo-1641247597421-52f47b939ff8?fm=jpg&q=80&w=1600&auto=format&fit=crop"
+          src="/images/photo-banner/profile.jpg"
           alt={t("heroImageAlt")}
           tone="primary"
           className="ml-auto aspect-square w-16 shrink-0 sm:w-20"

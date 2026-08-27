@@ -16,7 +16,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const ip = getClientIp(request);
+  const ip = getClientIp(request.headers);
   const limit = checkRateLimit(`otp-verify:ip:${ip}`, 20, 10 * 60 * 1000);
   if (!limit.allowed) {
     return NextResponse.json(

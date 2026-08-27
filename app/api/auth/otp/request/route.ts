@@ -16,7 +16,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const ip = getClientIp(request);
+  const ip = getClientIp(request.headers);
   const ipLimit = checkRateLimit(`otp-request:ip:${ip}`, 10, 10 * 60 * 1000);
   const mobileLimit = checkRateLimit(
     `otp-request:mobile:${parsed.data.mobile}`,

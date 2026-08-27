@@ -30,7 +30,7 @@ import { cn } from "@/lib/utils";
 import { extractFacts, type ExtractedField } from "@/lib/extract";
 import { classifyFraud, FRAUD_SUBCATEGORIES, type FraudSubCategoryCode } from "@/lib/classify";
 import { INDIAN_STATES } from "@/lib/india-states";
-import { submitMoneyReport, confirmUpdatesOptIn, uploadEvidence } from "./actions";
+import { submitMoneyReport, confirmUpdatesOptIn, requestUpdatesOtp, uploadEvidence } from "./actions";
 import { FileUpload } from "@/components/ui/file-upload";
 import { compressImageFile } from "@/lib/compress-image";
 import { StepProgress } from "@/components/tracking/step-progress";
@@ -45,11 +45,9 @@ import {
   EVIDENCE_MAX_FILES,
   EVIDENCE_MAX_RAW_INPUT_BYTES,
   formatBytes,
-  isAcceptedEvidenceFile,
 } from "@/lib/evidence-limits";
 
 const DRAFT_KEY = "cc-money-draft-v1";
-const DEMO_OTP_CODE = "123456";
 
 const selectClassName =
   "h-8 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm dark:bg-input/30";
@@ -77,6 +75,11 @@ interface DraftState {
   // than a new DB column, since it's the same kind of free-text account of
   // what happened as the narrative already is.
   evidenceText: string;
+  // File objects themselves can't go into localStorage (D16/§28.2) — this is
+  // just the name/size of whatever was selected, so a refresh can tell the
+  // citizen "you had 2 files attached, re-attach them" instead of silently
+  // dropping the fact that anything was ever selected.
+  evidenceFileMeta: Array<{ name: string; size: number }>;
   savedAt: number;
 }
 
@@ -104,6 +107,7 @@ function emptyDraft(): DraftState {
     district: "",
     mobile: "",
     evidenceText: "",
+    evidenceFileMeta: [],
     savedAt: Date.now(),
   };
 }
@@ -233,6 +237,7 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
   const [wantMobile, setWantMobile] = React.useState("");
   const [otpCode, setOtpCode] = React.useState("");
   const [otpStage, setOtpStage] = React.useState<"idle" | "sent" | "confirmed" | "skipped">("idle");
+  const [otpDemoCode, setOtpDemoCode] = React.useState<string | null>(null);
   const [otpError, setOtpError] = React.useState<string | null>(null);
   const [otpSubmitting, setOtpSubmitting] = React.useState(false);
   const resumeSavedAtLabel = resumeSavedAt ? new Date(resumeSavedAt).toLocaleString(dateLocale) : "";
@@ -253,7 +258,11 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
   function resumeDraft() {
     const stored = readStoredDraft();
     if (stored) {
-      setDraft({ ...stored, evidenceText: stored.evidenceText ?? "" });
+      setDraft({
+        ...stored,
+        evidenceText: stored.evidenceText ?? "",
+        evidenceFileMeta: stored.evidenceFileMeta ?? [],
+      });
       setFactsInitialized(true);
       setAutofillFromProfile(false);
     }
@@ -351,16 +360,15 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
     setStep("evidence");
   }
 
+  function handleRejectedEvidenceFiles(rejected: File[]) {
+    setEvidenceError(t("evidence.unsupportedType", { name: rejected[0].name }));
+  }
+
   function handleEvidenceFilesChange(files: File[]) {
     setEvidenceError(null);
     if (files.length > EVIDENCE_MAX_FILES) {
       setEvidenceError(t("evidence.tooManyFiles", { maxFiles: EVIDENCE_MAX_FILES }));
       files = files.slice(0, EVIDENCE_MAX_FILES);
-    }
-    const unsupported = files.find((f) => !isAcceptedEvidenceFile(f));
-    if (unsupported) {
-      setEvidenceError(t("evidence.unsupportedType", { name: unsupported.name }));
-      files = files.filter(isAcceptedEvidenceFile);
     }
     const oversized = files.find((f) => f.size > EVIDENCE_MAX_RAW_INPUT_BYTES);
     if (oversized) {
@@ -370,6 +378,10 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
       files = files.filter((f) => f.size <= EVIDENCE_MAX_RAW_INPUT_BYTES);
     }
     setEvidenceFiles(files);
+    setDraft((d) => ({
+      ...d,
+      evidenceFileMeta: files.map((f) => ({ name: f.name, size: f.size })),
+    }));
   }
 
   async function goToReview() {
@@ -477,6 +489,24 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
     a.download = t("done.downloadFilename", { publicId: result.publicId });
     a.click();
     URL.revokeObjectURL(url);
+  }
+
+  async function handleSendOtp() {
+    setOtpSubmitting(true);
+    setOtpError(null);
+    try {
+      const res = await requestUpdatesOtp({ mobile: wantMobile.trim(), locale });
+      if (res.ok) {
+        setOtpDemoCode(res.demoCode ?? null);
+        setOtpStage("sent");
+      } else {
+        setOtpError(res.error ?? t("done.otpGenericError"));
+      }
+    } catch {
+      setOtpError(t("done.otpGenericError"));
+    } finally {
+      setOtpSubmitting(false);
+    }
   }
 
   async function handleConfirmOtp() {
@@ -732,6 +762,12 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
                       reason: t(`category.reasons.${suggestion.reasonKey}`),
                     })}
                   </p>
+                  {suggestion.confidence === "low" && (
+                    <p className="flex items-start gap-1.5 text-sm text-warning-foreground">
+                      <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+                      {t("facts.lowConfidenceNote")}
+                    </p>
+                  )}
                   <div className="flex flex-wrap gap-2">
                     <Button size="sm" onClick={confirmSuggestedCategory}>
                       {t("facts.confirmYes")}
@@ -876,6 +912,18 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
             <CardDescription>{t("evidence.description")}</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-5">
+            {draft.evidenceFileMeta.length > 0 && evidenceFiles.length === 0 && (
+              <Alert className="border-warning/30 bg-warning/8">
+                <AlertTriangle />
+                <AlertTitle>{t("evidence.reattachTitle")}</AlertTitle>
+                <AlertDescription>
+                  {t("evidence.reattachBody", {
+                    names: draft.evidenceFileMeta.map((f) => f.name).join(", "),
+                    count: draft.evidenceFileMeta.length,
+                  })}
+                </AlertDescription>
+              </Alert>
+            )}
             <FileUpload
               id="evidence"
               label={t("evidence.filesLabel")}
@@ -886,6 +934,7 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
               accept={EVIDENCE_ACCEPT}
               files={evidenceFiles}
               onFilesChange={handleEvidenceFilesChange}
+              onRejectedFiles={handleRejectedEvidenceFiles}
               dragPrompt={t("evidence.dragPrompt")}
               chooseFilesLabel={t("evidence.chooseFiles")}
               removeFileLabel={(name) => t("evidence.removeFile", { name })}
@@ -1059,9 +1108,10 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
             onOtpCodeChange={setOtpCode}
             otpError={otpError}
             otpSubmitting={otpSubmitting}
+            onSendCode={handleSendOtp}
             onConfirm={handleConfirmOtp}
             onSkip={() => setOtpStage("skipped")}
-            demoCode={DEMO_OTP_CODE}
+            demoCode={otpDemoCode}
           />
 
           <Button variant="outline" className="min-h-11" onClick={() => router.push("/")}>

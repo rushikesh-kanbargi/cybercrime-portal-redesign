@@ -27,7 +27,7 @@ export default async function ContactPage() {
           <p className="text-lg text-muted-foreground">{t("subtitle")}</p>
         </div>
         <PhotoBanner
-          src="https://images.unsplash.com/photo-1555399784-17946f55db19?fm=jpg&q=80&w=1600&auto=format&fit=crop"
+          src="/images/photo-banner/contact.jpg"
           alt={t("heroImageAlt")}
           tone="primary"
           accentIcon={Phone}

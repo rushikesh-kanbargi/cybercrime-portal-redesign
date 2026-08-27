@@ -29,7 +29,7 @@ export default async function AccessibilityPage() {
           <p className="text-lg text-muted-foreground">{t("subtitle")}</p>
         </div>
         <PhotoBanner
-          src="https://images.unsplash.com/photo-1647154933795-422ba6b3034e?fm=jpg&q=80&w=1600&auto=format&fit=crop"
+          src="/images/photo-banner/accessibility.jpg"
           alt={t("heroImageAlt")}
           tone="gold"
           accentIcon={Accessibility}

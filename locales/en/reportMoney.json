@@ -6,7 +6,13 @@
   "progress": {
     "lastQuestion": "Last question",
     "moreQuestions": "{count, plural, one {# more question} other {# more questions}}",
-    "steps": ["Tell us", "Confirm", "Contact", "Evidence", "Review"]
+    "steps": [
+      "Tell us",
+      "Confirm",
+      "Contact",
+      "Evidence",
+      "Review"
+    ]
   },
   "storageUnavailable": "We can't save your progress in this browser. Try to finish in one go.",
   "resumeBanner": {
@@ -30,7 +36,8 @@
   },
   "facts": {
     "title": "Confirm the facts",
-    "description": "We pulled this from what you told us. Check it, fix anything wrong, and confirm the category.",
+    "description": "We pulled this from what you told us — nothing is invented. Every field below quotes the exact words it came from, so check it, fix anything wrong, and confirm the category.",
+    "lowConfidenceNote": "We're not fully sure about this one — please double-check before confirming.",
     "amountLabel": "Amount lost (₹)",
     "amountPlaceholder": "18000",
     "amountError": "Enter the amount that was taken.",
@@ -82,6 +89,8 @@
     "description": "Completely optional, your report is already valid without it. Screenshots, bank statements (PDF is fine), call logs, chat exports: whatever you have.",
     "filesLabel": "Files",
     "helperText": "Images and PDFs, up to {maxSize} each, up to {maxFiles} files. Images are compressed on your device before upload.",
+    "reattachTitle": "Files you had attached weren't restored",
+    "reattachBody": "This page reloaded, and browsers can't keep selected files across a refresh. You had attached: {names}. Please re-attach {count, plural, one {it} other {them}} — or add the text fallback below if you can't.",
     "tooManyFiles": "You can attach up to {maxFiles} files.",
     "fileTooLarge": "“{name}” is too large (max {maxSize} per file).",
     "unsupportedType": "“{name}” isn't an image or PDF. You can skip evidence and submit without it.",
@@ -145,6 +154,8 @@
     "demoCodeTitle": "Demo code: {code}",
     "demoCodeBody": "This is a hackathon prototype; no real SMS is sent. In production this code would arrive by text.",
     "otpLabel": "Enter the code",
+    "sendCode": "Send code",
+    "sendingCode": "Sending…",
     "confirm": "Confirm",
     "confirming": "Confirming…",
     "skip": "Skip",
@@ -204,7 +215,7 @@
       "OTHER_FINANCIAL_FRAUD": "Other Financial Fraud"
     },
     "reasons": {
-      "kycOtpLink": "We think this because you mentioned KYC, an OTP, or a link that expired or needed verifying.",
+      "kycOtpLink": "We think this because you mentioned KYC, an OTP or verification code, a link that expired or needed verifying, or an account/card that was going to be blocked or suspended.",
       "investment": "We think this because you mentioned an investment, trading, or crypto opportunity.",
       "card": "We think this because you mentioned a debit or credit card.",
       "upi": "We think this because you mentioned UPI, PhonePe, Google Pay, Paytm, or BHIM.",

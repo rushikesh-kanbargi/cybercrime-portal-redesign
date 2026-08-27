@@ -259,7 +259,7 @@ export default async function Home() {
             {t("trustSection.title")}
           </h2>
           <PhotoBanner
-            src="https://images.unsplash.com/photo-1752650735119-8929e5f7d1ec?fm=jpg&q=80&w=1600&auto=format&fit=crop"
+            src="/images/photo-banner/homepage.jpg"
             alt={t("trustImageAlt")}
             tone="gold"
             className="hidden aspect-square w-24 shrink-0 sm:block"

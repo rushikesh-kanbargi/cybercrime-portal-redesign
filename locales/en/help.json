@@ -5,8 +5,10 @@
   },
   "title": "It just happened. Do this now.",
   "subtitle": "Money was taken, or you think you're being scammed right now. Here's what to do, in order. No account needed, and this takes about two minutes to read.",
-  "heroImageAlt": "A hand holding a smartphone while sitting on a couch.",
   "callNow": "Call 1930 now",
+  "readAloud": "Read this page aloud",
+  "readAloudStop": "Stop reading",
+  "readAloudUnsupported": "Read-aloud isn't supported in this browser.",
   "steps": [
     {
       "title": "Call your bank or wallet's fraud helpline right now",
@@ -29,6 +31,8 @@
       "body": "You'll need it for any follow-up with your bank or the cyber cell. It takes under two minutes and doesn't require an account, a password, or any ID document."
     }
   ],
+  "deadlineTitle": "There's a 24-hour clock on the online report too",
+  "deadlineBody": "The government's own guidance says that after calling 1930, completing this online report is mandatory within 24 hours of the call, or the bank-freeze request behind it can lapse. The real portal doesn't display this deadline anywhere — file below as soon as you're done on the phone, not \"later today.\"",
   "readyTitle": "Ready to file?",
   "readyBody": "Money was taken from my account. Report it in under 90 seconds.",
   "readyCta": "Start now",

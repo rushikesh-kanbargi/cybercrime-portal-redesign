@@ -6,11 +6,11 @@ const nextConfig: NextConfig = {
   // ponytail: this repo has its own CLAUDE.md conventions; don't let every
   // `next dev` regenerate AGENTS.md/CLAUDE.md scaffolding.
   agentRules: false,
-  images: {
-    // Real, free-licensed (Unsplash License, not Unsplash+) photography on
-    // /safety-tips and /cyber-awareness — see those pages for credit.
-    remotePatterns: [{ protocol: "https", hostname: "images.unsplash.com" }],
-  },
+  // No remotePatterns — every PhotoBanner image (Unsplash License, not
+  // Unsplash+) is downloaded once into public/images/photo-banner/ and
+  // served locally, not fetched live from images.unsplash.com. Zero runtime
+  // third-party dependency, matches the low-bandwidth/mobile-first design
+  // rule, and nothing to disclose since nothing is fetched externally.
 };
 
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts");

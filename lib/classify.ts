@@ -38,8 +38,16 @@ const RULES: Array<{
   reasonKey: string;
 }> = [
   {
+    // Literal "KYC"/"OTP"/"link" keywords miss a common real phrasing of
+    // this exact scam: "they said my account would be blocked, I panicked
+    // and shared the code" — no jargon at all, same scam. The
+    // block/suspend + shared-code branches catch that shape without
+    // requiring the citizen to use the same words a form does.
+    // categoryConfirmedByUser (D10) still gates everything downstream, so a
+    // false match here costs one tap to correct, never a silent misfile.
     subCategoryCode: "KYC_OTP_SCAM",
-    pattern: /\b(kyc|otp|expir(e|ed|y|ing)|verify.*(account|link)|link.*(sent|click))\b/i,
+    pattern:
+      /\b(kyc|otp|expir(e|ed|y|ing)|verify.*(account|link)|link.*(sent|click)|verification code|(account|card).*(block|suspend|deactivat)|(shared|gave|told|sent).*(code|otp))\b/i,
     reasonKey: "kycOtpLink",
   },
   {

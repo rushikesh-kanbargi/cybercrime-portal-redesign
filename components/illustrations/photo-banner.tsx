@@ -49,7 +49,7 @@ export function PhotoBanner({
           src={src}
           alt={alt}
           fill
-          sizes="(min-width: 1024px) 480px, (min-width: 640px) 672px, 100vw"
+          sizes="(min-width: 1024px) 480px, (min-width: 640px) 400px, 100vw"
           className="object-cover"
           priority={priority}
         />

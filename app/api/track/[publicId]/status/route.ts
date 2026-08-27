@@ -41,7 +41,7 @@ export async function GET(
     );
   }
 
-  const ip = getClientIp(request);
+  const ip = getClientIp(request.headers);
   const timeline = await getComplaintTimeline(publicId, hashIp(ip));
   if (!timeline) {
     return NextResponse.json(

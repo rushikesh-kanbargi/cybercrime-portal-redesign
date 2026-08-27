@@ -33,7 +33,7 @@ export default async function AdvisoriesPage() {
           <p className="text-lg text-muted-foreground">{t("subtitle")}</p>
         </div>
         <PhotoBanner
-          src="https://images.unsplash.com/photo-1660890694842-0163c693099f?fm=jpg&q=80&w=1600&auto=format&fit=crop"
+          src="/images/photo-banner/advisories.jpg"
           alt={t("heroImageAlt")}
           tone="primary"
           accentIcon={Megaphone}

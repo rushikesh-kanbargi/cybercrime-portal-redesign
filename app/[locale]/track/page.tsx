@@ -57,7 +57,7 @@ export default function TrackEntryPage() {
             {/* Real photography merged into the card's own header, not a
                 trailing block — a small thumbnail beside the title. */}
             <PhotoBanner
-              src="https://images.unsplash.com/photo-1743796055664-3473eedab36e?fm=jpg&q=80&w=1600&auto=format&fit=crop"
+              src="/images/photo-banner/track.jpg"
               alt={t("heroImageAlt")}
               tone="gold"
               className="aspect-square w-20 shrink-0 sm:w-24"

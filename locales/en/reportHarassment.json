@@ -6,7 +6,13 @@
   "progress": {
     "lastQuestion": "Last question",
     "moreQuestions": "{count, plural, one {# more question} other {# more questions}}",
-    "steps": ["Tell us", "A few details", "Contact", "Evidence", "Review"]
+    "steps": [
+      "Tell us",
+      "A few details",
+      "Contact",
+      "Evidence",
+      "Review"
+    ]
   },
   "storageUnavailable": "We can't save your progress in this browser. Try to finish in one go.",
   "resumeBanner": {
@@ -148,6 +154,8 @@
     "demoCodeTitle": "Demo code: {code}",
     "demoCodeBody": "This is a hackathon prototype; no real SMS is sent. In production this code would arrive by text.",
     "otpLabel": "Enter the code",
+    "sendCode": "Send code",
+    "sendingCode": "Sending…",
     "confirm": "Confirm",
     "confirming": "Confirming…",
     "skip": "Skip",

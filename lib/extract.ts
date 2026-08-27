@@ -29,11 +29,15 @@ const BANK_NAMES = [
   "Yes Bank",
   "IndusInd",
   "Paytm Payments Bank",
-  "Paytm",
-  "PhonePe",
-  "Google Pay",
-  "GPay",
 ];
+
+// Payment apps, not banks — kept separate from BANK_NAMES so it's clear at
+// a glance which is which, even though both currently map to the same
+// `debitedInstrument` field below: the citizen sees and can edit whatever
+// name is detected either way, so a payment-app match isn't mislabeled as
+// a bank in the UI, just filed under the same free-text field a bank name
+// would be.
+const PAYMENT_APP_NAMES = ["Paytm", "PhonePe", "Google Pay", "GPay"];
 
 const CHANNEL_PATTERNS: Array<{ value: string; pattern: RegExp }> = [
   { value: "whatsapp", pattern: /\bwhatsapp\b/i },
@@ -56,15 +60,23 @@ export function extractFacts(narrative: string): ExtractedField[] {
     });
   }
 
-  const upiMatch = narrative.match(/[a-z0-9.\-_]{2,}@[a-z]{2,}(?!\.[a-z]{2,})/i);
-  const bankName = BANK_NAMES.find((name) =>
-    new RegExp(`\\b${name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(narrative),
+  // UPI handles look exactly like `name@bankhandle` with no TLD (e.g.
+  // `9876543210@ybl`), which is indistinguishable-by-shape from someone
+  // typing an email address without its TLD (`scammer@gmail`). Excluding
+  // the common webmail providers by name removes that specific false
+  // positive without needing an exhaustive allowlist of every UPI PSP
+  // handle (ybl, oksbi, paytm, ibl, axl, apl... — dozens, and growing).
+  const upiMatch = narrative.match(
+    /[a-z0-9.\-_]{2,}@(?!gmail\b|yahoo\b|outlook\b|hotmail\b|rediffmail\b|live\b|protonmail\b|icloud\b|aol\b|zoho\b)[a-z]{2,}(?!\.[a-z]{2,})/i,
   );
-  if (bankName) {
+  const nameMatches = (name: string) =>
+    new RegExp(`\\b${name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(narrative);
+  const bankOrAppName = BANK_NAMES.find(nameMatches) ?? PAYMENT_APP_NAMES.find(nameMatches);
+  if (bankOrAppName) {
     fields.push({
       field: "debitedInstrument",
-      value: bankName,
-      sourceSpan: bankName,
+      value: bankOrAppName,
+      sourceSpan: bankOrAppName,
       confirmed: false,
     });
   } else if (upiMatch) {

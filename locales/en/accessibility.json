@@ -64,6 +64,10 @@
     {
       "title": "The evidence upload step is a real, labelled file input",
       "body": "A genuine <input type=\"file\">, drag-and-drop as an addition on top of it (never the only way in), a live region that announces how many files are selected, and fully translated copy in both languages. Skipping it completes the report exactly the same as attaching something."
+    },
+    {
+      "title": "Read-aloud on the emergency checklist",
+      "body": "/help/just-happened has a “Read this page aloud” button using the browser's native speechSynthesis API — no external service, works offline once the page has loaded."
     }
   ],
   "testedTitle": "What was actually tested, and how",
@@ -100,6 +104,10 @@
     {
       "strong": "Automated tools only catch part of the picture.",
       "body": "axe-core and Lighthouse's own documentation puts automated coverage at roughly 20-50% of accessibility issues. Everything else in this page's commitment list was checked by hand against the code, not exhaustively fuzzed against every possible input or screen size."
+    },
+    {
+      "strong": "Read-aloud exists on one page only.",
+      "body": "CLAUDE.md's own design rule (“teen to elderly... optional read-aloud”) is currently met only on /help/just-happened, the single highest-urgency page. The report wizards, review steps, and status timeline don't have it yet — named here rather than left silently absent."
     }
   ],
   "footer": "See <link>what's real vs mocked</link> for the rest of this prototype's honest scope."

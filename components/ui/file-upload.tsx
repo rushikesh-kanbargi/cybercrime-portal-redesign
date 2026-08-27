@@ -7,6 +7,24 @@ import { cn } from "@/lib/utils";
 // §19.5 — real labelled <input type="file">, drag-drop as an addition only,
 // per-file removal. Compression / scan-status / upload-progress are feature
 // logic for the evidence-upload flow, not this primitive.
+//
+// `accept` mirrors the native <input accept> attribute, but the browser
+// only enforces that on the file *picker* — never on drag-and-drop. Without
+// this check, a dropped mismatched file used to sit in the list for one
+// render before the caller's own filtering (if any) removed it. Checking
+// here means it's never added in the first place, for every caller, not
+// just the ones that remember to filter themselves.
+function fileMatchesAccept(file: File, accept?: string): boolean {
+  if (!accept) return true;
+  const name = file.name.toLowerCase();
+  return accept.split(",").some((raw) => {
+    const entry = raw.trim().toLowerCase();
+    if (!entry) return true;
+    if (entry.startsWith(".")) return name.endsWith(entry);
+    if (entry.endsWith("/*")) return file.type.startsWith(entry.slice(0, -1));
+    return file.type === entry;
+  });
+}
 export interface FileUploadProps {
   id: string;
   label: string;
@@ -15,6 +33,10 @@ export interface FileUploadProps {
   multiple?: boolean;
   files: File[];
   onFilesChange: (files: File[]) => void;
+  /** Called with any picked/dropped files that don't match `accept`, so the
+   * caller can still show its own translated error copy — filtering here
+   * only stops the mismatch from entering the list, it doesn't silence it. */
+  onRejectedFiles?: (files: File[]) => void;
   className?: string;
   /** §16.3 #12/#15 — real, translated copy; no hardcoded English inside a shared primitive. */
   dragPrompt: string;
@@ -32,6 +54,7 @@ export function FileUpload({
   multiple = true,
   files,
   onFilesChange,
+  onRejectedFiles,
   className,
   dragPrompt,
   chooseFilesLabel,
@@ -43,7 +66,12 @@ export function FileUpload({
 
   function addFiles(incoming: FileList | null) {
     if (!incoming || incoming.length === 0) return;
-    const next = multiple ? [...files, ...Array.from(incoming)] : [incoming[0]];
+    const all = Array.from(incoming);
+    const picked = all.filter((f) => fileMatchesAccept(f, accept));
+    const rejected = all.filter((f) => !fileMatchesAccept(f, accept));
+    if (rejected.length > 0) onRejectedFiles?.(rejected);
+    if (picked.length === 0) return;
+    const next = multiple ? [...files, ...picked] : [picked[0]];
     onFilesChange(next);
   }
 

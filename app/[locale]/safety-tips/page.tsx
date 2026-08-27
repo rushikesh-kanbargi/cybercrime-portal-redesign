@@ -35,7 +35,7 @@ export default async function SafetyTipsPage() {
           <p className="text-lg text-muted-foreground">{t("subtitle")}</p>
         </div>
         <PhotoBanner
-          src="https://images.unsplash.com/photo-1772115428479-9045bc0c2a3d?fm=jpg&q=80&w=1600&auto=format&fit=crop"
+          src="/images/photo-banner/safety-tips.jpg"
           alt={t("heroImageAlt")}
           tone="primary"
           accentIcon={ShieldCheck}

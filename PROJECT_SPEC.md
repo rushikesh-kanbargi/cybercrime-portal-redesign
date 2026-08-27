@@ -2973,3 +2973,19 @@ Genuinely unresolved. Each names who can answer it and what it changes.
 > **Record the ≤2-minute video and confirm the user's Vercel deployment is live and reachable from a private browser window on a phone (§30, §27 Day-3/4).** Everything else that was blocking submission is now done: Q10 (Codex involvement) is resolved, the manual failure-path pass is done, README and project summary are written.
 
 Status as of 2026-08-26: **the entire MVP build (§25.4, all 16 items) is complete, verified, and committed** — landing, `/report/money` end-to-end with evidence upload, `/track`, mocked-OTP auth, a one-complaint profile list with working delete, full EN/HI translation, a visual-credibility pass, synthetic demo data, and a WCAG 2.1 AA accessibility pass (0 axe violations, 100/100 Lighthouse, all 18 routes). Every research/strategy section (§1-24) has been individually re-confirmed against the actual shipped code and annotated with an implementation-status note. The Codex-involvement requirement (Q10) is now genuinely resolved, not just documented around — Codex ran directly against the codebase and found two real bugs. README.md and PROJECT_SUMMARY.md are written. What remains: the ≤2-minute video, final deployment verification (user handling directly), feature freeze, and a copy-consistency pass. `.env.example`/`.env.local` still must be created by hand (§32, confirmed blocked by this environment's own permissions, not just the earlier agent's sandbox) — `DATABASE_URL=postgres://cybercrime:cybercrime@localhost:5432/cybercrime` for local dev.
+
+---
+
+## 38. Adversarial Audit — 2026-08-27
+
+Deployment moved to Vercel + Supabase this session (DATABASE_URL now a pooled Supabase Postgres connection; build/runtime issues from a bad connection string and unencoded password resolved). User then requested a full adversarial audit (Claude + Codex, independent review → debate → consensus → prioritized backlog).
+
+**Full findings, prioritized backlog, and demo strategy: see `FINAL_FINDINGS.md` at repo root.**
+
+Key caveat: the Codex leg of the audit did not actually run — the `codex:codex-rescue` bridge hit a Codex usage limit (resets ~Sep 25, 2026) and returned empty output. The reconciliation pass independently fact-checked Claude's review against source instead of fabricating a Codex position. Treat `FINAL_FINDINGS.md` as a single-reviewer audit with independent verification, not a genuine two-model consensus — re-run the Codex pass after the limit resets and diff it in.
+
+Two P0 findings stand out as self-contradicting the project's own stated rules (not generic polish): a hardcoded `DEMO_OTP_CODE = "123456"` in the money flow that `lib/otp.ts`'s own comment calls "a real backdoor," and an undisclosed Unsplash CDN dependency on 15 pages including `/help/just-happened` and the two disclosure pages (`/whats-real`, `/privacy`).
+
+**Update, same session: full backlog implemented.** User approved "go ahead with all and all the findings." Every P0-P3 item is fixed or explicitly resolved (see `FINAL_FINDINGS.md`'s "Implementation status" table) except one P3 item that turned out not to apply (the two pages named as opportunistic fix targets never had the flagged pattern). Verified with `tsc --noEmit` (0 errors), `eslint .` (0 errors/warnings), `next build` (all routes compile), and a live curl pass against a running dev server confirming the new copy, images, and OTP flow actually render. Not committed — no explicit commit instruction given yet.
+
+One incidental finding: a subagent from the audit workflow wrote an unrequested ~25-file directory (`cybercrime-portal-requirements/`) into the repo root instead of returning text as instructed. User asked to leave it untouched; not part of this implementation.
