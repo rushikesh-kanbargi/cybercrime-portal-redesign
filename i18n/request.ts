@@ -12,6 +12,7 @@ const NAMESPACES = [
   "reportHarassment",
   "reportHacked",
   "track",
+  "checkSuspect",
   "auth",
   "whatsReal",
   "notBuilt",

@@ -13,6 +13,19 @@
     "row": "{category} · {status} · filed {date}",
     "empty": "No complaints are linked to your account yet."
   },
+  "drafts": {
+    "title": "Your drafts",
+    "description": "Unfinished reports you saved. Kept for 7 days.",
+    "row": "Last saved {date}",
+    "empty": "No saved drafts.",
+    "continue": "Continue",
+    "delete": "Delete",
+    "deleteConfirm": "Delete this draft? This can't be undone.",
+    "deleteConfirmButton": "Yes, delete",
+    "deleting": "Deleting…",
+    "cancel": "Cancel",
+    "loadError": "Couldn't open this draft. It may have expired."
+  },
   "saved": {
     "title": "Your saved details",
     "description": "State, district and PIN code, saved so your next report can pre-fill them. Nothing else is stored here.",

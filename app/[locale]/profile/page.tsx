@@ -6,7 +6,9 @@ import { Info } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { listMyComplaints, getMyProfile } from "@/lib/actions/profile";
+import { listMyDrafts } from "@/lib/actions/draft";
 import { DeleteProfileButton } from "./delete-profile-button";
+import { DraftRowActions } from "./draft-row-actions";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("profile.meta");
@@ -26,7 +28,11 @@ export default async function ProfilePage() {
   const t = await getTranslations("profile");
   const tTrack = await getTranslations("track");
 
-  const [myComplaints, myProfile] = await Promise.all([listMyComplaints(), getMyProfile()]);
+  const [myComplaints, myProfile, myDrafts] = await Promise.all([
+    listMyComplaints(),
+    getMyProfile(),
+    listMyDrafts(),
+  ]);
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-4 py-10">
@@ -82,6 +88,31 @@ export default async function ProfilePage() {
               )}
             </CardContent>
           </Card>
+
+          {myDrafts !== null && (
+            <Card>
+              <CardHeader>
+                <CardTitle>{t("drafts.title")}</CardTitle>
+                <CardDescription>{t("drafts.description")}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {myDrafts.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">{t("drafts.empty")}</p>
+                ) : (
+                  <ul className="flex flex-col divide-y divide-border">
+                    {myDrafts.map((d) => (
+                      <li key={d.draftId} className="flex flex-col gap-2 py-3 first:pt-0 last:pb-0">
+                        <p className="text-sm text-muted-foreground">
+                          {t("drafts.row", { date: new Date(d.updatedAt).toLocaleString("en-IN") })}
+                        </p>
+                        <DraftRowActions draftId={d.draftId} />
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </CardContent>
+            </Card>
+          )}
 
           <Card>
             <CardHeader>

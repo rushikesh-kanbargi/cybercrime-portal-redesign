@@ -59,6 +59,8 @@ export const SUSPECT_IDENTIFIER_TYPES = [
   "sms_header",
 ] as const;
 
+export type SuspectIdentifierType = (typeof SUSPECT_IDENTIFIER_TYPES)[number];
+
 // ---------------------------------------------------------------------------
 // Input schemas — validated at trust boundaries.
 // ---------------------------------------------------------------------------
@@ -120,6 +122,18 @@ export const suspectIdentifierInputSchema = z.object({
   valueNormalised: z.string().trim().min(1),
   complaintId: z.string().uuid().optional(),
 });
+
+// Suspicious Entity Checker (10-entity-intelligence.md "Public Checker") —
+// the raw, unnormalised value the citizen typed. Normalization/format
+// validation per type happens in lib/suspect-identifier.ts, not here: the
+// type-specific rules (mobile digit count, UPI shape, URL parseability...)
+// don't reduce to one shared zod rule the way the other schemas above do.
+export const suspectCheckRequestSchema = z.object({
+  type: z.enum(SUSPECT_IDENTIFIER_TYPES),
+  value: z.string().trim().min(1).max(200),
+});
+
+export type SuspectCheckRequestInput = z.infer<typeof suspectCheckRequestSchema>;
 
 export const consentInputSchema = z.object({
   userId: z.string().uuid().optional(),

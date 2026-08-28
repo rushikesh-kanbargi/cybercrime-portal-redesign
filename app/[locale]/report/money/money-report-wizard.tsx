@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useTranslations, useLocale } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
+import { useRouter, Link } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -31,6 +31,7 @@ import { extractFacts, type ExtractedField } from "@/lib/extract";
 import { classifyFraud, FRAUD_SUBCATEGORIES, type FraudSubCategoryCode } from "@/lib/classify";
 import { INDIAN_STATES } from "@/lib/india-states";
 import { submitMoneyReport, confirmUpdatesOptIn, requestUpdatesOtp, uploadEvidence, type SubmitMoneyReportResult } from "./actions";
+import { saveDraft, deleteDraft } from "@/lib/actions/draft";
 import { FileUpload } from "@/components/ui/file-upload";
 import { compressImageFile } from "@/lib/compress-image";
 import { StepProgress } from "@/components/tracking/step-progress";
@@ -53,7 +54,11 @@ import {
   formatBytes,
 } from "@/lib/evidence-limits";
 
-const DRAFT_KEY = "cc-money-draft-v1";
+// Exported so the resume-by-code page (app/[locale]/report/resume) can
+// write a fetched server-side draft into the exact same localStorage slot
+// this wizard already reads on mount — reusing the existing resume-banner
+// UI below rather than building a second one.
+export const DRAFT_KEY = "cc-money-draft-v1";
 
 const selectClassName =
   "h-8 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm dark:bg-input/30";
@@ -88,6 +93,14 @@ interface DraftState {
   // dropping the fact that anything was ever selected.
   evidenceFileMeta: Array<{ name: string; size: number }>;
   savedAt: number;
+  // P1.5 — set once this draft has been explicitly saved server-side
+  // (never on the local-first autosave above, which is unrelated). Riding
+  // along inside the same localStorage draft means resuming on this same
+  // device after a refresh naturally carries these forward too, so a
+  // repeat "Save draft" click updates the same server row instead of
+  // creating a new one every time.
+  serverDraftId?: string;
+  serverResumeToken?: string;
 }
 
 function nowForInput(): string {
@@ -243,6 +256,61 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
   >("idle");
 
   // Want-updates sub-state
+  // P1.5 — server-side save/resume, independent of the local-first
+  // autosave above.
+  const [draftSaveStatus, setDraftSaveStatus] = React.useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [draftSaveError, setDraftSaveError] = React.useState<string | null>(null);
+  const [draftSavedAt, setDraftSavedAt] = React.useState<number | null>(null);
+  const [showResumeCode, setShowResumeCode] = React.useState(false);
+  const [resumeCodeCopied, setResumeCodeCopied] = React.useState(false);
+
+  async function handleSaveDraft() {
+    setDraftSaveStatus("saving");
+    setDraftSaveError(null);
+    try {
+      const result = await saveDraft({
+        draftId: draft.serverDraftId,
+        resumeToken: draft.serverResumeToken,
+        reportType: "money",
+        payload: {
+          narrative: draft.narrative,
+          smsPaste: draft.smsPaste,
+          amountLost: draft.amountLost,
+          debitedInstrument: draft.debitedInstrument,
+          transactionRef: draft.transactionRef,
+          channelUsed: draft.channelUsed,
+          occurredAt: draft.occurredAt,
+          subCategoryCode: draft.subCategoryCode,
+          categorySource: draft.categorySource,
+          categoryConfirmed: draft.categoryConfirmed,
+          confirmedForNarrative: draft.confirmedForNarrative,
+          state: draft.state,
+          district: draft.district,
+          mobile: draft.mobile,
+          evidenceText: draft.evidenceText,
+          evidenceFileMeta: draft.evidenceFileMeta,
+          step: step === "done" ? "review" : step,
+        },
+      });
+      if (!result.ok) {
+        setDraftSaveStatus("error");
+        setDraftSaveError(result.error ?? t("saveDraft.error"));
+        return;
+      }
+      setDraft((d) => ({
+        ...d,
+        serverDraftId: result.draftId,
+        serverResumeToken: result.resumeToken ?? d.serverResumeToken,
+      }));
+      setDraftSavedAt(Date.now());
+      setDraftSaveStatus("saved");
+      if (result.resumeToken) setShowResumeCode(true);
+    } catch {
+      setDraftSaveStatus("error");
+      setDraftSaveError(t("saveDraft.error"));
+    }
+  }
+
   const [wantMobile, setWantMobile] = React.useState("");
   const [otpCode, setOtpCode] = React.useState("");
   const [otpStage, setOtpStage] = React.useState<"idle" | "sent" | "confirmed" | "skipped">("idle");
@@ -346,7 +414,15 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
 
   function goToContact() {
     const newErrors: Record<string, string> = {};
-    if (!draft.amountLost || Number(draft.amountLost) <= 0) newErrors.amountLost = t("facts.amountError");
+    // Production-readiness audit — `Number("abc") <= 0` is `false` (NaN
+    // comparisons are always false in JS), so a non-numeric amount used to
+    // silently pass this gate and only fail at server submission, where
+    // the raw Zod validation error leaked into the UI as the error
+    // message. `Number.isFinite` closes that gap here; handleSubmit below
+    // also stopped ever showing a raw server error message.
+    if (!draft.amountLost || !Number.isFinite(Number(draft.amountLost)) || Number(draft.amountLost) <= 0) {
+      newErrors.amountLost = t("facts.amountError");
+    }
     if (!isCategoryConfirmed) newErrors.category = t("facts.categoryError");
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -452,6 +528,13 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
       } catch {
         // ignore
       }
+      // Best-effort — the complaint is already created via the trusted
+      // pipeline above regardless of whether this succeeds; a failure here
+      // just leaves the server-side draft to expire on its own 7-day TTL
+      // (D16), never a reason to fail or retry the submission itself.
+      if (draft.serverDraftId) {
+        void deleteDraft(draft.serverDraftId, draft.serverResumeToken).catch(() => {});
+      }
 
       // Evidence is a follow-up upload, never part of the submit
       // transaction — a slow/failing attachment must not block or unwind a
@@ -473,8 +556,12 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
           setEvidenceUploadStatus("error");
         }
       }
-    } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : t("genericSubmitError"));
+    } catch {
+      // Production-readiness audit — never surface a raw thrown error
+      // (a Zod validation error, a DB error, anything) directly to the
+      // citizen; Next.js already logs the real error server-side. Rule
+      // 019: clean human message to the UI, full detail to logs only.
+      setSubmitError(t("genericSubmitError"));
     } finally {
       setSubmitting(false);
     }
@@ -587,6 +674,80 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
         <p className="text-sm text-muted-foreground" role="status">
           {t("storageUnavailable")}
         </p>
+      )}
+
+      {step === "narrate" && !showResumeBanner && (
+        <p className="text-xs text-muted-foreground">
+          {t("resumeByCode.linkPrompt")}{" "}
+          <Link href="/report/resume" className="underline underline-offset-2 hover:no-underline">
+            {t("resumeByCode.linkText")}
+          </Link>
+        </p>
+      )}
+
+      {/* P1.5 — explicit, server-side save/resume, separate from the
+          always-on local-first autosave above. Available on every real
+          step; hidden once there's nothing worth saving yet or the report
+          is already submitted. */}
+      {step !== "done" && draft.narrative.trim().length > 0 && (
+        <div className="flex flex-col gap-2 rounded-lg border border-dashed border-border p-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={handleSaveDraft}
+              disabled={draftSaveStatus === "saving"}
+            >
+              {draftSaveStatus === "saving" ? t("saveDraft.saving") : t("saveDraft.button")}
+            </Button>
+            {draftSaveStatus === "saved" && draftSavedAt && (
+              <span className="text-xs text-muted-foreground" role="status">
+                {t("saveDraft.savedAt", { time: new Date(draftSavedAt).toLocaleTimeString(dateLocale) })}
+              </span>
+            )}
+          </div>
+          {draftSaveStatus === "error" && draftSaveError && (
+            <p className="text-xs text-destructive" role="alert">
+              {draftSaveError}
+            </p>
+          )}
+          {showResumeCode && draft.serverDraftId && draft.serverResumeToken && (
+            <Alert>
+              <Info />
+              <AlertTitle>{t("saveDraft.codeTitle")}</AlertTitle>
+              <AlertDescription>
+                <div className="flex flex-col gap-2">
+                  <p>{t("saveDraft.codeBody")}</p>
+                  <code className="break-all rounded bg-muted px-2 py-1 text-xs">
+                    {draft.serverDraftId}.{draft.serverResumeToken}
+                  </code>
+                  <div className="flex gap-2">
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(`${draft.serverDraftId}.${draft.serverResumeToken}`);
+                          setResumeCodeCopied(true);
+                          setTimeout(() => setResumeCodeCopied(false), 2000);
+                        } catch {
+                          // clipboard unavailable — the code is already shown selectable in the <code> above
+                        }
+                      }}
+                    >
+                      {resumeCodeCopied ? tCommon("actions.copied") : tCommon("actions.copy")}
+                    </Button>
+                    <Button type="button" size="sm" variant="ghost" onClick={() => setShowResumeCode(false)}>
+                      {t("saveDraft.codeDismiss")}
+                    </Button>
+                  </div>
+                </div>
+              </AlertDescription>
+            </Alert>
+          )}
+        </div>
       )}
 
       {/* Australia's ReportCyber pattern: bundle "what to do right now"

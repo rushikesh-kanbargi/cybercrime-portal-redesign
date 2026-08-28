@@ -18,6 +18,7 @@ import {
   jsonb,
   numeric,
   uniqueIndex,
+  index,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
@@ -41,6 +42,7 @@ export const complaintStatusCodeEnum = pgEnum("complaint_status_code", [
   "SENT_TO_BANK",
   "WITH_CYBER_CELL",
   "UNDER_INVESTIGATION",
+  "EVIDENCE_REQUESTED",
   "DISPOSED",
   "FIR_REGISTERED",
   "WITHDRAWN",
@@ -59,6 +61,27 @@ export const suspectIdentifierTypeEnum = pgEnum("suspect_identifier_type", [
   "app",
   "social",
   "sms_header",
+]);
+
+// P2 — Threat Reputation (ADR-012). The exact 9-state list
+// requirements/10-entity-intelligence.md's own "Reputation States" line
+// names, deferred at P0 (ADR-003: "a plain report-count tier until
+// investigator curation lands") and at P1.4 (ADR-008: "revisit if/when an
+// investigator-curation requirement is actually scheduled"). Investigator
+// curation now exists (see updateEntityStatus in
+// lib/actions/entity-intelligence.ts) — this column is the "appropriate
+// verification process" a report needs before ever being called
+// Confirmed, never an automatic conversion from report count alone.
+export const suspectIdentifierStatusEnum = pgEnum("suspect_identifier_status", [
+  "reported",
+  "under_review",
+  "correlated",
+  "verified",
+  "confirmed",
+  "blocked",
+  "resolved",
+  "false_positive",
+  "archived",
 ]);
 
 export const notificationChannelEnum = pgEnum("notification_channel", [
@@ -81,6 +104,22 @@ export const auditActorTypeEnum = pgEnum("audit_actor_type", [
   "citizen",
   "system",
   "police_mock",
+  // ADR-001 (cybercrime-portal-requirements/execution/DECISIONS.md) — a
+  // real, authenticated investigator actor, distinct from the old
+  // "police_mock" placeholder this enum already had reserved.
+  "investigator",
+]);
+
+// ADR-002 — investigator identity is a completely separate table/session
+// pair from citizens (users/sessions above), not a role column bolted onto
+// `users`. Different trust model (staff-provisioned, not self-service
+// mobile OTP), different session lifetime, and zero risk of a bug in
+// citizen session code accidentally granting investigator access by
+// sharing a table. See execution/DECISIONS.md ADR-002 for the full
+// rationale and alternatives considered.
+export const investigatorRoleEnum = pgEnum("investigator_role", [
+  "investigator",
+  "admin",
 ]);
 
 // §12.5/§18.2 gap: the spec calls for "a real session model" and mocked OTP
@@ -170,47 +209,66 @@ export const complaints = pgTable(
       .defaultNow(),
     submittedAt: timestamp("submitted_at", { withTimezone: true }),
   },
-  (table) => [uniqueIndex("complaints_public_id_idx").on(table.publicId)],
+  (table) => [
+    uniqueIndex("complaints_public_id_idx").on(table.publicId),
+    // P1.4 (ADR-008) — duplicate-candidate detection looks up other
+    // complaints by the same reporter's contact number (a citizen
+    // accidentally re-submitting the same incident). Exact-match equality
+    // only, same trimmed-string shape the citizen typed — no phone
+    // normalization applied here (that's suspect_identifier's concern for
+    // scam-actor numbers, not the reporter's own).
+    index("complaints_contact_mobile_idx").on(table.contactMobile),
+  ],
 );
 
 // ---------------------------------------------------------------------------
 // Incident — what actually happened. Separated from Complaint on purpose.
 // ---------------------------------------------------------------------------
 
-export const incidents = pgTable("incidents", {
-  complaintId: uuid("complaint_id")
-    .primaryKey()
-    .references(() => complaints.id, { onDelete: "cascade" }),
-  narrative: text("narrative").notNull(), // [S], free text, no minimum length
-  occurredAt: timestamp("occurred_at", { withTimezone: true }),
-  amountLost: numeric("amount_lost", { precision: 14, scale: 2 }),
-  currency: text("currency").default("INR"),
-  debitedInstrument: text("debited_instrument"), // [S]
-  transactionRef: text("transaction_ref"), // [S]
-  channelUsed: text("channel_used"), // call | sms | whatsapp | app | website
-  // The platform it happened on, in the citizen's own words (WhatsApp,
-  // Instagram, a loan app's name). Free text on purpose: a dropdown of
-  // platforms is out of date the day it ships.
-  platform: text("platform"), // [S]
-  // Who the other side said they were. Never treated as a real identity —
-  // "Inspector Sharma from CBI" is a claim the scammer made, and recording
-  // it verbatim is what makes a pattern findable across reports.
-  suspectName: text("suspect_name"), // [S]
-  // What they actually said — the threat, the story, the instruction. This
-  // is often the single most useful paragraph in the whole report.
-  suspectClaims: text("suspect_claims"), // [S]
-  // JSON: { field, value, sourceSpan, confirmed }[] — the provenance record
-  // behind the editable chips (Flow 10). A value with no sourceSpan is never
-  // displayed (§15.4).
-  extractedFields: jsonb("extracted_fields").$type<
-    Array<{
-      field: string;
-      value: string;
-      sourceSpan: string;
-      confirmed: boolean;
-    }>
-  >(),
-});
+export const incidents = pgTable(
+  "incidents",
+  {
+    complaintId: uuid("complaint_id")
+      .primaryKey()
+      .references(() => complaints.id, { onDelete: "cascade" }),
+    narrative: text("narrative").notNull(), // [S], free text, no minimum length
+    occurredAt: timestamp("occurred_at", { withTimezone: true }),
+    amountLost: numeric("amount_lost", { precision: 14, scale: 2 }),
+    currency: text("currency").default("INR"),
+    debitedInstrument: text("debited_instrument"), // [S]
+    transactionRef: text("transaction_ref"), // [S]
+    channelUsed: text("channel_used"), // call | sms | whatsapp | app | website
+    // The platform it happened on, in the citizen's own words (WhatsApp,
+    // Instagram, a loan app's name). Free text on purpose: a dropdown of
+    // platforms is out of date the day it ships.
+    platform: text("platform"), // [S]
+    // Who the other side said they were. Never treated as a real identity —
+    // "Inspector Sharma from CBI" is a claim the scammer made, and recording
+    // it verbatim is what makes a pattern findable across reports.
+    suspectName: text("suspect_name"), // [S]
+    // What they actually said — the threat, the story, the instruction. This
+    // is often the single most useful paragraph in the whole report.
+    suspectClaims: text("suspect_claims"), // [S]
+    // JSON: { field, value, sourceSpan, confirmed }[] — the provenance record
+    // behind the editable chips (Flow 10). A value with no sourceSpan is never
+    // displayed (§15.4).
+    extractedFields: jsonb("extracted_fields").$type<
+      Array<{
+        field: string;
+        value: string;
+        sourceSpan: string;
+        confirmed: boolean;
+      }>
+    >(),
+  },
+  (table) => [
+    // P1.4 (ADR-008) — duplicate-candidate detection's second candidate
+    // signal: two complaints citing the same bank transaction reference are
+    // very likely the same underlying transfer. Exact-match equality on the
+    // citizen-entered (already-trimmed) string, same limitation as above.
+    index("incidents_transaction_ref_idx").on(table.transactionRef),
+  ],
+);
 
 // ---------------------------------------------------------------------------
 // ComplaintStatus — append-only. Never a mutable status column on Complaint.
@@ -234,26 +292,33 @@ export const complaintStatuses = pgTable("complaint_statuses", {
 // contradiction).
 // ---------------------------------------------------------------------------
 
-export const evidence = pgTable("evidence", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  complaintId: uuid("complaint_id")
-    .notNull()
-    .references(() => complaints.id, { onDelete: "cascade" }),
-  storageKey: text("storage_key").notNull(), // randomised, never the original filename
-  originalFilename: text("original_filename").notNull(), // [S]
-  mimeType: text("mime_type").notNull(),
-  sizeBytes: integer("size_bytes").notNull(),
-  sha256: text("sha256").notNull(),
-  uploadedAt: timestamp("uploaded_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-  scanStatus: evidenceScanStatusEnum("scan_status")
-    .notNull()
-    .default("SIMULATED_CLEAN"),
-  compressedClientSide: boolean("compressed_client_side")
-    .notNull()
-    .default(false),
-});
+export const evidence = pgTable(
+  "evidence",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    complaintId: uuid("complaint_id")
+      .notNull()
+      .references(() => complaints.id, { onDelete: "cascade" }),
+    storageKey: text("storage_key").notNull(), // randomised, never the original filename
+    originalFilename: text("original_filename").notNull(), // [S]
+    mimeType: text("mime_type").notNull(),
+    sizeBytes: integer("size_bytes").notNull(),
+    sha256: text("sha256").notNull(),
+    uploadedAt: timestamp("uploaded_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    scanStatus: evidenceScanStatusEnum("scan_status")
+      .notNull()
+      .default("SIMULATED_CLEAN"),
+    compressedClientSide: boolean("compressed_client_side")
+      .notNull()
+      .default(false),
+  },
+  // Production-readiness audit — a foreign key column is never
+  // auto-indexed by Postgres; every one of these is a hot `eq()` lookup
+  // path in existing code (getCaseDetail's evidence fetch, etc.).
+  (table) => [index("evidence_complaint_id_idx").on(table.complaintId)],
+);
 
 // ---------------------------------------------------------------------------
 // SuspectIdentifier — used both inside a complaint and by the standalone
@@ -275,7 +340,45 @@ export const suspectIdentifiers = pgTable("suspect_identifiers", {
   // First-class column, not a comment — the check dataset is seeded and
   // fake, and the UI says so (Flow 6, §22.2 note).
   isSynthetic: boolean("is_synthetic").notNull().default(true),
+  // P2/ADR-012 — investigator-curated only, never auto-derived from
+  // reportCount. Never surfaced on the public checker (that would be
+  // exactly the "public accusation" pattern the product rules forbid) —
+  // investigator-only, via lib/actions/entity-intelligence.ts.
+  status: suspectIdentifierStatusEnum("status").notNull().default("reported"),
 });
+
+// Multi-report provenance — ADR-005 (cybercrime-portal-requirements/
+// execution/DECISIONS.md). `suspect_identifiers.complaintId` above only
+// ever records the first complaint that reported an identifier; this table
+// is the real many-to-many link ("identifier X was also reported by
+// complaints B, C, D..."), additive only — the parent table's existing
+// columns are unchanged. The unique index is the database-enforced
+// idempotency guarantee: the same complaint reporting the same identifier
+// twice cannot create a second row.
+export const suspectIdentifierReports = pgTable(
+  "suspect_identifier_reports",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    suspectIdentifierId: uuid("suspect_identifier_id")
+      .notNull()
+      .references(() => suspectIdentifiers.id, { onDelete: "cascade" }),
+    complaintId: uuid("complaint_id")
+      .notNull()
+      .references(() => complaints.id, { onDelete: "cascade" }),
+    // Which incident/report field this link came from — e.g.
+    // "debitedInstrument" — provenance for "why does this identifier exist".
+    extractedField: text("extracted_field").notNull(),
+    reportedAt: timestamp("reported_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("suspect_identifier_reports_unique_idx").on(
+      table.suspectIdentifierId,
+      table.complaintId,
+    ),
+  ],
+);
 
 // ---------------------------------------------------------------------------
 // Notification — simulated delivery. Nothing is ever sent (§7.2 #17).
@@ -300,18 +403,39 @@ export const notifications = pgTable("notifications", {
 
 // ---------------------------------------------------------------------------
 // Draft — server-side mirror of the local-first draft, only for the
-// "continue on another device" path. Hard 7-day expiry (D16).
+// "continue on another device" path. Hard 7-day expiry (D16). P1.5
+// (ADR-009) added three columns to what was already here — `id` +
+// `resumeTokenHash` are the whole ownership model for an anonymous citizen
+// (bearer possession of both, exactly like Complaint ID + OTP elsewhere in
+// this app), and `userId` is the same opportunistic, nullable-FK pattern
+// `complaints.userId` already uses for a citizen who happens to have a
+// session — "a report exists before an identity does" applies to drafts
+// too. Neither ownership path is required; either one is sufficient.
 // ---------------------------------------------------------------------------
 
-export const drafts = pgTable("drafts", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  payload: jsonb("payload").notNull(), // [S]
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
-  resumeTokenHash: text("resume_token_hash").notNull(),
-});
+export const drafts = pgTable(
+  "drafts",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    // P1.5 — only "money" exists today (P1.1's own extraction/submission
+    // scope). A free-text column, not an enum, because nothing here should
+    // block adding a new report type's draft support with a migration —
+    // the wizard-side payload shape is what actually needs one type per
+    // report, not this column.
+    reportType: text("report_type").notNull().default("money"),
+    payload: jsonb("payload").notNull(), // [S] — untrusted client-originated form state, never authoritative (see P1.5/ADR-009)
+    userId: uuid("user_id").references(() => users.id, { onDelete: "set null" }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    resumeTokenHash: text("resume_token_hash").notNull(),
+  },
+  (table) => [index("drafts_user_id_idx").on(table.userId)],
+);
 
 // ---------------------------------------------------------------------------
 // Consent — per-purpose, versioned, withdrawable (D23). Not one blanket
@@ -338,21 +462,30 @@ export const consents = pgTable("consents", {
 // login/upgrade (Flow 9) from a Complaint ID + OTP case read (Flow 2/§23.2).
 // ---------------------------------------------------------------------------
 
-export const otpChallenges = pgTable("otp_challenges", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  purpose: otpPurposeEnum("purpose").notNull(),
-  mobile: text("mobile").notNull(), // [S] — the number the mock code was "sent" to
-  codeHash: text("code_hash").notNull(),
-  complaintId: uuid("complaint_id").references(() => complaints.id, {
-    onDelete: "cascade",
-  }),
-  attempts: integer("attempts").notNull().default(0),
-  consumedAt: timestamp("consumed_at", { withTimezone: true }),
-  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-});
+export const otpChallenges = pgTable(
+  "otp_challenges",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    purpose: otpPurposeEnum("purpose").notNull(),
+    mobile: text("mobile").notNull(), // [S] — the number the mock code was "sent" to
+    codeHash: text("code_hash").notNull(),
+    complaintId: uuid("complaint_id").references(() => complaints.id, {
+      onDelete: "cascade",
+    }),
+    attempts: integer("attempts").notNull().default(0),
+    consumedAt: timestamp("consumed_at", { withTimezone: true }),
+    expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  // `mobile` is the hot lookup path (every OTP request/verify queries by
+  // mobile+purpose); `complaintId` is the track-flow's own lookup.
+  (table) => [
+    index("otp_challenges_mobile_idx").on(table.mobile),
+    index("otp_challenges_complaint_id_idx").on(table.complaintId),
+  ],
+);
 
 // ---------------------------------------------------------------------------
 // Session — real server-side session record behind the httpOnly cookie
@@ -372,22 +505,151 @@ export const sessions = pgTable("sessions", {
 });
 
 // ---------------------------------------------------------------------------
+// Investigator identity — ADR-001/ADR-002. Staff-provisioned (no public
+// signup), real email+password (scrypt, lib/investigator-auth.ts), fully
+// separate from the citizen users/sessions pair above.
+// ---------------------------------------------------------------------------
+
+export const investigators = pgTable("investigators", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  email: text("email").notNull().unique(),
+  passwordHash: text("password_hash").notNull(),
+  displayName: text("display_name").notNull(),
+  role: investigatorRoleEnum("role").notNull().default("investigator"),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
+});
+
+export const investigatorSessions = pgTable("investigator_sessions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  investigatorId: uuid("investigator_id")
+    .notNull()
+    .references(() => investigators.id, { onDelete: "cascade" }),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
+// ---------------------------------------------------------------------------
+// Basic Case Management — ADR-004
+// (cybercrime-portal-requirements/execution/DECISIONS.md). `cases` is a
+// thin 1:1 wrapper over an existing complaint — narrative/contact/evidence
+// all stay in complaints/incidents/evidence, never copied here. Status is
+// never a mutable column (same append-only pattern as complaint_statuses
+// above) — always derived from the latest case_events row.
+// ---------------------------------------------------------------------------
+
+export const caseStatusEnum = pgEnum("case_status", [
+  "received",
+  "triaged",
+  "assigned",
+  "under_investigation",
+  "resolved",
+  "closed",
+]);
+
+export const caseEventTypeEnum = pgEnum("case_event_type", [
+  "created",
+  "status_changed",
+  "assigned",
+  "note_added",
+  "evidence_requested",
+]);
+
+export const cases = pgTable(
+  "cases",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    complaintId: uuid("complaint_id")
+      .notNull()
+      .unique()
+      .references(() => complaints.id, { onDelete: "cascade" }),
+    assignedInvestigatorId: uuid("assigned_investigator_id").references(() => investigators.id, {
+      onDelete: "set null",
+    }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  // Production-readiness audit — the join-driving side of listCases()'s/
+  // getDashboardStats()'s leftJoin(investigators) on this column.
+  (table) => [index("cases_assigned_investigator_id_idx").on(table.assignedInvestigatorId)],
+);
+
+// Investigator-facing timeline — structurally separate from
+// complaint_statuses (the citizen-facing one) so a citizen-facing query can
+// never accidentally include an investigator-internal event; there is no
+// shared table or visibility flag to forget to filter (ADR-004).
+export const caseEvents = pgTable(
+  "case_events",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    caseId: uuid("case_id")
+      .notNull()
+      .references(() => cases.id, { onDelete: "cascade" }),
+    type: caseEventTypeEnum("type").notNull(),
+    status: caseStatusEnum("status"), // set when type = status_changed / created
+    actorInvestigatorId: uuid("actor_investigator_id").references(() => investigators.id, {
+      onDelete: "set null",
+    }),
+    summary: text("summary").notNull(),
+    occurredAt: timestamp("occurred_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  // Production-readiness audit — every case-detail/dashboard read queries
+  // this by caseId (getCaseDetail, listCases, getDashboardStats).
+  (table) => [index("case_events_case_id_idx").on(table.caseId)],
+);
+
+// Investigator-only internal notes — never read by any citizen-facing code
+// path.
+export const caseNotes = pgTable(
+  "case_notes",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    caseId: uuid("case_id")
+      .notNull()
+      .references(() => cases.id, { onDelete: "cascade" }),
+    investigatorId: uuid("investigator_id")
+      .notNull()
+      .references(() => investigators.id, { onDelete: "cascade" }),
+    body: text("body").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [index("case_notes_case_id_idx").on(table.caseId)],
+);
+
+// ---------------------------------------------------------------------------
 // AuditLog — append-only. Narrative contents are never written here (§18.2).
 // ---------------------------------------------------------------------------
 
-export const auditLogs = pgTable("audit_logs", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  actorType: auditActorTypeEnum("actor_type").notNull(),
-  actorId: text("actor_id"),
-  action: text("action").notNull(),
-  targetType: text("target_type").notNull(),
-  targetId: text("target_id").notNull(),
-  occurredAt: timestamp("occurred_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-  ipHash: text("ip_hash"),
-  metadata: jsonb("metadata"),
-});
+export const auditLogs = pgTable(
+  "audit_logs",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    actorType: auditActorTypeEnum("actor_type").notNull(),
+    actorId: text("actor_id"),
+    action: text("action").notNull(),
+    targetType: text("target_type").notNull(),
+    targetId: text("target_id").notNull(),
+    occurredAt: timestamp("occurred_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    ipHash: text("ip_hash"),
+    metadata: jsonb("metadata"),
+  },
+  // getCaseAuditLog() queries by (targetType, targetId) on every case-detail
+  // view — an append-only table with no index on its own lookup column
+  // will only get slower as the audit history grows.
+  (table) => [index("audit_logs_target_idx").on(table.targetType, table.targetId)],
+);
 
 // ---------------------------------------------------------------------------
 // Cyber office directory + officers.
@@ -520,10 +782,46 @@ export const usersRelations = relations(users, ({ one, many }) => ({
   consents: many(consents),
   notifications: many(notifications),
   sessions: many(sessions),
+  drafts: many(drafts),
+}));
+
+export const draftsRelations = relations(drafts, ({ one }) => ({
+  user: one(users, { fields: [drafts.userId], references: [users.id] }),
 }));
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, { fields: [sessions.userId], references: [users.id] }),
+}));
+
+export const investigatorsRelations = relations(investigators, ({ many }) => ({
+  sessions: many(investigatorSessions),
+}));
+
+export const investigatorSessionsRelations = relations(investigatorSessions, ({ one }) => ({
+  investigator: one(investigators, {
+    fields: [investigatorSessions.investigatorId],
+    references: [investigators.id],
+  }),
+}));
+
+export const casesRelations = relations(cases, ({ one, many }) => ({
+  complaint: one(complaints, { fields: [cases.complaintId], references: [complaints.id] }),
+  assignedInvestigator: one(investigators, {
+    fields: [cases.assignedInvestigatorId],
+    references: [investigators.id],
+  }),
+  events: many(caseEvents),
+  notes: many(caseNotes),
+}));
+
+export const caseEventsRelations = relations(caseEvents, ({ one }) => ({
+  case: one(cases, { fields: [caseEvents.caseId], references: [cases.id] }),
+  actor: one(investigators, { fields: [caseEvents.actorInvestigatorId], references: [investigators.id] }),
+}));
+
+export const caseNotesRelations = relations(caseNotes, ({ one }) => ({
+  case: one(cases, { fields: [caseNotes.caseId], references: [cases.id] }),
+  investigator: one(investigators, { fields: [caseNotes.investigatorId], references: [investigators.id] }),
 }));
 
 export const otpChallengesRelations = relations(otpChallenges, ({ one }) => ({
@@ -576,13 +874,25 @@ export const evidenceRelations = relations(evidence, ({ one }) => ({
 
 export const suspectIdentifiersRelations = relations(
   suspectIdentifiers,
-  ({ one }) => ({
+  ({ one, many }) => ({
     complaint: one(complaints, {
       fields: [suspectIdentifiers.complaintId],
       references: [complaints.id],
     }),
+    reports: many(suspectIdentifierReports),
   }),
 );
+
+export const suspectIdentifierReportsRelations = relations(suspectIdentifierReports, ({ one }) => ({
+  suspectIdentifier: one(suspectIdentifiers, {
+    fields: [suspectIdentifierReports.suspectIdentifierId],
+    references: [suspectIdentifiers.id],
+  }),
+  complaint: one(complaints, {
+    fields: [suspectIdentifierReports.complaintId],
+    references: [complaints.id],
+  }),
+}));
 
 export const notificationsRelations = relations(notifications, ({ one }) => ({
   complaint: one(complaints, {

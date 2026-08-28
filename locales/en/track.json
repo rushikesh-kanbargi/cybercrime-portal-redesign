@@ -101,6 +101,11 @@
       "meaning": "An investigating officer is actively working your case.",
       "whatYouCanDo": "Keep any new evidence (screenshots, messages). You can add it to this case."
     },
+    "EVIDENCE_REQUESTED": {
+      "label": "Additional evidence requested",
+      "meaning": "The investigating officer needs more information or evidence from you to move this case forward.",
+      "whatYouCanDo": "Reply through the contact on file, or add what you can when you're contacted. Don't share OTPs, passwords, or card PINs with anyone, even someone claiming to be the investigating officer."
+    },
     "DISPOSED": {
       "label": "Handed to a police unit for investigation",
       "meaning": "This does not mean your case is closed. \"Disposed\" is police-internal wording for \"assigned onward\": it is not a rejection and it is not the end.",

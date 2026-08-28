@@ -5,7 +5,7 @@ import { db } from "@/lib/db";
 import { auditLogs } from "@/lib/db/schema";
 
 export async function writeAudit(entry: {
-  actorType: "citizen" | "system" | "police_mock";
+  actorType: "citizen" | "system" | "police_mock" | "investigator";
   actorId?: string | null;
   action: string;
   targetType: string;

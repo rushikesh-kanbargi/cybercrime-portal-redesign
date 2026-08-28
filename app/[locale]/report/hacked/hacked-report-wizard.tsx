@@ -378,8 +378,10 @@ export function HackedReportWizard({ savedProfile }: { savedProfile?: SavedProfi
           setEvidenceUploadStatus("error");
         }
       }
-    } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : t("genericSubmitError"));
+    } catch {
+      // Production-readiness audit — never surface a raw thrown error to
+      // the citizen; Next.js already logs it server-side (Rule 019).
+      setSubmitError(t("genericSubmitError"));
     } finally {
       setSubmitting(false);
     }

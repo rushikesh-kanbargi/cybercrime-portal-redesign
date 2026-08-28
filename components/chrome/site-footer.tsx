@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
+import NextLink from "next/link";
 import { Phone, LifeBuoy, Eye, Accessibility, Lock } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { SiteMark } from "./site-mark";
@@ -72,8 +73,14 @@ export async function SiteFooter() {
 
         <Separator />
 
-        <div className="flex flex-col gap-3 text-xs text-muted-foreground">
+        <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-muted-foreground">
           <p>{t("footer.copyright")}</p>
+          {/* Plain next/link, not the locale-aware <Link> — /investigator
+              sits outside the [locale] tree by design (its own root layout,
+              no citizen chrome/i18n; see app/investigator/layout.tsx). */}
+          <NextLink href="/investigator/login" className="underline underline-offset-2 hover:text-foreground">
+            {t("footer.investigatorLink")}
+          </NextLink>
         </div>
       </div>
     </footer>

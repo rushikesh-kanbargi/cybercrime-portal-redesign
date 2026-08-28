@@ -40,9 +40,11 @@ import {
 // so the honest-stub version of D25 no longer applies to them (D25's actual
 // rule, not D53's override of it) — leaving the stub reachable once a real
 // flow exists would be the "disable" half of "remove, don't disable".
-// D-new — "check-suspect" dropped from this list: /check now works against
-// identifiers really reported on this prototype, so the honest-stub version
-// no longer applies (same rule that retired "harassment" and "hacked").
+// D-new — "check-suspect" dropped from this list: it now has real,
+// working flows (both /check-suspect and /check reached real
+// identifier-reporting data on this prototype), so the honest-stub
+// version no longer applies (same rule that retired "harassment" and
+// "hacked").
 const CATEGORIES = [
   "report-suspect",
   "volunteer-account",

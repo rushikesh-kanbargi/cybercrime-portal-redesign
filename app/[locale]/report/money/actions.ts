@@ -24,6 +24,7 @@ import path from "node:path";
 import { headers } from "next/headers";
 import { checkRateLimit, getClientIp, hashIp } from "@/lib/rate-limit";
 import { requestLoginOtp, verifyLoginOtp } from "@/lib/actions/auth";
+import { recordEntitiesFromNarrative } from "@/lib/entity-extraction";
 import {
   EVIDENCE_MAX_FILES,
   EVIDENCE_MAX_FILE_BYTES,
@@ -198,6 +199,12 @@ export async function submitMoneyReport(
       targetId: complaint.id,
       metadata: { categoryCode: parsed.categoryCode, subCategoryCode: parsed.subCategoryCode },
     });
+
+    // P1.1 (ADR-005) — same transaction, so a report and any entity it
+    // surfaces commit or roll back together. Re-derives facts from
+    // parsed.narrative itself, not parsed.extractedFields (client-supplied,
+    // used only for the citizen's own review screen) — see the ADR for why.
+    await recordEntitiesFromNarrative(tx, complaint.id, parsed.narrative);
 
     return complaint.id;
   });

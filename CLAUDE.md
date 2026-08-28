@@ -25,8 +25,14 @@ still matters. Never write copy that claims otherwise.
    an independent hackathon prototype.
 4. **Disclose every mock.** If a thing is faked, it says so in the UI. A dedicated
    "What's real / what's mocked" page is mandatory, not optional.
-5. **No admin panel as product.** The brief says reviewers test the citizen
-   experience. Any police-side view is a single read-only *demonstration*.
+5. **~~No admin panel as product.~~ SUPERSEDED by ADR-001 (2026-08-27).**
+   The project has deliberately pivoted from a hackathon-scoped citizen
+   prototype to a real cybercrime reporting + investigation platform per
+   `cybercrime-portal-requirements/`. Real investigator-facing surfaces
+   (case management, investigator dashboard, entity intelligence) are now
+   in scope, gated by real authentication/authorization — not merely a
+   "demonstration." See `cybercrime-portal-requirements/execution/DECISIONS.md`
+   ADR-001 for the rationale and what stays constrained.
 6. **No chatbot.** The model extracts and classifies, then hands control back.
    It never holds a conversation with the victim.
 7. **Never claim an action we do not perform.** The prototype does not freeze accounts,
@@ -53,4 +59,17 @@ Do not add a claim about the existing portal without a source. If unsure, say so
 
 ## Current phase
 
-**Built.** This file and the rest of the design-phase artifacts (`mock/`, `data/`, `docs/specs/`, `prompt.md`) predate the real app and describe a broader scope than what shipped. The actual, running product is in `app/`, `components/`, `lib/`, `locales/` — see the root `README.md` and `PROJECT_SPEC.md` for what was actually built and why the scope narrowed. The hard rules and design rules above still hold for the real app; the "do not build yet" instruction does not.
+**Pivoting (2026-08-27, ADR-001).** The hackathon-scoped citizen prototype
+described above is built and shipped (`app/`, `components/`, `lib/`,
+`locales/`; see `README.md` and `PROJECT_SPEC.md`/`FINAL_FINDINGS.md`). The
+project has since deliberately expanded scope toward a real cybercrime
+reporting + prevention + intelligence + investigation platform, specified in
+`cybercrime-portal-requirements/` (vision, principles, requirements ledger,
+roadmap, and a live execution ledger in `cybercrime-portal-requirements/execution/`).
+
+That ledger is now the source of truth for *product scope and priority*.
+This file's hard/design rules remain the source of truth for what's still
+never allowed regardless of scope (rules 1, 2, 3, 4, 6, 7 above) — rule 5 is
+the one superseded rule; see the inline note. Read
+`cybercrime-portal-requirements/AGENTS.md` and its execution ledger before
+starting any new requirement.

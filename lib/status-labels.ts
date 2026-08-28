@@ -16,6 +16,7 @@ export const STATUS_TONE: Record<ComplaintStatus["code"], StatusTone> = {
   SENT_TO_BANK: "progress",
   WITH_CYBER_CELL: "progress",
   UNDER_INVESTIGATION: "progress",
+  EVIDENCE_REQUESTED: "attention",
   DISPOSED: "attention",
   FIR_REGISTERED: "done",
   WITHDRAWN: "attention",
