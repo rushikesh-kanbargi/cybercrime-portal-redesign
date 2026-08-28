@@ -39,6 +39,17 @@ export async function GET(
     return NextResponse.json({ code: "VERIFICATION_REQUIRED" }, { status: 401 });
   }
 
+  // A real upload's `storageKey` is always a server-generated `<uuid>.<ext>`,
+  // never a URL — citizen input never reaches this field. The one exception
+  // is demo/seed data (scripts/seed-demo-data.ts) pointed at an environment
+  // whose evidence directory isn't the one that received the seeded files
+  // (e.g. seeding a deployed environment's DB from a local machine) — there,
+  // an http(s) storageKey lets the seed reference a stable placeholder image
+  // instead of a file that doesn't exist on that deployment's filesystem.
+  if (file.storageKey.startsWith("http://") || file.storageKey.startsWith("https://")) {
+    return NextResponse.redirect(file.storageKey);
+  }
+
   // `storageKey` is generated server-side as `<uuid>.<ext>`; basename() is a
   // belt-and-braces guard in case that ever stops being true.
   try {

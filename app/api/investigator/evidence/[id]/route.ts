@@ -35,6 +35,20 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
     return NextResponse.json({ ok: false, message: "Not found." }, { status: 404 });
   }
 
+  // See app/api/evidence/[id]/route.ts's matching comment: real uploads
+  // never have a URL storageKey, only demo/seed data pointed at a deployment
+  // whose local evidence directory never received the seeded files.
+  if (row.storageKey.startsWith("http://") || row.storageKey.startsWith("https://")) {
+    await writeAudit({
+      actorType: "investigator",
+      actorId: investigator.id,
+      action: "evidence_downloaded",
+      targetType: "evidence",
+      targetId: row.id,
+    });
+    return NextResponse.redirect(row.storageKey);
+  }
+
   let bytes: Buffer;
   try {
     bytes = await readFile(path.join(EVIDENCE_DIR, row.storageKey));
