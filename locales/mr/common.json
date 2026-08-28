@@ -70,7 +70,8 @@
     "tagline": "ऑनलाइन सायबर गुन्ह्याची तक्रार करण्याचा शांत, जलद मार्ग शोधणारा एक स्वतंत्र हॅकाथॉन प्रोटोटाइप.",
     "callLabel": "1930 वर कॉल करा",
     "linksHeading": "या प्रोटोटाइपविषयी",
-    "copyright": "Build What Moves India साठी बनवले, एक स्वतंत्र निर्माता उपक्रम, सरकारी हॅकाथॉन नाही."
+    "copyright": "Build What Moves India साठी बनवले, एक स्वतंत्र निर्माता उपक्रम, सरकारी हॅकाथॉन नाही.",
+    "investigatorLink": "Investigator / staff login"
   },
   "languageSwitcher": {
     "label": "भाषा",
@@ -95,5 +96,29 @@
     "change": "बदला"
   },
   "errorSummaryTitle": "पुढे जाण्यापूर्वी कृपया खालील दुरुस्त करा:",
-  "notAnFir": "तुमचा तक्रार क्रमांक हा तुम्ही तक्रार नोंदवल्याचा पुरावा आहे. ही FIR (प्रथम माहिती अहवाल) नाही. FIR ही नंतरची वेगळी पायरी आहे, जी प्रकरण योग्य वाटल्यास पोलिस अधिकारी नोंदवतात."
+  "notAnFir": "तुमचा तक्रार क्रमांक हा तुम्ही तक्रार नोंदवल्याचा पुरावा आहे. ही FIR (प्रथम माहिती अहवाल) नाही. FIR ही नंतरची वेगळी पायरी आहे, जी प्रकरण योग्य वाटल्यास पोलिस अधिकारी नोंदवतात.",
+  "guidedHelp": {
+    "openLabel": "Guided help",
+    "closeLabel": "Close guided help",
+    "title": "Guided help",
+    "disclaimer": "Scripted guidance, not a live AI conversation. It only helps you find the right report — it never files anything for you.",
+    "intro": "Tell me what happened, or choose the option closest to it below.",
+    "options": {
+      "money": "Money was taken from my account",
+      "harassment": "Someone is harassing or threatening me",
+      "hacked": "My account was hacked",
+      "unsure": "I'm not sure / something else"
+    },
+    "replies": {
+      "money": "That's financial fraud. I'll take you to the money-loss report — it takes about 90 seconds and starts by asking what happened, in your own words.",
+      "harassment": "I'm sorry that's happening. I'll take you to the harassment/threats report so you can tell us what's going on.",
+      "hacked": "Let's get that reported. I'll take you to the account-compromise report.",
+      "unsure": "That's okay — you don't have to know the exact category. Start with a report and describe what happened in your own words; we'll help sort out the rest."
+    },
+    "freeTextPrefix": "Based on what you typed, this sounds closest to: \"{option}\".",
+    "inputPlaceholder": "Or type what happened…",
+    "inputLabel": "Describe what happened",
+    "sendLabel": "Send",
+    "continueButton": "Continue to report"
+  }
 }

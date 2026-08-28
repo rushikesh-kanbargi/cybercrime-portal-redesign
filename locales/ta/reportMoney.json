@@ -230,5 +230,31 @@
       "jobTask": "நீங்கள் பகுதிநேர வேலை, வீட்டிலிருந்து வேலை, அல்லது ஊதியம் தரும் பணிகளைக் குறிப்பிட்டதால் இப்படி நினைக்கிறோம். உங்கள் வருமானத்தை எடுக்கும் முன் பணம் செலுத்தச் சொல்வதே மோசடி.",
       "matrimonial": "நீங்கள் திருமணத் தளம், டேட்டிங் செயலி, அல்லது நீண்ட ஆன்லைன் உறவின் மூலம் சந்தித்த ஒருவரைக் குறிப்பிட்டதால் இப்படி நினைக்கிறோம்."
     }
+  },
+  "saveDraft": {
+    "button": "Save draft",
+    "saving": "Saving…",
+    "savedAt": "Draft saved · {time}",
+    "error": "Couldn't save your draft. Check your connection and try again.",
+    "codeTitle": "Your resume code",
+    "codeBody": "Use this code to continue this report from another device or browser. Keep it safe — anyone with this code can open this draft. It stops working after 7 days.",
+    "codeDismiss": "Got it"
+  },
+  "resumeByCode": {
+    "meta": {
+      "title": "Resume a saved report: Cybercrime Report & Track",
+      "description": "Continue a report you saved earlier using your resume code."
+    },
+    "heading": "Resume a saved report",
+    "description": "Paste the resume code you saved earlier.",
+    "codeLabel": "Resume code",
+    "codePlaceholder": "e.g. 3f2a1c9e-....-....-....-............xxxxxxxx",
+    "codeError": "Enter the resume code exactly as it was shown to you.",
+    "submit": "Continue this report",
+    "loading": "Looking for your draft…",
+    "notFound": "We couldn't find a draft for that code. It may have expired (drafts are kept for 7 days) or the code may not be exact.",
+    "unsupportedType": "This draft was started in a part of the reporting flow that doesn't support resuming yet.",
+    "linkPrompt": "Already started a report on another device?",
+    "linkText": "Resume it with your code"
   }
 }

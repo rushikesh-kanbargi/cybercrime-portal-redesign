@@ -25,5 +25,18 @@
     "deleting": "நீக்குகிறது…",
     "cancel": "ரத்து செய்",
     "deleted": "உங்கள் சேமித்த விவரங்கள் நீக்கப்பட்டன."
+  },
+  "drafts": {
+    "title": "Your drafts",
+    "description": "Unfinished reports you saved. Kept for 7 days.",
+    "row": "Last saved {date}",
+    "empty": "No saved drafts.",
+    "continue": "Continue",
+    "delete": "Delete",
+    "deleteConfirm": "Delete this draft? This can't be undone.",
+    "deleteConfirmButton": "Yes, delete",
+    "deleting": "Deleting…",
+    "cancel": "Cancel",
+    "loadError": "Couldn't open this draft. It may have expired."
   }
 }

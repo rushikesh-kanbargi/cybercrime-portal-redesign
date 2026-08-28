@@ -115,6 +115,11 @@
       "label": "திரும்பப் பெறப்பட்டது",
       "meaning": "இந்தப் புகார் திரும்பப் பெறப்பட்டது, இது இனி செயலில் இல்லை.",
       "whatYouCanDo": "இது நீங்கள் செய்யவில்லை என்றால், உடனடியாக உங்கள் மாநிலத்தின் குறைதீர்ப்பு அதிகாரியைத் தொடர்பு கொள்ளுங்கள்."
+    },
+    "EVIDENCE_REQUESTED": {
+      "label": "Additional evidence requested",
+      "meaning": "The investigating officer needs more information or evidence from you to move this case forward.",
+      "whatYouCanDo": "Reply through the contact on file, or add what you can when you're contacted. Don't share OTPs, passwords, or card PINs with anyone, even someone claiming to be the investigating officer."
     }
   },
   "categoryLabels": {

@@ -115,6 +115,11 @@
       "label": "ఉపసంహరించబడింది",
       "meaning": "ఈ ఫిర్యాదు ఉపసంహరించబడింది మరియు ఇది ఇక చురుకుగా లేదు.",
       "whatYouCanDo": "ఇది మీరు కాకపోతే, వెంటనే మీ రాష్ట్ర ఫిర్యాదు అధికారిని సంప్రదించండి."
+    },
+    "EVIDENCE_REQUESTED": {
+      "label": "Additional evidence requested",
+      "meaning": "The investigating officer needs more information or evidence from you to move this case forward.",
+      "whatYouCanDo": "Reply through the contact on file, or add what you can when you're contacted. Don't share OTPs, passwords, or card PINs with anyone, even someone claiming to be the investigating officer."
     }
   },
   "categoryLabels": {

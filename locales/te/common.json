@@ -70,7 +70,8 @@
     "tagline": "సైబర్ నేరాన్ని ఆన్‌లైన్‌లో ఫిర్యాదు చేయడానికి ప్రశాంతమైన, వేగవంతమైన మార్గాన్ని అన్వేషించే ఒక స్వతంత్ర హ్యాకథాన్ ప్రోటోటైప్.",
     "callLabel": "1930కి కాల్ చేయండి",
     "linksHeading": "ఈ ప్రోటోటైప్ గురించి",
-    "copyright": "Build What Moves India కోసం నిర్మించబడింది, ఒక స్వతంత్ర నిర్మాత చొరవ, ప్రభుత్వ హ్యాకథాన్ కాదు."
+    "copyright": "Build What Moves India కోసం నిర్మించబడింది, ఒక స్వతంత్ర నిర్మాత చొరవ, ప్రభుత్వ హ్యాకథాన్ కాదు.",
+    "investigatorLink": "Investigator / staff login"
   },
   "languageSwitcher": {
     "label": "భాష",
@@ -95,5 +96,29 @@
     "change": "మార్చండి"
   },
   "errorSummaryTitle": "కొనసాగించే ముందు దయచేసి కింది వాటిని సరిచేయండి:",
-  "notAnFir": "మీ ఫిర్యాదు సంఖ్య మీరు దీన్ని ఫిర్యాదు చేశారనడానికి రికార్డు. ఇది FIR (ప్రథమ సమాచార నివేదిక) కాదు. FIR అనేది వేరే, తరువాతి దశ, కేసు తగినదని భావిస్తే పోలీసు అధికారి నమోదు చేస్తారు."
+  "notAnFir": "మీ ఫిర్యాదు సంఖ్య మీరు దీన్ని ఫిర్యాదు చేశారనడానికి రికార్డు. ఇది FIR (ప్రథమ సమాచార నివేదిక) కాదు. FIR అనేది వేరే, తరువాతి దశ, కేసు తగినదని భావిస్తే పోలీసు అధికారి నమోదు చేస్తారు.",
+  "guidedHelp": {
+    "openLabel": "Guided help",
+    "closeLabel": "Close guided help",
+    "title": "Guided help",
+    "disclaimer": "Scripted guidance, not a live AI conversation. It only helps you find the right report — it never files anything for you.",
+    "intro": "Tell me what happened, or choose the option closest to it below.",
+    "options": {
+      "money": "Money was taken from my account",
+      "harassment": "Someone is harassing or threatening me",
+      "hacked": "My account was hacked",
+      "unsure": "I'm not sure / something else"
+    },
+    "replies": {
+      "money": "That's financial fraud. I'll take you to the money-loss report — it takes about 90 seconds and starts by asking what happened, in your own words.",
+      "harassment": "I'm sorry that's happening. I'll take you to the harassment/threats report so you can tell us what's going on.",
+      "hacked": "Let's get that reported. I'll take you to the account-compromise report.",
+      "unsure": "That's okay — you don't have to know the exact category. Start with a report and describe what happened in your own words; we'll help sort out the rest."
+    },
+    "freeTextPrefix": "Based on what you typed, this sounds closest to: \"{option}\".",
+    "inputPlaceholder": "Or type what happened…",
+    "inputLabel": "Describe what happened",
+    "sendLabel": "Send",
+    "continueButton": "Continue to report"
+  }
 }

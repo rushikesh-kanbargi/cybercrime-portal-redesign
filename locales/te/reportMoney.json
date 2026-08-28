@@ -230,5 +230,31 @@
       "jobTask": "మీరు పార్ట్-టైమ్ ఉద్యోగం, ఇంటి నుండి పని, లేదా చెల్లింపు టాస్క్‌ల గురించి ప్రస్తావించారు కాబట్టి ఇలా అనుకుంటున్నాము. మీ సంపాదనను తీసుకునే ముందు డబ్బు జమ చేయమని అడగడమే మోసం.",
       "matrimonial": "మీరు వైవాహిక సైట్, డేటింగ్ యాప్, లేదా సుదీర్ఘ ఆన్‌లైన్ సంబంధం ద్వారా కలిసిన వ్యక్తి గురించి ప్రస్తావించారు కాబట్టి ఇలా అనుకుంటున్నాము."
     }
+  },
+  "saveDraft": {
+    "button": "Save draft",
+    "saving": "Saving…",
+    "savedAt": "Draft saved · {time}",
+    "error": "Couldn't save your draft. Check your connection and try again.",
+    "codeTitle": "Your resume code",
+    "codeBody": "Use this code to continue this report from another device or browser. Keep it safe — anyone with this code can open this draft. It stops working after 7 days.",
+    "codeDismiss": "Got it"
+  },
+  "resumeByCode": {
+    "meta": {
+      "title": "Resume a saved report: Cybercrime Report & Track",
+      "description": "Continue a report you saved earlier using your resume code."
+    },
+    "heading": "Resume a saved report",
+    "description": "Paste the resume code you saved earlier.",
+    "codeLabel": "Resume code",
+    "codePlaceholder": "e.g. 3f2a1c9e-....-....-....-............xxxxxxxx",
+    "codeError": "Enter the resume code exactly as it was shown to you.",
+    "submit": "Continue this report",
+    "loading": "Looking for your draft…",
+    "notFound": "We couldn't find a draft for that code. It may have expired (drafts are kept for 7 days) or the code may not be exact.",
+    "unsupportedType": "This draft was started in a part of the reporting flow that doesn't support resuming yet.",
+    "linkPrompt": "Already started a report on another device?",
+    "linkText": "Resume it with your code"
   }
 }

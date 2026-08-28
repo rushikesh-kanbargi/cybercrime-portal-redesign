@@ -1,0 +1,198 @@
+{
+  "badge": "Not built in this prototype yet",
+  "callNow": "Call 1930 now",
+  "categories": {
+    "report-suspect": {
+      "meta": {
+        "title": "Report a suspect: Cybercrime Report & Tracking",
+        "description": "This category is not built in this prototype. Here's what it is, why it isn't built, and what to actually do right now."
+      },
+      "title": "Report a suspect to I4C, or report abuse to a social platform",
+      "subtitle": "You want to flag a suspicious number, account, or website to the authorities, or report abusive content to the platform hosting it.",
+      "whatThisIsTitle": "What this category is",
+      "whatThisIsBody": "This covers two related but different actions: reporting a suspect (a number, account, website, or app used in cybercrime) to I4C so it can be added to the Suspect Repository, and reporting abusive content directly to the social media platform that hosts it, using that platform's own reporting tools.",
+      "notBuiltTitle": "This isn't built here",
+      "notBuiltBody": "Neither of these is built on this prototype. Reporting a suspect to I4C needs access to the real repository we don't have; reporting abuse to a platform depends on that platform's own systems, not ours.",
+      "whyTitle": "Why",
+      "whyBody": "The idea is simple: you should be able to check a thing before you trust it, and report a thing after you don't. What is missing here is the data behind it, the real repository is built from complaints across the whole country, and we have no access to it. Rather than invent entries, we built the parts we could stand behind and named the rest. See <link>what's real and what's mocked</link>.",
+      "whatToDoNowTitle": "What to do right now",
+      "steps": [
+        {
+          "title": "Report abusive content on the platform itself",
+          "body": "WhatsApp, Instagram, Facebook, X, and YouTube each have their own in-app report button. That report goes straight to the platform and works today, right now."
+        },
+        {
+          "title": "Report the suspect on the real portal",
+          "body": "cybercrime.gov.in has a dedicated flow for reporting a suspect number, account, or website to I4C."
+        },
+        {
+          "title": "File your own complaint if you're a victim",
+          "body": "If this suspect took money from you, our one finished journey covers writing it up and getting a Complaint ID."
+        }
+      ],
+      "moneyNote": "If the suspect you're reporting also took money from you, our one finished journey covers that part."
+    },
+    "volunteer-account": {
+      "meta": {
+        "title": "Volunteer registration, login, and terms: Cybercrime Report & Tracking",
+        "description": "This category is not built in this prototype. Here's what it is, why it isn't built, and what to actually do right now."
+      },
+      "title": "Cyber volunteer registration, login, and terms",
+      "subtitle": "You want to create a Cyber Volunteer account, sign in to one, or read the volunteer terms and conditions.",
+      "whatThisIsTitle": "What this category is",
+      "whatThisIsBody": "The real Cyber Volunteer Programme is a genuine account system: citizens register, get verified, and are approved before they can take part. It has its own login, its own terms and conditions, and its own vetting process.",
+      "notBuiltTitle": "This isn't built here",
+      "notBuiltBody": "Registration, login, and a real terms-of-service document all need an account and verification system this prototype doesn't build. Inventing a fake login here would be exactly the fake interactivity this project refuses to ship.",
+      "whyTitle": "Why",
+      "whyBody": "The idea is simple: you should be able to check a thing before you trust it, and report a thing after you don't. What is missing here is the data behind it, the real repository is built from complaints across the whole country, and we have no access to it. Rather than invent entries, we built the parts we could stand behind and named the rest. See <link>what's real and what's mocked</link>.",
+      "whatToDoNowTitle": "What to do right now",
+      "steps": [
+        {
+          "title": "Read what the real programme actually is",
+          "body": "Our Cyber Volunteer Concept page explains the real programme honestly, without pretending this prototype runs it."
+        },
+        {
+          "title": "Register on the real portal",
+          "body": "cybercrime.gov.in has the real volunteer registration, login, and terms and conditions."
+        },
+        {
+          "title": "Call 1930 if something feels off",
+          "body": "If a message or call claiming to be about volunteer registration asks for money or your Aadhaar/PAN, treat it as a scam and report it."
+        }
+      ],
+      "moneyNote": "If someone impersonating the volunteer programme took money from you, our one finished journey covers that part."
+    },
+    "media-gallery": {
+      "meta": {
+        "title": "Photo, video, and radio gallery: Cybercrime Report & Tracking",
+        "description": "This category is not built in this prototype. Here's what it is, why it isn't built, and what to actually do right now."
+      },
+      "title": "Photo, video, and radio gallery",
+      "subtitle": "You're looking for the awareness campaign photos, public service videos, and radio jingles from the real programme.",
+      "whatThisIsTitle": "What this category is",
+      "whatThisIsBody": "The real portal hosts a media gallery of cyber-safety campaign photos, public service videos, and radio jingles produced by I4C.",
+      "notBuiltTitle": "This isn't built here",
+      "notBuiltBody": "We have no real media assets from that programme, and won't fill this page with stock photos or fabricated videos dressed up as official content. That would be dishonest, not a shortcut.",
+      "whyTitle": "Why",
+      "whyBody": "The idea is simple: you should be able to check a thing before you trust it, and report a thing after you don't. What is missing here is the data behind it, the real repository is built from complaints across the whole country, and we have no access to it. Rather than invent entries, we built the parts we could stand behind and named the rest. See <link>what's real and what's mocked</link>.",
+      "whatToDoNowTitle": "What to do right now",
+      "steps": [
+        {
+          "title": "Read our own safety content instead",
+          "body": "Our Cyber Safety Tips and Cyber Awareness pages are real, written content, not stock media, and cover the same ground."
+        },
+        {
+          "title": "See the real gallery",
+          "body": "cybercrime.gov.in hosts the actual campaign photos, videos, and radio jingles."
+        }
+      ],
+      "moneyNote": "If you're here after losing money and want to file a report instead, our one finished journey covers that."
+    },
+    "daily-digest": {
+      "meta": {
+        "title": "Daily digest: Cybercrime Report & Tracking",
+        "description": "This category is not built in this prototype. Here's what it is, why it isn't built, and what to actually do right now."
+      },
+      "title": "Daily digest",
+      "subtitle": "You want a daily summary of newly published cyber-security advisories and trends.",
+      "whatThisIsTitle": "What this category is",
+      "whatThisIsBody": "The real portal publishes a daily digest of newly reported advisories and trends, refreshed every day.",
+      "notBuiltTitle": "This isn't built here",
+      "notBuiltBody": "Building this honestly would mean either connecting to a real, live incident feed we don't have, or inventing today's numbers ourselves. We refuse to do the second one, so there is no digest here, not a fake one with made-up figures.",
+      "whyTitle": "Why",
+      "whyBody": "The idea is simple: you should be able to check a thing before you trust it, and report a thing after you don't. What is missing here is the data behind it, the real repository is built from complaints across the whole country, and we have no access to it. Rather than invent entries, we built the parts we could stand behind and named the rest. See <link>what's real and what's mocked</link>.",
+      "whatToDoNowTitle": "What to do right now",
+      "steps": [
+        {
+          "title": "Read our general advisories instead",
+          "body": "Our Advisories page covers common, ongoing scam patterns that don't depend on today's date, so it can't go stale or be faked."
+        },
+        {
+          "title": "See the real daily digest",
+          "body": "cybercrime.gov.in publishes the actual day-by-day advisory digest."
+        }
+      ],
+      "moneyNote": "If a scam mentioned in an advisory already cost you money, our one finished journey covers filing a report."
+    },
+    "training-resources": {
+      "meta": {
+        "title": "Training resources: Cybercrime Report & Tracking",
+        "description": "This category is not built in this prototype. Here's what it is, why it isn't built, and what to actually do right now."
+      },
+      "title": "Training resources",
+      "subtitle": "You're looking for training material for police, prosecutors, or the judiciary on handling cybercrime cases.",
+      "whatThisIsTitle": "What this category is",
+      "whatThisIsBody": "The real portal hosts institutional training material aimed at law enforcement and the judiciary, not at the general public.",
+      "notBuiltTitle": "This isn't built here",
+      "notBuiltBody": "We're a citizen-facing hackathon prototype with no institutional training content to host honestly, and no standing to author it.",
+      "whyTitle": "Why",
+      "whyBody": "The idea is simple: you should be able to check a thing before you trust it, and report a thing after you don't. What is missing here is the data behind it, the real repository is built from complaints across the whole country, and we have no access to it. Rather than invent entries, we built the parts we could stand behind and named the rest. See <link>what's real and what's mocked</link>.",
+      "whatToDoNowTitle": "What to do right now",
+      "steps": [
+        {
+          "title": "Read our citizen-facing guidance instead",
+          "body": "Our Cyber Safety Tips and Cyber Awareness pages are written for the public, which is who this prototype is actually for."
+        },
+        {
+          "title": "See the real training resources",
+          "body": "cybercrime.gov.in hosts the actual institutional training material for law enforcement and the judiciary."
+        }
+      ],
+      "moneyNote": "If you're a victim looking to file a report rather than train on this topic, our one finished journey covers that."
+    },
+    "screen-reader": {
+      "meta": {
+        "title": "Screen reader tool: Cybercrime Report & Tracking",
+        "description": "This category is not built in this prototype. Here's what it is, why it isn't built, and what to actually do right now."
+      },
+      "title": "Dedicated screen reader tool",
+      "subtitle": "You're looking for a built-in screen-reader tool like the one on the real portal.",
+      "whatThisIsTitle": "What this category is",
+      "whatThisIsBody": "The real portal offers a dedicated screen-reader tool bundled into the page that reads content aloud on request.",
+      "notBuiltTitle": "This isn't built here",
+      "notBuiltBody": "We didn't build a separate screen-reader tool. Instead, every page here is built with semantic HTML, labelled controls, and visible focus states, so your own screen reader, NVDA, JAWS, VoiceOver, or TalkBack, already works properly, without us needing to bundle one.",
+      "whyTitle": "Why",
+      "whyBody": "The idea is simple: you should be able to check a thing before you trust it, and report a thing after you don't. What is missing here is the data behind it, the real repository is built from complaints across the whole country, and we have no access to it. Rather than invent entries, we built the parts we could stand behind and named the rest. See <link>what's real and what's mocked</link>.",
+      "whatToDoNowTitle": "What to do right now",
+      "steps": [
+        {
+          "title": "Use your device's own screen reader",
+          "body": "NVDA or JAWS on Windows, VoiceOver on Mac and iOS, TalkBack on Android, all work correctly on this prototype."
+        },
+        {
+          "title": "Read our accessibility statement",
+          "body": "It lists exactly what's implemented and what hasn't been independently verified yet, honestly."
+        }
+      ],
+      "moneyNote": "If you're here to report money that was taken from you, our one finished journey is built to work with a screen reader end to end."
+    },
+    "public-notices": {
+      "meta": {
+        "title": "RTI and CPGRAMS public notices: Cybercrime Report & Tracking",
+        "description": "This category is not built in this prototype. Here's what it is, why it isn't built, and what to actually do right now."
+      },
+      "title": "RTI and CPGRAMS public notices",
+      "subtitle": "You're looking for Right to Information disclosures or CPGRAMS grievance-redress notices published by the department.",
+      "whatThisIsTitle": "What this category is",
+      "whatThisIsBody": "RTI (Right to Information) public notices and CPGRAMS (Centralised Public Grievance Redress and Monitoring System) notices are official disclosures a government department is legally required to publish.",
+      "notBuiltTitle": "This isn't built here",
+      "notBuiltBody": "We're an independent hackathon prototype, not a government department. We have no real notices to publish, so we won't invent any to fill this space.",
+      "whyTitle": "Why",
+      "whyBody": "The idea is simple: you should be able to check a thing before you trust it, and report a thing after you don't. What is missing here is the data behind it, the real repository is built from complaints across the whole country, and we have no access to it. Rather than invent entries, we built the parts we could stand behind and named the rest. See <link>what's real and what's mocked</link>.",
+      "whatToDoNowTitle": "What to do right now",
+      "steps": [
+        {
+          "title": "Use the official RTI and CPGRAMS channels",
+          "body": "These disclosures are handled by the real government department, not by this prototype, which has no legal standing to publish them."
+        },
+        {
+          "title": "See what this prototype actually is",
+          "body": "Our what's real vs mocked page states plainly that we are an independent, unaffiliated hackathon build."
+        }
+      ],
+      "moneyNote": "If you're here to report money that was taken from you, our one finished journey covers that part."
+    }
+  },
+  "footerLinks": "This page is honest about what it is: a real stop, not a workaround. See <whatsRealLink>what's real vs mocked</whatsRealLink> for the full picture, or <helpLink>what to do if money was just taken</helpLink> if that's part of what happened.",
+  "backToHome": "Back to home"
+}

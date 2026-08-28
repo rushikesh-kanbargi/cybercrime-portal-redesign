@@ -115,6 +115,11 @@
       "label": "ಹಿಂಪಡೆಯಲಾಗಿದೆ",
       "meaning": "ಈ ದೂರನ್ನು ಹಿಂಪಡೆಯಲಾಗಿದೆ ಮತ್ತು ಅದು ಈಗ ಸಕ್ರಿಯವಾಗಿಲ್ಲ.",
       "whatYouCanDo": "ಇದು ನೀವಲ್ಲದಿದ್ದರೆ, ತಕ್ಷಣ ನಿಮ್ಮ ರಾಜ್ಯದ ಕುಂದುಕೊರತೆ ಅಧಿಕಾರಿಯನ್ನು ಸಂಪರ್ಕಿಸಿ."
+    },
+    "EVIDENCE_REQUESTED": {
+      "label": "Additional evidence requested",
+      "meaning": "The investigating officer needs more information or evidence from you to move this case forward.",
+      "whatYouCanDo": "Reply through the contact on file, or add what you can when you're contacted. Don't share OTPs, passwords, or card PINs with anyone, even someone claiming to be the investigating officer."
     }
   },
   "categoryLabels": {
