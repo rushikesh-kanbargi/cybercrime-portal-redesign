@@ -6,7 +6,7 @@ A citizen-first redesign of India's cybercrime reporting journey — built for *
 
 > **This is an independent hackathon prototype.** It is not affiliated with, endorsed by, or connected to the Government of India, the Ministry of Home Affairs, or the Indian Cyber Crime Coordination Centre. If you need to report a real cybercrime, use the official portal at [cybercrime.gov.in](https://cybercrime.gov.in) or call **1930**.
 
-For the itemised list of what's real, mocked, simulated, or deliberately not built, see **`/whats-real`** on the running app.
+For the itemised list of what's real, mocked, simulated, or intentionally out of scope, see **`/whats-real`** on the running app.
 
 ---
 
@@ -33,7 +33,7 @@ If you've never looked at a code repository before, here's what this actually is
 - [Tech stack](#tech-stack) *(for developers)*
 - [Testing & verification](#testing--verification) *(for developers)*
 - [Accessibility](#accessibility)
-- [What this build deliberately does not include](#what-this-build-deliberately-does-not-include)
+- [Scope boundaries](#scope-boundaries)
 - [Project history](#project-history)
 
 ---
@@ -54,27 +54,27 @@ This build removes all of that: no ID upload, no minimum description length, and
 
 ### 🧑‍💻 Citizen side
 
-- **3 report flows** — money fraud, harassment/blackmail, account hacked — each: describe → confirm extracted facts → contact → evidence → review → real Complaint ID
-- **Simulated Aadhaar sign-in** (`/login`) — pre-fills your profile on every future report
-- **Track by Complaint ID + OTP** (`/track`) — full status timeline, printable FIR copy, printable bank acknowledgement
-- **"My complaints"** (`/profile`) — every report linked to your account, in one place
-- **Save & resume** — abandon a report mid-way, come back later with a code
-- **Suspicious Entity Checker** (`/check-suspect`) — check a phone/UPI/email/link against community reports, and report one yourself
-- **Guided Help** — a scripted, deterministic quick-reply widget on the homepage (never a live AI — see [`/whats-real`](https://cybercrime-portal-redesign.vercel.app/en/whats-real))
-- **6 languages** — English, Hindi, Marathi, Tamil, Telugu, Kannada
+- **3 report flows** — money fraud, harassment/blackmail, account hacked. Each follows the same shape: describe what happened in your own words → confirm the facts the system pulled out of that description (amount, date, transaction reference — nothing invented) → how to reach you → optional evidence → review → a real Complaint ID you can save or screenshot.
+- **Simulated Aadhaar sign-in** (`/login`) — entirely optional. Sign in once and your name, mobile, state, district, and PIN code pre-fill on every report after that, so a second report takes far less typing than the first.
+- **Track by Complaint ID + OTP** (`/track`) — anyone with a Complaint ID and the mobile number on file can pull up the full status timeline, a printable FIR-style copy once one's registered, and a printable acknowledgement a bank or employer might ask for.
+- **"My complaints"** (`/profile`) — every report you've ever filed while signed in, in one list, linked to your account automatically — not something you have to manually connect.
+- **Save & resume** — start a report, get interrupted, come back later (even on a different device) using a short code, and pick up exactly where you left off.
+- **Suspicious Entity Checker** (`/check-suspect`) — paste in a phone number, UPI ID, email, or link and see whether other people have reported it before filing a full complaint yourself — and add your own report to that pool without filing one.
+- **Guided Help** — a homepage quick-reply widget that helps someone figure out which of the three flows fits their situation. It's a fixed decision tree plus simple keyword matching, not a live AI — and it says so, on-screen, every time (see [`/whats-real`](https://cybercrime-portal-redesign.vercel.app/en/whats-real)).
+- **6 languages** — English, Hindi, Marathi, Tamil, Telugu, Kannada, switchable from every page.
 
 </td>
 <td valign="top" width="50%">
 
 ### 🕵️ Investigator side
 
-- **Password-authenticated portal** (`/investigator`) — real hashed passwords, no public sign-up, provisioned by script only
-- **Dashboard** — case counts, status breakdown, workload by investigator, category trends
-- **Case management** — assign, mutate status, timeline, evidence, duplicate-candidate detection, risk indicator
-- **Entity intelligence** — threat reputation, correlated cases, moderation queue for community-reported identifiers
-- **Investigation brief** — an auto-compiled, non-AI summary of a case's own recorded data
-- **Integrations status page** (`/investigator/integrations`) — transparent, honest reporting of what's actually connected (nothing external, by design — see below)
-- **Full audit trail** on every mutation
+- **Password-authenticated portal** (`/investigator`) — real, hashed passwords behind a genuine login. There's no public sign-up form anywhere — an account only ever comes from someone with database access running a provisioning script.
+- **Dashboard** — open case counts, a breakdown by status, workload split across investigators, and category trends, all computed live from real data in the database, not sample numbers.
+- **Case management** — assign a case to yourself or a colleague, move it through its status stages, see its full timeline and any attached evidence, get flagged when it looks like a possible duplicate of another case, and see a computed risk indicator.
+- **Entity intelligence** — a running view of which phone numbers/UPI IDs/etc. keep coming up across multiple reports, a "threat reputation" derived from that, links to every case a given identifier touches, and a moderation queue for reviewing community-submitted reports before they count.
+- **Investigation brief** — a short, auto-written summary of a case's own recorded facts, assembled by plain rule-based code reading the case's own data — never an AI guessing or inferring anything beyond what's actually on file.
+- **Integrations status page** (`/investigator/integrations`) — an honest status page listing every external system this platform *could* connect to (banks, telecom, government feeds) and stating plainly that none of them are connected yet, rather than silently pretending they might be.
+- **Full audit trail** — every mutation an investigator makes (assignment, status change, evidence access) is logged with who did it and when.
 
 </td>
 </tr>
@@ -169,7 +169,7 @@ It's safe to run as many times as you like. It only ever touches its own demo ro
 
 ## What's real vs. mocked
 
-In plain terms: the reporting, tracking, and investigator-side experience genuinely work as software — real database, real page-to-page flow, real password protection where it matters. What's **not** real is anything that would require an actual government agency, bank, or telecom company to cooperate — there's no way for a hackathon project to actually plug into those, so instead every such moment is clearly labelled on-screen as a demo, never disguised as the real thing.
+In plain terms: the reporting, tracking, and investigator-side experience genuinely work as software — real database, real page-to-page flow, real password protection where it matters. What's simulated is anything that would require an actual government agency, bank, or telecom company to cooperate — a real integration is future scope, not something a hackathon project can plug into on its own — so every such moment is clearly labelled on-screen as a demo, never disguised as the real thing. A separate handful of things are ruled out permanently, on purpose, for privacy and legal reasons — those are called out distinctly below, not lumped in with "not built yet."
 
 | Area | Status | Detail |
 |---|---|---|
@@ -183,8 +183,8 @@ In plain terms: the reporting, tracking, and investigator-side experience genuin
 | AI / entity intelligence | 🟡 **Deterministic, not AI** | Classification, extraction, and the investigation brief are all rule-based. No LLM or AI provider is configured anywhere in this app. |
 | Guided Help widget | 🟡 **Scripted, not AI** | A fixed decision tree + local keyword heuristic. Never a live model — labelled as such in its own UI. |
 | Aadhaar sign-in at `/login` | 🟡 **Simulated** | Invented `0000`-prefixed records only. No UIDAI call, ever. |
-| Bank freeze / NCRP / CFCFRMS / any government system | ⬛ **Not built** | Nothing submitted here reaches a real bank, police unit, or government system. It stays in this prototype's own database. |
-| Aadhaar/PAN collection in reporting, DigiLocker | ⬛ **Not built, deliberately** | A named product and legal decision — see `/whats-real`. |
+| Bank freeze / NCRP / CFCFRMS / any government system | 🔭 **Future scope** | Genuinely out of reach for a project without institutional access — nothing submitted here reaches a real bank, police unit, or government system today. It stays in this prototype's own database until that access exists. |
+| Aadhaar/PAN collection in reporting, DigiLocker | 🚫 **By design, permanently** | Not a gap waiting to be filled — a deliberate product and legal boundary this project has committed not to cross. See `/whats-real` for the full reasoning. |
 
 **Complaint IDs generated by this prototype are not real NCRP complaint numbers.**
 
@@ -306,16 +306,41 @@ WCAG 2.1 AA, verified (not just targeted) with `axe-core` (0 violations) and Lig
 
 ---
 
-## What this build deliberately does not include
+## Scope boundaries
 
-No Aadhaar or PAN collection anywhere in the reporting flow, no real Aadhaar authentication, no live DigiLocker integration, no real SMS/email delivery, no native mobile app, no real AI provider, no real bank/telecom/government connectivity. Every one of these is a named decision, not an oversight — see `/whats-real` and `PROJECT_SPEC.md` §26.
+Not everything absent from this build is absent for the same reason. Some things are ruled out permanently, on principle. Others are simply beyond what any project without institutional access could build, and are named here as real future scope rather than quietly ignored.
+
+### Permanent — by design, not by limitation
+
+These aren't on any roadmap, and adding real institutional access wouldn't change them:
+
+- **No Aadhaar or PAN collection anywhere in the reporting flow.** A citizen can file a complete report with nothing more than a phone number. Asking for a government ID number before someone can even describe what happened to them is exactly the friction this project set out to remove — see [The problem this addresses](#the-problem-this-addresses).
+- **No real Aadhaar authentication.** The `/login` sign-in only ever checks against this project's own invented `0000`-prefixed test records — it has no code path that could contact UIDAI even if credentials existed for one.
+- **No live DigiLocker integration.** Same reasoning as Aadhaar/PAN: pulling a citizen's real government documents into a hackathon-scale prototype's database is a legal and privacy liability this project isn't willing to take on, not a missing feature.
+
+Full legal/product reasoning for each is in `PROJECT_SPEC.md` §26 and disclosed plainly on `/whats-real`.
+
+### Future scope — real, tracked, and out of reach for now
+
+These are honest gaps: things a production deployment with real institutional partners would need, that this project cannot build on its own.
+
+- **Real bank / NCRP / CFCFRMS / government-system connectivity.** A hold request, an FIR filing, a bank freeze — all of these require a live integration agreement with an actual bank, telecom operator, or government system. No hackathon project gets that access; every such moment in this build is simulated and clearly labelled, never disguised as a real action taken.
+- **Real SMS/email delivery.** Every OTP and status notification renders on-screen exactly as it would be sent — there's no SMS gateway or mail provider wired in, by cost and scope, not by design.
+- **A real AI/LLM provider.** Classification, extraction, and the investigator-side "investigation brief" are all deterministic, rule-based code — genuinely useful, but not AI, and the architecture (`lib/ai/`) is written provider-neutral specifically so a real model could be swapped in later without a rewrite.
+- **Production-grade infrastructure.** Rate limiting currently lives in server memory (fine for a single instance, not for a multi-region production deployment — a shared store like Redis is the known next step); there's no automated backup or monitoring/alerting configured yet. These are ordinary pre-launch infrastructure work, not architectural gaps.
+- **DPDP Act compliance.** India's Digital Personal Data Protection Act's substantive obligations come into force in stages through 2026–2027. This build is built *toward* that standard already (see `/privacy`), but doesn't claim compliance with a law that isn't fully in force yet.
+- **A native mobile app.** The web app is fully responsive and phone-first, but there's no App Store/Play Store presence.
+
+`cybercrime-portal-requirements/execution/` tracks each of these with more precision than this README — start at `STATUS.md` if you want the current, living state of this list rather than a snapshot.
 
 ---
 
 ## Project history
 
-Originally a 3-day hackathon build (citizen-only, English + Hindi, no tests, no investigator portal). The scope has since grown into a real investigator/admin portal, a 149-test automated suite, and four more languages. The four newest languages carry some English-source stopgap text pending native-speaker review — tracked honestly in `cybercrime-portal-requirements/`, not hidden.
+**Phase 1 — the original hackathon build (3 days).** Citizen-only: the three report flows, `/track`, English + Hindi, no automated tests, no investigator portal. Built for **Build What Moves India**, scoped tightly around the single highest-stakes journey — reporting online financial fraud — end to end, rather than spreading thin across the real portal's full feature set.
 
-An earlier, separate design-phase exploration (static HTML mockups, a synthetic-data generator, scenario/schema docs covering a broader 13-category taxonomy) briefly lived alongside the built app after a merge. Its one genuinely useful finding — the undisclosed 24-hour post-1930-call deadline — was folded into the FAQ; the rest was removed as fully superseded by `PROJECT_SPEC.md`, which has the complete, decision-by-decision account of how scope narrowed to what actually shipped.
+**Phase 2 — deliberate expansion beyond the hackathon scope.** After submission, the project's own hard rules were revisited and formally amended (see `CLAUDE.md`'s ADR references) to allow a real investigator/admin portal — genuinely password-authenticated, not a demonstration — case management, entity intelligence, and a moderation queue. Alongside that: a 149-test automated suite where none existed before, and four additional languages (Marathi, Tamil, Telugu, Kannada), each of which required correcting a handful of user-facing claims that were true at the original hackathon-submission time but had since become false (for example, "there is no password anywhere in this product" — no longer accurate once real investigator authentication existed). The four newest languages carry some English-source text standing in for a handful of newer strings, pending native-speaker review — tracked openly in `cybercrime-portal-requirements/`, not silently left inconsistent.
 
-This build was developed primarily with Claude Code. Codex was also run directly against this codebase for a real engineering pass — a manual failure-path resilience review of `/report/money` and `/track` — and found and fixed two real, previously-shipped bugs on its own. See git history and `PROJECT_SPEC.md` for the full account.
+**A parallel, separate design-phase exploration** — static HTML mockups, a synthetic-data generator, and scenario/schema docs covering a much broader 13-category taxonomy than what actually shipped — briefly lived alongside the built app after a repository merge. Its one genuinely useful, previously-unpublished finding (the undisclosed 24-hour deadline that follows a 1930 call) was folded into the FAQ. Everything else from that exploration was removed as fully superseded by `PROJECT_SPEC.md`, which holds the complete, decision-by-decision account of how the eventual scope was chosen.
+
+**How the tooling was used.** This build was developed primarily with Claude Code. Codex was also run directly against the codebase for a genuine, independent engineering pass — a manual failure-path resilience review of `/report/money` and `/track` covering missing required fields, a browser refresh mid-form, oversized or wrong-type evidence uploads, an unknown Complaint ID, a wrong OTP code, and unavailable browser storage. It found and fixed two real, previously-shipped bugs on its own: a "continue where you left off" resume banner whose saved-timestamp placeholder was never actually being filled in, and an evidence-upload path that checked file size but never checked file type before accepting a file. It also introduced one small lint violation in the process, which was caught and fixed afterward. The full account, with exact commits, is in git history and `PROJECT_SPEC.md`.
