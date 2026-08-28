@@ -6,6 +6,7 @@ import path from "node:path";
 import { db } from "@/lib/db";
 import { evidence, complaints } from "@/lib/db/schema";
 import { trackCookieName, verifyTrackToken } from "@/lib/track-auth";
+import { getSessionUser } from "@/lib/session";
 
 // Serve one evidence file back to the citizen who filed it.
 //
@@ -33,9 +34,22 @@ export async function GET(
     return NextResponse.json({ code: "NOT_FOUND" }, { status: 404 });
   }
 
+  // Auth: Complaint ID + OTP (the signed track cookie from /verify), OR a
+  // logged-in session that owns this complaint — same dual-auth pattern
+  // app/api/track/[publicId]/status/route.ts already uses. Without the
+  // session fallback, a signed-in citizen reaching their own report via
+  // "My complaints" (session-based access, no separate per-complaint OTP
+  // step) could see the report's timeline but never its evidence images.
   const store = await cookies();
   const token = store.get(trackCookieName(complaint.publicId))?.value;
-  if (!verifyTrackToken(complaint.publicId, token)) {
+  let authorized = verifyTrackToken(complaint.publicId, token);
+
+  if (!authorized) {
+    const user = await getSessionUser();
+    authorized = !!user && complaint.userId === user.id;
+  }
+
+  if (!authorized) {
     return NextResponse.json({ code: "VERIFICATION_REQUIRED" }, { status: 401 });
   }
 
