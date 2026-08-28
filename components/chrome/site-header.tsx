@@ -13,6 +13,7 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { getSessionUser } from "@/lib/session";
+import { SignOutButton } from "./sign-out-button";
 
 // §13.3 / §19.5 — the tel:1930 action is persistent chrome and must never
 // scroll away. `sticky top-0` keeps it pinned through every screen in the
@@ -46,14 +47,20 @@ export async function SiteHeader() {
       <div className="mx-auto flex max-w-[1500px] items-center justify-between gap-2 px-4 py-3">
         <Link
           href="/"
-          className="flex shrink-0 items-center gap-2 text-base font-semibold tracking-tight text-foreground"
+          className="flex shrink-0 items-center gap-2.5 text-foreground"
         >
-          <SiteMark className="size-7 text-primary" />
-          {/* D54 — visually hidden below `lg` to make room for the wider
-              nav, but kept in the accessibility tree at every width (never
-              `hidden`, which would leave this link with no discernible
-              name for a11y at narrower-than-lg headless/assistive contexts). */}
-          <span className="sr-only lg:not-sr-only">{t("siteName")}</span>
+          <SiteMark className="size-8 shrink-0 text-primary" />
+          {/* Stacked rather than strung out in a row: the acronym and its
+              expansion together were eating the width the nav needs, and a
+              horizontally scrolling nav is a nav people never reach the end
+              of. Both strings stay in the accessibility tree at every width
+              (never `hidden`), so the link always has a discernible name. */}
+          <span className="flex flex-col leading-tight">
+            <span className="text-base font-semibold tracking-tight">{t("siteName")}</span>
+            <span className="sr-only text-[11px] font-normal text-muted-foreground lg:not-sr-only">
+              {t("siteNameFull")}
+            </span>
+          </span>
         </Link>
 
         <nav
@@ -110,10 +117,10 @@ export async function SiteHeader() {
             <DropdownMenuContent align="start">
               <DropdownMenuLabel>{t("nav.reportCheckSuspect.repositoryLabel")}</DropdownMenuLabel>
               <DropdownMenuItem asChild>
-                <Link href="/not-built/check-suspect">{t("nav.reportCheckSuspect.checkContact")}</Link>
+                <Link href="/check">{t("nav.reportCheckSuspect.checkContact")}</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href="/not-built/check-suspect">{t("nav.reportCheckSuspect.checkWebsite")}</Link>
+                <Link href="/check">{t("nav.reportCheckSuspect.checkWebsite")}</Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuLabel>{t("nav.reportCheckSuspect.reportLabel")}</DropdownMenuLabel>
@@ -247,13 +254,26 @@ export async function SiteHeader() {
           </Link>
 
           {user ? (
+            <>
+              <Link
+                href="/profile"
+                className="shrink-0 rounded-md px-2 py-2 font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              >
+                {t("nav.myComplaints")}
+              </Link>
+              <SignOutButton />
+            </>
+          ) : (
+            // Signing in is never required to report — it only gets a
+            // returning citizen back to their own list (§12). The link is a
+            // real destination either way, so it is never a dead affordance.
             <Link
-              href="/profile"
+              href="/login"
               className="shrink-0 rounded-md px-2 py-2 font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             >
-              {t("nav.myComplaints")}
+              {t("nav.signIn")}
             </Link>
-          ) : null}
+          )}
         </nav>
 
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
@@ -292,10 +312,10 @@ export async function SiteHeader() {
               <DropdownMenuSeparator />
               <DropdownMenuLabel>{t("nav.reportCheckSuspect.trigger")}</DropdownMenuLabel>
               <DropdownMenuItem asChild>
-                <Link href="/not-built/check-suspect">{t("nav.reportCheckSuspect.checkContact")}</Link>
+                <Link href="/check">{t("nav.reportCheckSuspect.checkContact")}</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href="/not-built/check-suspect">{t("nav.reportCheckSuspect.checkWebsite")}</Link>
+                <Link href="/check">{t("nav.reportCheckSuspect.checkWebsite")}</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href="/not-built/report-suspect">{t("nav.reportCheckSuspect.reportI4C")}</Link>
@@ -393,10 +413,19 @@ export async function SiteHeader() {
                 <Link href="/contact">{t("nav.contact")}</Link>
               </DropdownMenuItem>
               {user ? (
+                <>
+                  <DropdownMenuItem asChild>
+                    <Link href="/profile">{t("nav.myComplaints")}</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <SignOutButton className="flex w-full items-center gap-2" />
+                  </DropdownMenuItem>
+                </>
+              ) : (
                 <DropdownMenuItem asChild>
-                  <Link href="/profile">{t("nav.myComplaints")}</Link>
+                  <Link href="/login">{t("nav.signIn")}</Link>
                 </DropdownMenuItem>
-              ) : null}
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
           <LanguageSwitcher />

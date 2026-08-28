@@ -62,6 +62,7 @@ export interface MyProfileData {
   displayName: string | null;
   state: string | null;
   district: string | null;
+  pincode: string | null;
 }
 
 // The autofill surface (§14.6) — read for both the /profile "saved
@@ -75,7 +76,12 @@ export async function getMyProfile(): Promise<MyProfileData | null> {
   });
   if (!profile) return null;
 
-  return { displayName: profile.displayName, state: profile.state, district: profile.district };
+  return {
+    displayName: profile.displayName,
+    state: profile.state,
+    district: profile.district,
+    pincode: profile.pincode,
+  };
 }
 
 // Rule 8 erasure rehearsal — deletes ONLY the profiles row for the

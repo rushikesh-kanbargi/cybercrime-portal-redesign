@@ -29,6 +29,10 @@ export function OtpInput({
       <Input
         id={id}
         name="otp"
+        // Masked, like every other code field a citizen has used. This is
+        // often typed in a public place or with someone watching over a
+        // shoulder — the exact situation a fraud victim is already in.
+        type="password"
         inputMode="numeric"
         autoComplete="one-time-code"
         pattern="[0-9]{6}"

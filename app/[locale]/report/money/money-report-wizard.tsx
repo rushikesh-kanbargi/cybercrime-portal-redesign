@@ -30,7 +30,7 @@ import { cn } from "@/lib/utils";
 import { extractFacts, type ExtractedField } from "@/lib/extract";
 import { classifyFraud, FRAUD_SUBCATEGORIES, type FraudSubCategoryCode } from "@/lib/classify";
 import { INDIAN_STATES } from "@/lib/india-states";
-import { submitMoneyReport, confirmUpdatesOptIn, requestUpdatesOtp, uploadEvidence } from "./actions";
+import { submitMoneyReport, confirmUpdatesOptIn, requestUpdatesOtp, uploadEvidence, type SubmitMoneyReportResult } from "./actions";
 import { FileUpload } from "@/components/ui/file-upload";
 import { compressImageFile } from "@/lib/compress-image";
 import { StepProgress } from "@/components/tracking/step-progress";
@@ -38,6 +38,12 @@ import { ConsentNotice } from "@/components/tracking/consent-notice";
 import { ErrorSummary } from "@/components/tracking/error-summary";
 import { ReviewLine } from "@/components/tracking/review-line";
 import { ActionChecklist } from "@/components/tracking/action-checklist";
+import { SubmitConfirmDialog } from "@/components/report/submit-confirm";
+import {
+  SuspectFields,
+  emptySuspectFields,
+  type SuspectFieldValues,
+} from "@/components/report/suspect-fields";
 import { UpdatesOptIn } from "@/components/tracking/updates-optin";
 import { ConfirmationIllustration } from "@/components/illustrations/confirmation-illustration";
 import {
@@ -75,6 +81,7 @@ interface DraftState {
   // than a new DB column, since it's the same kind of free-text account of
   // what happened as the narrative already is.
   evidenceText: string;
+  suspect: SuspectFieldValues;
   // File objects themselves can't go into localStorage (D16/§28.2) — this is
   // just the name/size of whatever was selected, so a refresh can tell the
   // citizen "you had 2 files attached, re-attach them" instead of silently
@@ -107,6 +114,7 @@ function emptyDraft(): DraftState {
     district: "",
     mobile: "",
     evidenceText: "",
+    suspect: { ...emptySuspectFields },
     evidenceFileMeta: [],
     savedAt: Date.now(),
   };
@@ -217,9 +225,10 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
       errorSummaryRef.current?.focus();
     }
   }, [errors]);
+  const [confirmOpen, setConfirmOpen] = React.useState(false);
   const [submitting, setSubmitting] = React.useState(false);
   const [submitError, setSubmitError] = React.useState<string | null>(null);
-  const [result, setResult] = React.useState<{ publicId: string; complaintId: string; smsPreview: string } | null>(null);
+  const [result, setResult] = React.useState<SubmitMoneyReportResult | null>(null);
   const [copied, setCopied] = React.useState(false);
 
   // Evidence — optional, added between "where + how to reach you" and
@@ -261,6 +270,7 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
       setDraft({
         ...stored,
         evidenceText: stored.evidenceText ?? "",
+        suspect: { ...emptySuspectFields, ...(stored.suspect ?? {}) },
         evidenceFileMeta: stored.evidenceFileMeta ?? [],
       });
       setFactsInitialized(true);
@@ -432,6 +442,7 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
         state: draft.state,
         district: draft.district.trim(),
         contactMobile: draft.mobile.trim(),
+        suspect: draft.suspect,
         locale,
       });
       setResult(res);
@@ -596,6 +607,25 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
             <ActionChecklist
               items={[t("done.checklist1"), t("done.checklist2"), t("done.checklist3")]}
             />
+            {result?.office ? (
+              <div className="mt-5 flex flex-col gap-1 rounded-lg border border-border bg-muted/20 p-4 text-sm">
+                <p className="font-medium text-foreground">{t("done.officeTitle")}</p>
+                <p className="text-foreground">{result.office.name}</p>
+                <p className="text-muted-foreground">
+                  {result.office.addressLine}, {result.office.district},{" "}
+                  {result.office.state} {result.office.pincode}
+                </p>
+                <p>
+                  <a
+                    href={`tel:${result.office.phone.replace(/\s/g, "")}`}
+                    className="font-medium text-primary underline underline-offset-4"
+                  >
+                    {result.office.phone}
+                  </a>
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">{t("done.officeCaveat")}</p>
+              </div>
+            ) : null}
           </CardContent>
         </Card>
       )}
@@ -924,6 +954,14 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
                 </AlertDescription>
               </Alert>
             )}
+            <SuspectFields
+              values={draft.suspect}
+              showPaymentIdentifiers={true}
+              onChange={(patch) =>
+                setDraft((d) => ({ ...d, suspect: { ...d.suspect, ...patch } }))
+              }
+            />
+
             <FileUpload
               id="evidence"
               label={t("evidence.filesLabel")}
@@ -1026,13 +1064,32 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
               <Button variant="outline" className="min-h-11" onClick={() => setStep("evidence")} disabled={submitting}>
                 {t("review.back")}
               </Button>
-              <Button className="min-h-11" onClick={handleSubmit} disabled={submitting}>
+              <Button className="min-h-11" onClick={() => setConfirmOpen(true)} disabled={submitting}>
                 {submitting ? t("review.submitting") : t("review.submit")}
               </Button>
             </div>
           </CardContent>
         </Card>
       )}
+
+      <SubmitConfirmDialog
+
+        open={confirmOpen}
+
+        onOpenChange={setConfirmOpen}
+
+        submitting={submitting}
+
+        onConfirm={() => {
+
+          setConfirmOpen(false);
+
+          void handleSubmit();
+
+        }}
+
+      />
+
 
       {step === "done" && result && (
         <div className="animate-enter flex flex-col gap-6">
@@ -1168,6 +1225,7 @@ function CategoryPicker({
         ))}
       </select>
       <Badge variant="secondary">{t("facts.yourChoice")}</Badge>
+
     </div>
   );
 }

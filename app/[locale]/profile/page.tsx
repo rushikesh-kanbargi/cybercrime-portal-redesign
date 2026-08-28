@@ -89,12 +89,13 @@ export default async function ProfilePage() {
               <CardDescription>{t("saved.description")}</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
-              {myProfile && (myProfile.state || myProfile.district) ? (
+              {myProfile && (myProfile.state || myProfile.district || myProfile.pincode) ? (
                 <>
                   <p className="text-sm text-foreground">
                     {t("saved.current", {
                       state: myProfile.state || t("saved.none"),
                       district: myProfile.district || t("saved.none"),
+                      pincode: myProfile.pincode || t("saved.none"),
                     })}
                   </p>
                   <DeleteProfileButton />

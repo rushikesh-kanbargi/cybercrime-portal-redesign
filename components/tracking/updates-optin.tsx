@@ -73,6 +73,7 @@ export function UpdatesOptIn({
               <Label htmlFor="otp-code">{t("done.otpLabel")}</Label>
               <Input
                 id="otp-code"
+                type="password"
                 inputMode="numeric"
                 maxLength={6}
                 value={otpCode}
