@@ -18,7 +18,17 @@ import { Badge } from "@/components/ui/badge";
 import { OtpInput } from "@/components/auth/otp-input";
 import { StatusTimeline, type TimelineStatus } from "@/components/tracking/status-timeline";
 import { PageIcon } from "@/components/illustrations/page-icon";
-import { Info, ShieldCheck, Banknote, ShieldAlert, KeyRound, type LucideIcon } from "lucide-react";
+import {
+  Info,
+  ShieldCheck,
+  Banknote,
+  ShieldAlert,
+  KeyRound,
+  ClipboardList,
+  CheckCircle2,
+  FileText,
+  type LucideIcon,
+} from "lucide-react";
 
 // Fallback for any category code without a translated label — a safety net
 // for a code this build doesn't know about, not the primary path.
@@ -40,9 +50,37 @@ interface CaseData {
     publicId: string;
     categoryCode: string;
     isAnonymous: boolean;
+    state: string | null;
+    district: string | null;
+    pincode: string | null;
     submittedAt: string | null;
     createdAt: string;
   };
+  incident: {
+    narrative: string;
+    amountLost: string | null;
+    transactionRef: string | null;
+    debitedInstrument: string | null;
+    platform: string | null;
+    suspectName: string | null;
+    suspectClaims: string | null;
+  } | null;
+  office: {
+    name: string;
+    addressLine: string;
+    district: string;
+    state: string;
+    pincode: string;
+    phone: string;
+  } | null;
+  officer: { name: string; rank: string } | null;
+  matchedOn: "pincode" | "district" | "state" | null;
+  suspects: Array<{ type: string; value: string }>;
+  evidenceCount: number;
+  evidence: Array<{ id: string; originalFilename: string; mimeType: string; sizeBytes: number }>;
+  documents: Array<{ kind: string; referenceNumber: string; issuedAt: string; note: string | null }>;
+  additions: Array<{ body: string; addedAt: string }>;
+  gaps: Array<"transactionRef" | "suspect" | "evidence">;
   statuses: TimelineStatus[];
 }
 
@@ -252,11 +290,266 @@ export default function TrackCasePage({
                   ).toLocaleDateString("en-IN", { dateStyle: "medium" }),
                 })}
               </CardDescription>
+              {/* Omitted entirely rather than shown empty when a report
+                  carried no location — an anonymous report is first-class. */}
+              {stage.data.complaint.district || stage.data.complaint.state ? (
+                <CardDescription>
+                  {t("case.filedFrom", {
+                    place: [
+                      stage.data.complaint.district,
+                      stage.data.complaint.state,
+                      stage.data.complaint.pincode,
+                    ]
+                      .filter(Boolean)
+                      .join(", "),
+                  })}
+                </CardDescription>
+              ) : null}
             </CardHeader>
             <CardContent>
               <StatusTimeline statuses={stage.data.statuses} />
             </CardContent>
           </Card>
+
+          {stage.data.documents.length > 0 ? (
+            <Card className="border-primary/30 bg-primary/5">
+              <CardHeader>
+                <CardTitle>{t("case.documentsTitle")}</CardTitle>
+                <CardDescription>{t("case.documentsDescription")}</CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-4 text-sm">
+                {stage.data.documents.map((doc) => (
+                  <div key={doc.referenceNumber} className="flex flex-col gap-2">
+                    <p className="font-medium text-foreground">
+                      {t(`case.documentKinds.${doc.kind}`)} {doc.referenceNumber}
+                    </p>
+                    <p className="text-muted-foreground">
+                      {t("case.documentIssued", {
+                        date: new Date(doc.issuedAt).toLocaleDateString("en-IN", {
+                          dateStyle: "medium",
+                        }),
+                      })}
+                    </p>
+                    {doc.note ? (
+                      <p className="whitespace-pre-line text-muted-foreground">{doc.note}</p>
+                    ) : null}
+                    {doc.kind === "fir" ? (
+                      <Button asChild variant="outline" className="min-h-11 self-start">
+                        <Link href={`/track/${stage.data.complaint.publicId}/fir`}>
+                          <FileText className="size-4" aria-hidden="true" />
+                          {t("case.viewFir")}
+                        </Link>
+                      </Button>
+                    ) : null}
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {/* What the citizen can still do. Shown BEFORE the case detail
+              because it is the only part that asks anything of them, and an
+              amber card buried under three sections gets missed. */}
+          {stage.data.gaps.length > 0 ? (
+            <Alert className="border-warning/40 bg-warning/5">
+              <ClipboardList className="size-4" aria-hidden="true" />
+              <AlertTitle>{t("case.stillNeededTitle")}</AlertTitle>
+              <AlertDescription>
+                <ul className="mt-1 flex list-disc flex-col gap-2 pl-4">
+                  {stage.data.gaps.map((gap) => (
+                    <li key={gap}>{t(`case.gaps.${gap}`)}</li>
+                  ))}
+                </ul>
+                <p className="mt-3">
+                  <Link
+                    href={`/track/${stage.data.complaint.publicId}/add`}
+                    className="font-medium underline underline-offset-4"
+                  >
+                    {t("case.addInformation")}
+                  </Link>
+                </p>
+              </AlertDescription>
+            </Alert>
+          ) : (
+            <Alert className="border-success/40 bg-success/5">
+              <CheckCircle2 className="size-4" aria-hidden="true" />
+              <AlertTitle>{t("case.completeTitle")}</AlertTitle>
+              <AlertDescription>{t("case.completeBody")}</AlertDescription>
+            </Alert>
+          )}
+
+          {/* Who has it now. `matchedOn` is stated rather than implied — a
+              case matched only at state level is a much weaker claim than one
+              matched on the PIN, and pretending otherwise would be a lie of
+              precision. */}
+          <Card>
+            <CardHeader>
+              <CardTitle>{t("case.handledByTitle")}</CardTitle>
+              {stage.data.matchedOn ? (
+                <CardDescription>{t(`case.matchedOn.${stage.data.matchedOn}`)}</CardDescription>
+              ) : null}
+            </CardHeader>
+            <CardContent className="flex flex-col gap-3 text-sm">
+              {stage.data.office ? (
+                <>
+                  {stage.data.officer ? (
+                    <p className="font-medium text-foreground">
+                      {stage.data.officer.rank} {stage.data.officer.name}
+                    </p>
+                  ) : null}
+                  <p className="text-foreground">{stage.data.office.name}</p>
+                  <p className="text-muted-foreground">
+                    {stage.data.office.addressLine}
+                    <br />
+                    {stage.data.office.district}, {stage.data.office.state}{" "}
+                    {stage.data.office.pincode}
+                  </p>
+                  <p>
+                    <a
+                      href={`tel:${stage.data.office.phone.replace(/\s/g, "")}`}
+                      className="font-medium text-primary underline underline-offset-4"
+                    >
+                      {stage.data.office.phone}
+                    </a>
+                  </p>
+                  <p className="text-muted-foreground">{t("case.officeCaveat")}</p>
+                </>
+              ) : (
+                <p className="text-muted-foreground">{t("case.noOfficeMatched")}</p>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* What was reported, read back. A citizen who filed weeks ago
+              should not have to remember what they wrote. */}
+          {stage.data.incident ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>{t("case.whatYouReportedTitle")}</CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-4 text-sm">
+                <p className="whitespace-pre-line text-foreground">
+                  {stage.data.incident.narrative}
+                </p>
+
+                <dl className="flex flex-col gap-2 border-t border-border pt-4">
+                  {stage.data.incident.transactionRef ? (
+                    <div className="flex flex-wrap justify-between gap-2">
+                      <dt className="text-muted-foreground">{t("case.fields.transactionRef")}</dt>
+                      <dd className="font-mono">{stage.data.incident.transactionRef}</dd>
+                    </div>
+                  ) : null}
+                  {stage.data.incident.debitedInstrument ? (
+                    <div className="flex flex-wrap justify-between gap-2">
+                      <dt className="text-muted-foreground">{t("case.fields.debitedFrom")}</dt>
+                      <dd>{stage.data.incident.debitedInstrument}</dd>
+                    </div>
+                  ) : null}
+                  {stage.data.incident.platform ? (
+                    <div className="flex flex-wrap justify-between gap-2">
+                      <dt className="text-muted-foreground">{t("case.fields.platform")}</dt>
+                      <dd>{stage.data.incident.platform}</dd>
+                    </div>
+                  ) : null}
+                  <div className="flex flex-wrap justify-between gap-2">
+                    <dt className="text-muted-foreground">{t("case.fields.evidence")}</dt>
+                    <dd>{t("case.fields.evidenceCount", { count: stage.data.evidenceCount })}</dd>
+                  </div>
+                </dl>
+
+                {stage.data.evidence.length > 0 ? (
+                  <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                    {stage.data.evidence.map((file) => (
+                      <li key={file.id}>
+                        <a
+                          href={`/api/evidence/${file.id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex flex-col gap-1 rounded-lg border border-border p-2 transition-colors hover:bg-muted"
+                        >
+                          {file.mimeType.startsWith("image/") ? (
+                            /* eslint-disable-next-line @next/next/no-img-element */
+                            <img
+                              src={`/api/evidence/${file.id}`}
+                              alt={file.originalFilename}
+                              className="h-44 w-full rounded bg-background object-contain"
+                              loading="lazy"
+                            />
+                          ) : (
+                            <span className="flex h-28 items-center justify-center rounded bg-muted">
+                              <FileText className="size-6 text-muted-foreground" aria-hidden="true" />
+                            </span>
+                          )}
+                          <span className="truncate text-xs text-muted-foreground">
+                            {file.originalFilename}
+                          </span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+
+                {stage.data.incident.suspectName ||
+                stage.data.incident.suspectClaims ||
+                stage.data.suspects.length > 0 ? (
+                  <div className="flex flex-col gap-2 border-t border-border pt-4">
+                    <p className="font-medium text-foreground">{t("case.whoDidItTitle")}</p>
+                    {stage.data.incident.suspectName ? (
+                      <p className="text-muted-foreground">{stage.data.incident.suspectName}</p>
+                    ) : null}
+                    {stage.data.incident.suspectClaims ? (
+                      <p className="whitespace-pre-line text-muted-foreground">
+                        {stage.data.incident.suspectClaims}
+                      </p>
+                    ) : null}
+                    {stage.data.suspects.length > 0 ? (
+                      <ul className="flex flex-col gap-1">
+                        {stage.data.suspects.map((sus) => (
+                          <li key={`${sus.type}-${sus.value}`} className="font-mono text-xs">
+                            {t(`case.suspectTypes.${sus.type}`)}: {sus.value}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : null}
+                  </div>
+                ) : null}
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {/* Additions, never edits. Shown after the original, in order. */}
+          {stage.data.additions.length > 0 ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>{t("case.additionsTitle")}</CardTitle>
+                <CardDescription>{t("case.additionsDescription")}</CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-4 text-sm">
+                {stage.data.additions.map((add) => (
+                  <div key={add.addedAt} className="flex flex-col gap-1">
+                    <p className="text-xs text-muted-foreground">
+                      {new Date(add.addedAt).toLocaleDateString("en-IN", { dateStyle: "medium" })}
+                    </p>
+                    <p className="whitespace-pre-line text-foreground">{add.body}</p>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          ) : null}
+
+          <div className="flex flex-wrap gap-3">
+            <Button asChild variant="outline" className="min-h-11">
+              <Link href={`/track/${stage.data.complaint.publicId}/add`}>
+                {t("case.addInformation")}
+              </Link>
+            </Button>
+            <Button asChild variant="outline" className="min-h-11">
+              <Link href={`/track/${stage.data.complaint.publicId}/print`}>
+                {t("case.downloadAcknowledgement")}
+              </Link>
+            </Button>
+          </div>
+
           <Alert>
             <Info />
             <AlertTitle>{t("case.notAnFirTitle")}</AlertTitle>

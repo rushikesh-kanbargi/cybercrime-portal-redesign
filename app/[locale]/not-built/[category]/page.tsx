@@ -40,8 +40,10 @@ import {
 // so the honest-stub version of D25 no longer applies to them (D25's actual
 // rule, not D53's override of it) — leaving the stub reachable once a real
 // flow exists would be the "disable" half of "remove, don't disable".
+// D-new — "check-suspect" dropped from this list: /check now works against
+// identifiers really reported on this prototype, so the honest-stub version
+// no longer applies (same rule that retired "harassment" and "hacked").
 const CATEGORIES = [
-  "check-suspect",
   "report-suspect",
   "volunteer-account",
   "media-gallery",
@@ -53,7 +55,6 @@ const CATEGORIES = [
 type Category = (typeof CATEGORIES)[number];
 
 const categoryIcons: Record<Category, typeof Search> = {
-  "check-suspect": Search,
   "report-suspect": Flag,
   "volunteer-account": UserRoundPlus,
   "media-gallery": Images,
