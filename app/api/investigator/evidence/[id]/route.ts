@@ -36,17 +36,28 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
   }
 
   // See app/api/evidence/[id]/route.ts's matching comment: real uploads
-  // never have a URL storageKey, only demo/seed data pointed at a deployment
-  // whose local evidence directory never received the seeded files.
-  if (row.storageKey.startsWith("http://") || row.storageKey.startsWith("https://")) {
-    await writeAudit({
-      actorType: "investigator",
-      actorId: investigator.id,
-      action: "evidence_downloaded",
-      targetType: "evidence",
-      targetId: row.id,
-    });
-    return NextResponse.redirect(row.storageKey);
+  // never have a data: URI storageKey, only demo/seed data pointed at a
+  // deployment whose local evidence directory never received the seeded
+  // files.
+  if (row.storageKey.startsWith("data:")) {
+    const match = /^data:([^;]+);base64,(.+)$/.exec(row.storageKey);
+    if (match) {
+      const [, mimeType, base64] = match;
+      await writeAudit({
+        actorType: "investigator",
+        actorId: investigator.id,
+        action: "evidence_downloaded",
+        targetType: "evidence",
+        targetId: row.id,
+      });
+      return new NextResponse(new Uint8Array(Buffer.from(base64, "base64")), {
+        headers: {
+          "Content-Type": mimeType,
+          "Content-Disposition": `attachment; filename="${encodeURIComponent(row.originalFilename)}"`,
+          "Cache-Control": "no-store",
+        },
+      });
+    }
   }
 
   let bytes: Buffer;

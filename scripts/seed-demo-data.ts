@@ -652,31 +652,35 @@ async function main() {
         ],
       });
 
-      // Placeholder screenshots. Locally, these are written to the same
-      // .data/evidence store the real upload path uses, so the case page and
-      // the download route treat them identically to a genuinely uploaded
-      // file. Against a remote (ALLOW_PRODUCTION_SEED=1) target, local disk
-      // isn't readable by that deployment's own instances — storageKey is a
-      // stable placeholder URL instead, which app/api/evidence/[id]/route.ts
-      // (and its investigator-side counterpart) redirect to.
+      // Placeholder screenshots, generated the same way regardless of
+      // target. Locally, these are written to the same .data/evidence store
+      // the real upload path uses, so the case page and the download route
+      // treat them identically to a genuinely uploaded file. Against a
+      // remote (ALLOW_PRODUCTION_SEED=1) target, local disk isn't readable
+      // by that deployment's own instances — storageKey is a `data:` URI
+      // embedding the same generated PNG directly (these render at ~1KB
+      // each, cheap to store inline) instead of a file path. No external
+      // host involved, so nothing here depends on a third-party image
+      // service staying up or reachable past an ad blocker.
       for (const shot of seed.screenshots) {
+        const bytes =
+          shot.kind === "chat"
+            ? chatScreenshot(shot.title, shot.subtitle, shot.lines)
+            : statementScreenshot(shot.title, shot.subtitle, shot.rows);
+
         if (process.env.ALLOW_PRODUCTION_SEED === "1") {
-          const storageKey = `https://placehold.co/720x1280/1e3a3a/e8f5f0?text=${encodeURIComponent(shot.title)}`;
+          const storageKey = `data:image/png;base64,${bytes.toString("base64")}`;
           await tx.insert(evidence).values({
             complaintId: complaint.id,
             storageKey,
             originalFilename: shot.filename,
             mimeType: "image/png",
-            sizeBytes: 0,
-            sha256: sha256(Buffer.from(storageKey)),
+            sizeBytes: bytes.length,
+            sha256: sha256(bytes),
             uploadedAt: filedAt,
           });
           continue;
         }
-        const bytes =
-          shot.kind === "chat"
-            ? chatScreenshot(shot.title, shot.subtitle, shot.lines)
-            : statementScreenshot(shot.title, shot.subtitle, shot.rows);
         const storageKey = `${crypto.randomUUID()}.png`;
         await mkdir(EVIDENCE_DIR, { recursive: true });
         await writeFile(path.join(EVIDENCE_DIR, storageKey), bytes);
