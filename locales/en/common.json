@@ -75,7 +75,11 @@
   "languageSwitcher": {
     "label": "Language",
     "en": "English",
-    "hi": "हिन्दी"
+    "hi": "हिन्दी",
+    "mr": "मराठी",
+    "ta": "தமிழ்",
+    "te": "తెలుగు",
+    "kn": "ಕನ್ನಡ"
   },
   "actions": {
     "back": "Back",

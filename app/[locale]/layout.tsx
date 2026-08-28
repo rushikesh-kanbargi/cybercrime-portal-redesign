@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { Noto_Sans, Geist_Mono } from "next/font/google";
+import {
+  Noto_Sans,
+  Noto_Sans_Tamil,
+  Noto_Sans_Telugu,
+  Noto_Sans_Kannada,
+  Geist_Mono,
+} from "next/font/google";
 import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -14,12 +20,38 @@ import { routing } from "@/i18n/routing";
 import "./globals.css";
 
 // §19.3 — one family, weight contrast instead of family contrast. Genuine
-// Devanagari coverage so the EN/HI language switch never changes the typeface.
-// Kannada is stretch scope (§17.2) and is added the same way when it lands.
+// One typeface family across every script, so switching language never changes
+// how the page feels (§19.3). Devanagari covers both Hindi and Marathi; Tamil,
+// Telugu and Kannada are separate Noto families rather than subsets, because
+// they are separate scripts.
+//
+// They are stacked in one font-family rather than swapped per locale: the
+// browser already picks the first family containing a given glyph, so this
+// needs no locale-aware logic and degrades correctly if one fails to load.
+// Weights are trimmed on the non-Latin families to keep the payload sane on a
+// 3G connection (§ mobile-first).
 const notoSans = Noto_Sans({
   variable: "--font-sans",
   subsets: ["latin", "devanagari"],
   weight: ["400", "500", "600", "700"],
+});
+
+const notoTamil = Noto_Sans_Tamil({
+  variable: "--font-tamil",
+  subsets: ["tamil"],
+  weight: ["400", "500", "600"],
+});
+
+const notoTelugu = Noto_Sans_Telugu({
+  variable: "--font-telugu",
+  subsets: ["telugu"],
+  weight: ["400", "500", "600"],
+});
+
+const notoKannada = Noto_Sans_Kannada({
+  variable: "--font-kannada",
+  subsets: ["kannada"],
+  weight: ["400", "500", "600"],
 });
 
 const geistMono = Geist_Mono({
@@ -57,7 +89,7 @@ export default async function RootLayout({
   return (
     <html
       lang={locale}
-      className={`${notoSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${notoSans.variable} ${notoTamil.variable} ${notoTelugu.variable} ${notoKannada.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <NextIntlClientProvider>

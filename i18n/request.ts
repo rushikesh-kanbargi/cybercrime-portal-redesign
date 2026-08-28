@@ -38,12 +38,20 @@ export default getRequestConfig(async ({ requestLocale }) => {
     ? requested
     : routing.defaultLocale;
 
+  // Fall back to English per namespace rather than per locale. A language
+  // whose translation is still in progress then renders every finished
+  // namespace in that language and the rest in English, instead of 500ing the
+  // entire locale on one missing file. Translating is incremental; the site
+  // staying up is not negotiable.
   const messages = Object.fromEntries(
     await Promise.all(
-      NAMESPACES.map(async (ns) => [
-        ns,
-        (await import(`../locales/${locale}/${ns}.json`)).default,
-      ]),
+      NAMESPACES.map(async (ns) => {
+        try {
+          return [ns, (await import(`../locales/${locale}/${ns}.json`)).default];
+        } catch {
+          return [ns, (await import(`../locales/en/${ns}.json`)).default];
+        }
+      }),
     ),
   );
 

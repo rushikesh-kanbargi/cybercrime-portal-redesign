@@ -7,7 +7,12 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  /* Every script in one stack. The browser picks the first family that has
+     the glyph, so Hindi and Marathi resolve to Devanagari inside Noto Sans,
+     and Tamil/Telugu/Kannada fall through to their own Noto family. No
+     locale-aware switching needed, and no flash of the wrong typeface. */
+  --font-sans: var(--font-sans), var(--font-tamil), var(--font-telugu),
+    var(--font-kannada), system-ui, sans-serif;
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
   /* awwwards-ui-ux rule 2 — one slow curve for one-time entrances, a
