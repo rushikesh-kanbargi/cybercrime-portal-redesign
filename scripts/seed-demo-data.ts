@@ -397,15 +397,117 @@ const SEED_COMPLAINTS: SeedComplaint[] = [
     suspectName: null,
     suspectClaims: null,
     suspects: [],
-    // No screenshots and no FIR — this is the report that exercises the
-    // "still needed from you" card.
-    screenshots: [],
+    // Deliberately still missing a transaction reference and suspect
+    // details even with a screenshot attached — this is the report that
+    // exercises the "still needed from you" card despite having evidence,
+    // showing evidence alone isn't the same as a complete report.
+    screenshots: [
+      {
+        filename: "card-statement.png",
+        kind: "statement",
+        title: "Card statement",
+        subtitle: "Unfamiliar international charges",
+        rows: [
+          { label: "POS purchase", detail: "Unrecognised merchant, overseas", amount: "11,200", debit: true },
+          { label: "POS purchase", detail: "Unrecognised merchant, overseas", amount: "9,800", debit: true },
+          { label: "POS purchase", detail: "Unrecognised merchant, overseas", amount: "6,300", debit: true },
+        ],
+      },
+    ],
     fir: null,
     accountIndex: 1,
     daysAgo: 12,
     statusHistory: [
       { code: "RECEIVED", daysAfterFiling: 0, note: "Complaint received via the web report flow." },
       { code: "SENT_TO_BANK", daysAfterFiling: 1, note: "Forwarded to the reporting bank for a freeze request." },
+    ],
+  },
+  {
+    publicId: "CC-4KTN-9QRX",
+    subCategoryCode: "KYC_OTP_SCAM",
+    narrative:
+      "Got a call saying my SIM would be deactivated unless I updated my KYC immediately. He asked me to share the OTP that came for 'verification' and ₹9,999 was withdrawn right after.",
+    amountLost: "9999.00",
+    debitedInstrument: "UPI — my savings account ending 3390",
+    transactionRef: "UPI2608212207641",
+    channelUsed: "call",
+    platform: "Google Pay",
+    suspectName: "Said he was from 'Jio customer care'",
+    suspectClaims:
+      "Said my SIM would stop working in two hours and read out a fake ticket number to sound official before asking for the OTP.",
+    suspects: [
+      { type: "mobile", value: "7000099004" },
+      { type: "upi", value: "kycverify99@oksbi" },
+    ],
+    screenshots: [
+      {
+        filename: "sim-kyc-sms.png",
+        kind: "chat",
+        title: "+91 70000 99004",
+        subtitle: "Call + SMS",
+        lines: [
+          { text: "Your SIM will be blocked in 2 hours. Update KYC now or share OTP with our agent to avoid deactivation.", time: "3:10 pm" },
+          { text: "OTP for UPI payment of Rs 9,999.00 is 448212. Do not share.", time: "3:14 pm" },
+          { text: "Rs 9,999.00 debited via UPI. Ref UPI2608212207641.", time: "3:15 pm" },
+        ],
+      },
+    ],
+    fir: null,
+    accountIndex: 0,
+    daysAgo: 6,
+    statusHistory: [
+      { code: "RECEIVED", daysAfterFiling: 0, note: "Complaint received via the web report flow." },
+      { code: "SENT_TO_BANK", daysAfterFiling: 1, note: "Hold requested on beneficiary UPI handle, named in your report." },
+    ],
+  },
+  {
+    publicId: "CC-8PZW-3MFD",
+    subCategoryCode: "JOB_TASK_FRAUD",
+    narrative:
+      "Applied for a part-time 'app rating' job over Telegram. Was asked to complete small paid tasks, then told I needed to deposit ₹52,000 to unlock a 'bonus round' before I could withdraw my earnings. I never got any of it back.",
+    amountLost: "52000.00",
+    debitedInstrument: "UPI — my savings account ending 2214",
+    transactionRef: "UPI2608153391207",
+    channelUsed: "app",
+    platform: "Telegram",
+    suspectName: "'HR - Priya, task coordination team'",
+    suspectClaims:
+      "Sent daily 'task summaries' showing a rising balance and said the bonus-round deposit was fully refundable within the app after the first withdrawal.",
+    suspects: [
+      { type: "upi", value: "taskrewards2026@ybl" },
+      { type: "social", value: "@taskrewards_support" },
+    ],
+    screenshots: [
+      {
+        filename: "telegram-task-chat.png",
+        kind: "chat",
+        title: "Task Rewards Official",
+        subtitle: "Telegram",
+        lines: [
+          { text: "Congrats! Your task balance is now Rs 68,400. Deposit Rs 52,000 to unlock the bonus round and withdraw everything.", time: "7:42 pm" },
+          { text: "I already completed 40 tasks, why do I need to deposit?", outgoing: true, time: "7:45 pm" },
+          { text: "It's fully refundable with your first withdrawal, standard process for all top earners.", time: "7:46 pm" },
+        ],
+      },
+      {
+        filename: "task-app-balance.png",
+        kind: "statement",
+        title: "TaskRewards",
+        subtitle: "Wallet - withdrawal locked",
+        rows: [
+          { label: "Deposit", detail: "UPI2608153391207", amount: "52,000", debit: true },
+          { label: "Task earnings shown", detail: "Not withdrawable", amount: "68,400" },
+          { label: "Withdrawal", detail: "Rejected - bonus round required", amount: "0" },
+        ],
+      },
+    ],
+    fir: null,
+    accountIndex: 1,
+    daysAgo: 18,
+    statusHistory: [
+      { code: "RECEIVED", daysAfterFiling: 0, note: "Complaint received via the web report flow." },
+      { code: "SENT_TO_BANK", daysAfterFiling: 2, note: "Hold requested on beneficiary UPI handle, named in your report." },
+      { code: "WITH_CYBER_CELL", daysAfterFiling: 5, note: "Assigned to the district cyber cell for review." },
     ],
   },
 ];
@@ -550,10 +652,27 @@ async function main() {
         ],
       });
 
-      // Placeholder screenshots, written to the same .data/evidence store the
-      // real upload path uses, so the case page and the download route treat
-      // them identically to a genuinely uploaded file.
+      // Placeholder screenshots. Locally, these are written to the same
+      // .data/evidence store the real upload path uses, so the case page and
+      // the download route treat them identically to a genuinely uploaded
+      // file. Against a remote (ALLOW_PRODUCTION_SEED=1) target, local disk
+      // isn't readable by that deployment's own instances — storageKey is a
+      // stable placeholder URL instead, which app/api/evidence/[id]/route.ts
+      // (and its investigator-side counterpart) redirect to.
       for (const shot of seed.screenshots) {
+        if (process.env.ALLOW_PRODUCTION_SEED === "1") {
+          const storageKey = `https://placehold.co/720x1280/1e3a3a/e8f5f0?text=${encodeURIComponent(shot.title)}`;
+          await tx.insert(evidence).values({
+            complaintId: complaint.id,
+            storageKey,
+            originalFilename: shot.filename,
+            mimeType: "image/png",
+            sizeBytes: 0,
+            sha256: sha256(Buffer.from(storageKey)),
+            uploadedAt: filedAt,
+          });
+          continue;
+        }
         const bytes =
           shot.kind === "chat"
             ? chatScreenshot(shot.title, shot.subtitle, shot.lines)
