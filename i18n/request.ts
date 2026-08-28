@@ -29,7 +29,6 @@ const NAMESPACES = [
   "cyberAwareness",
   "contact",
   "suspect",
-  "check",
   "submitConfirm",
 ] as const;
 

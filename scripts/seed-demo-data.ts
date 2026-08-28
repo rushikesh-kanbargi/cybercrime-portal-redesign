@@ -52,6 +52,9 @@ import {
 import { MONEY_FRAUD_CATEGORY_CODE } from "@/lib/classify";
 import { routeToOffice } from "@/lib/offices";
 import { normaliseIdentifier, hashIdentifier } from "@/lib/suspects";
+import { refuseIfProductionDatabase } from "@/lib/db/refuse-production";
+
+refuseIfProductionDatabase("db:seed-demo");
 
 type StatusCode = (typeof complaintStatusCodeEnum.enumValues)[number];
 type SuspectType = (typeof suspectIdentifierTypeEnum.enumValues)[number];

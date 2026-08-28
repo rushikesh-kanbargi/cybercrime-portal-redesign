@@ -34,8 +34,8 @@
     },
     "passwords": {
       "label": "Passwords",
-      "statusKey": "notBuilt",
-      "body": "There is no password anywhere in this product. Nothing to leak, nothing to hash badly."
+      "statusKey": "real",
+      "body": "Citizens never have a password anywhere in this product — reporting and tracking never require one. The one exception is the investigator/admin side: those accounts authenticate with a real, hashed password behind a separate login at /investigator/login, provisioned by a script, never a public sign-up form."
     },
     "scanning": {
       "label": "Evidence \"scanning\"",
@@ -94,12 +94,12 @@
       "body": "The substantive obligations (notice, consent, security safeguards, breach notification, erasure) come into force on 13 May 2027; a consent-manager rule follows on 13 Nov 2026. We build to that standard now, as forward-compliance, but we do not and cannot claim to be \"DPDP compliant\" today, because most of the law isn't in force yet. See <link>/privacy</link>."
     },
     "tests": {
-      "strong": "No automated test suite exists.",
-      "body": "A deliberate three-day tradeoff, stated openly rather than hidden."
+      "strong": "An automated test suite exists, but it is not exhaustive.",
+      "body": "149 Vitest tests cover core server actions and flows (money report, tracking, the suspect checker, community moderation), not full browser/UI end-to-end coverage."
     },
     "security": {
       "strong": "The prototype has no production security and cannot claim any.",
-      "body": "Mocked OTP, simulated virus scanning, no encryption at rest, no real access control."
+      "body": "Mocked OTP, simulated virus scanning, no encryption at rest. Investigator/admin accounts do have real password-based access control behind a server-side session check; citizen-facing data still has no field-level encryption or key management."
     },
     "unsolved": {
       "strong": "Three problems stay named and unsolved:",

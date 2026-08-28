@@ -117,10 +117,10 @@ export async function SiteHeader() {
             <DropdownMenuContent align="start">
               <DropdownMenuLabel>{t("nav.reportCheckSuspect.repositoryLabel")}</DropdownMenuLabel>
               <DropdownMenuItem asChild>
-                <Link href="/check">{t("nav.reportCheckSuspect.checkContact")}</Link>
+                <Link href="/check-suspect">{t("nav.reportCheckSuspect.checkContact")}</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href="/check">{t("nav.reportCheckSuspect.checkWebsite")}</Link>
+                <Link href="/check-suspect">{t("nav.reportCheckSuspect.checkWebsite")}</Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuLabel>{t("nav.reportCheckSuspect.reportLabel")}</DropdownMenuLabel>
@@ -312,10 +312,10 @@ export async function SiteHeader() {
               <DropdownMenuSeparator />
               <DropdownMenuLabel>{t("nav.reportCheckSuspect.trigger")}</DropdownMenuLabel>
               <DropdownMenuItem asChild>
-                <Link href="/check">{t("nav.reportCheckSuspect.checkContact")}</Link>
+                <Link href="/check-suspect">{t("nav.reportCheckSuspect.checkContact")}</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href="/check">{t("nav.reportCheckSuspect.checkWebsite")}</Link>
+                <Link href="/check-suspect">{t("nav.reportCheckSuspect.checkWebsite")}</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href="/not-built/report-suspect">{t("nav.reportCheckSuspect.reportI4C")}</Link>

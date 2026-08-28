@@ -10,7 +10,7 @@
 // must still be able to file, and nothing in this module is ever required.
 
 import crypto from "node:crypto";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { suspectIdentifiers, type suspectIdentifierTypeEnum } from "@/lib/db/schema";
 
@@ -106,44 +106,3 @@ export async function recordSuspects(
   return results;
 }
 
-export interface SuspectLookup {
-  found: boolean;
-  reportCount: number;
-  firstReportedAt: Date | null;
-}
-
-/**
- * Look one identifier up. Zero matches means only "not reported here" — the UI
- * must never render it as "this is safe", which would be the single most
- * harmful thing this page could say.
- */
-export async function lookupSuspect(type: SuspectType, raw: string): Promise<SuspectLookup> {
-  const normalised = normaliseIdentifier(type, raw);
-  if (!normalised) return { found: false, reportCount: 0, firstReportedAt: null };
-
-  const row = await db.query.suspectIdentifiers.findFirst({
-    where: and(
-      eq(suspectIdentifiers.valueHash, hashIdentifier(type, normalised)),
-      eq(suspectIdentifiers.type, type),
-    ),
-  });
-
-  if (!row) return { found: false, reportCount: 0, firstReportedAt: null };
-  return { found: true, reportCount: row.reportCount, firstReportedAt: row.firstReportedAt };
-}
-
-/** Guess the type from what was typed, so the check page needs no dropdown. */
-export function guessIdentifierType(raw: string): SuspectType {
-  const v = raw.trim();
-  if (/^https?:\/\//i.test(v) || /^[\w-]+(\.[\w-]+)+\//.test(v)) return "url";
-  if (/@/.test(v)) return /\.[a-z]{2,}$/i.test(v.split("@")[1] ?? "") ? "email" : "upi";
-  // An Indian mobile number is exactly 10 digits and starts 6-9, optionally
-  // with a 91 country code. Matching any 10-15 digit string here read a
-  // 12-digit bank account as a phone number, which then never matched the
-  // account it was reported as.
-  const digits = v.replace(/[\s-]/g, "");
-  if (/^(\+?91)?[6-9]\d{9}$/.test(digits)) return "mobile";
-  if (/^\d{6,18}$/.test(digits)) return "bank_account";
-  if (/^[\w-]+(\.[\w-]+)+$/.test(v)) return "url";
-  return "social";
-}

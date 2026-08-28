@@ -57,7 +57,7 @@ The first account deliberately owns **three** reports at three different stages,
 
 A real Aadhaar number is rejected on format before it is looked up, logged or stored. Nothing is checked against UIDAI, and no Aadhaar number is ever written to a complaint. Run `npm run db:seed-demo` to print this table.
 
-No password exists anywhere in this product.
+No password exists on the citizen side of this product — reporting and tracking never require one. The investigator/admin portal (`/investigator`) is the one exception: those accounts authenticate with a real, hashed password behind a separate login, provisioned by a script, never a public sign-up form. See `/whats-real` for the full breakdown.
 
 ## Running it locally
 
@@ -119,4 +119,6 @@ WCAG 2.1 AA, verified (not just targeted) with `axe-core` (0 violations) and Lig
 
 ## What this build deliberately does not include
 
-No Aadhaar or PAN collection anywhere in the reporting flow, no real Aadhaar authentication (the `/login` sign-in is simulated against invented records and never contacts UIDAI), no live DigiLocker integration, no real SMS/email delivery, no native mobile app, no admin/investigator portal, no automated test suite (a stated three-day tradeoff), and no language beyond English/Hindi. Every one of these is a named decision, not an oversight — see `/whats-real` and `PROJECT_SPEC.md` §26.
+No Aadhaar or PAN collection anywhere in the reporting flow, no real Aadhaar authentication (the `/login` sign-in is simulated against invented records and never contacts UIDAI), no live DigiLocker integration, no real SMS/email delivery, and no native mobile app. Every one of these is a named decision, not an oversight — see `/whats-real` and `PROJECT_SPEC.md` §26.
+
+The scope has grown since the original three-day hackathon build described above: the product now also has a real investigator/admin portal (`/investigator`, password-authenticated, case management, entity intelligence, moderation queue), an automated test suite (149 Vitest tests), and six languages (English, Hindi, Marathi, Tamil, Telugu, Kannada — the four newest are English-source stopgap pending native review in some newer strings, tracked in `cybercrime-portal-requirements/`). See `cybercrime-portal-requirements/execution/STATUS.md` for the current state of that broader build.

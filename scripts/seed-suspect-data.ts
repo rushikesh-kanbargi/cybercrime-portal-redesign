@@ -16,6 +16,9 @@ import { suspectIdentifiers } from "@/lib/db/schema";
 import { hashSuspectIdentifier, normalizeSuspectIdentifier } from "@/lib/suspect-identifier";
 import { inArray } from "drizzle-orm";
 import type { SuspectIdentifierType } from "@/lib/types";
+import { refuseIfProductionDatabase } from "@/lib/db/refuse-production";
+
+refuseIfProductionDatabase("db:seed-suspect-data");
 
 const DEMO_ENTRIES: Array<{ type: SuspectIdentifierType; raw: string; reportCount: number }> = [
   { type: "mobile", raw: "7000012345", reportCount: 1 },
