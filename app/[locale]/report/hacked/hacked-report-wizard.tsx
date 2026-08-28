@@ -664,6 +664,15 @@ export function HackedReportWizard({ savedProfile }: { savedProfile?: SavedProfi
                       label: categoryLabel(suggestion.subCategoryCode),
                     })}
                   </p>
+                  {/* Say WHY we guessed, the way the money flow does. Showing a
+                      category with no reasoning asks the citizen to either
+                      trust it blindly or argue with a black box, and the whole
+                      point of the confirm step is that they can judge it. The
+                      strings already existed for both these flows and were
+                      simply never rendered. */}
+                  <p className="text-sm text-muted-foreground">
+                    {t(`category.reasons.${suggestion.reasonKey}`)}
+                  </p>
                   <div className="flex flex-wrap gap-2">
                     <Button size="sm" onClick={confirmSuggestedCategory}>
                       {t("facts.confirmYes")}

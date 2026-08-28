@@ -27,7 +27,7 @@
     },
     {
       "title": "lang is set on the <html> element",
-      "body": "It switches with the active locale, English or Hindi, so screen readers pronounce the page correctly."
+      "body": "It switches with the active locale, so screen readers pronounce the page correctly."
     },
     {
       "title": "Semantic structure and real landmarks",
@@ -71,15 +71,15 @@
     }
   ],
   "testedTitle": "What was actually tested, and how",
-  "testedIntro": "Run on 26 Aug 2026, against all 18 shipped routes (9 pages × English/Hindi), on a running local build.",
+  "testedIntro": "Run on 26 Aug 2026, against the 18 routes shipping at that time (9 pages in English and Hindi), on a running local build. Marathi, Tamil, Telugu and Kannada were added after that date and have NOT been through this pass.",
   "tested": [
     {
       "strong": "Automated: axe-core CLI v4.13.0, WCAG 2.1 A + AA rule set.",
-      "body": "npx @axe-core/cli against each route in a headless Chrome matched to the local browser version. Result: 0 violations on all 18 routes. One \"incomplete\" (not a violation) was flagged on every English page: axe couldn't auto-resolve the contrast of the header's \"Resources\" menu button because of the translucent, blurred header background. Checked by hand from the actual OKLCH tokens: 6.8:1 (light) and 6.4:1 (dark), both well past the 4.5:1 target."
+      "body": "npx @axe-core/cli against each route in a headless Chrome matched to the local browser version. Result: 0 violations on all 18 routes tested. One “incomplete” (not a violation) was flagged on every English page: axe couldn't auto-resolve the contrast of the header's “Resources” menu button because of the translucent, blurred header background. Checked by hand from the actual OKLCH tokens: 6.8:1 (light) and 6.4:1 (dark), both well past the 4.5:1 target."
     },
     {
       "strong": "Automated: Lighthouse accessibility category.",
-      "body": "npx lighthouse <url> --only-categories=accessibility against the same 18 routes. Result: 100/100 on every route."
+      "body": "npx lighthouse <url> --only-categories=accessibility against the same 18 routes. Result: 100/100 on every route tested."
     },
     {
       "strong": "Manual: a full keyboard-and-focus walk of the /report/money wizard.",
