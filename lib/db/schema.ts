@@ -117,6 +117,7 @@ export const profiles = pgTable("profiles", {
   displayName: text("display_name"), // [S], optional
   state: text("state"),
   district: text("district"),
+  pincode: text("pincode"),
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
@@ -151,6 +152,18 @@ export const complaints = pgTable(
       .default(false),
     state: text("state"),
     district: text("district"),
+    // 6-digit PIN code of where the citizen actually is. Nullable and never
+    // required: State + District is enough to route a case (§13.2), and a
+    // victim who doesn't know their PIN must never be blocked by it. It is
+    // here because it is the finest-grained routing key India has, and a
+    // report filed away from your registered address (a student, a migrant
+    // worker, someone travelling) should reach the unit where you are.
+    pincode: text("pincode"),
+    // Which invented office and officer would handle this, resolved from the
+    // PIN code at submit time. Nullable: an unrecognised PIN routes nowhere
+    // and the case page says so rather than inventing a station.
+    assignedOfficeId: uuid("assigned_office_id"),
+    assignedOfficerId: uuid("assigned_officer_id"),
     contactMobile: text("contact_mobile"), // [S], nullable — anonymous reports are first-class
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
@@ -175,6 +188,17 @@ export const incidents = pgTable("incidents", {
   debitedInstrument: text("debited_instrument"), // [S]
   transactionRef: text("transaction_ref"), // [S]
   channelUsed: text("channel_used"), // call | sms | whatsapp | app | website
+  // The platform it happened on, in the citizen's own words (WhatsApp,
+  // Instagram, a loan app's name). Free text on purpose: a dropdown of
+  // platforms is out of date the day it ships.
+  platform: text("platform"), // [S]
+  // Who the other side said they were. Never treated as a real identity —
+  // "Inspector Sharma from CBI" is a claim the scammer made, and recording
+  // it verbatim is what makes a pattern findable across reports.
+  suspectName: text("suspect_name"), // [S]
+  // What they actually said — the threat, the story, the instruction. This
+  // is often the single most useful paragraph in the whole report.
+  suspectClaims: text("suspect_claims"), // [S]
   // JSON: { field, value, sourceSpan, confirmed }[] — the provenance record
   // behind the editable chips (Flow 10). A value with no sourceSpan is never
   // displayed (§15.4).
@@ -363,6 +387,124 @@ export const auditLogs = pgTable("audit_logs", {
     .defaultNow(),
   ipHash: text("ip_hash"),
   metadata: jsonb("metadata"),
+});
+
+// ---------------------------------------------------------------------------
+// Cyber office directory + officers.
+//
+// IMPORTANT — these are invented offices, not real police stations. A report
+// filed here is never sent to any of them; nothing in this product contacts a
+// real police unit (hard rule 2). They exist so a citizen can see *which kind
+// of unit* would handle their case and what a real handover looks like.
+//
+// The two genuinely real, verifiable pointers a victim needs — the 1930
+// helpline and cybercrime.gov.in — are surfaced separately and are never
+// mixed in with this directory.
+//
+// Routing is by PIN code, the finest-grained key India has. `jurisdictionPins`
+// is a plain array; a lookup falls back to district, then state, and finally
+// to nothing at all rather than guessing.
+// ---------------------------------------------------------------------------
+
+export const cyberOffices = pgTable("cyber_offices", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name").notNull(),
+  addressLine: text("address_line").notNull(),
+  district: text("district").notNull(),
+  state: text("state").notNull(),
+  pincode: text("pincode").notNull(),
+  phone: text("phone").notNull(),
+  jurisdictionPins: jsonb("jurisdiction_pins").$type<string[]>().notNull(),
+});
+
+export const officers = pgTable("officers", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  officeId: uuid("office_id")
+    .notNull()
+    .references(() => cyberOffices.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  rank: text("rank").notNull(),
+});
+
+// ---------------------------------------------------------------------------
+// CaseDocument — paperwork the POLICE side produces, as opposed to `evidence`,
+// which is what the citizen attaches.
+//
+// The FIR copy is the one that matters most: a citizen who has an FIR can act
+// on it — insurance, their employer, a court — and today they usually have to
+// chase a station in person to get a copy. Nothing here is filed with any real
+// police system; these are prototype documents and they say so on their face.
+// ---------------------------------------------------------------------------
+
+export const caseDocumentKindEnum = pgEnum("case_document_kind", [
+  "fir",
+  "bank_request",
+  "closure_report",
+]);
+
+export const caseDocuments = pgTable("case_documents", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  complaintId: uuid("complaint_id")
+    .notNull()
+    .references(() => complaints.id, { onDelete: "cascade" }),
+  kind: caseDocumentKindEnum("kind").notNull(),
+  // e.g. an FIR number as a station would write it: "0142/2026".
+  referenceNumber: text("reference_number").notNull(),
+  issuedAt: timestamp("issued_at", { withTimezone: true }).notNull().defaultNow(),
+  issuedByOfficeId: uuid("issued_by_office_id"),
+  // Sections/notes as the issuing officer recorded them. Free text — the real
+  // thing varies by state and by offence.
+  note: text("note"),
+});
+
+// ---------------------------------------------------------------------------
+// ComplaintAddition — append-only extra information from the citizen.
+//
+// A filed report is never editable: changing what you originally said would
+// destroy the evidentiary value of the statement. But people remember things,
+// the fraudster contacts them again, or the UTR turns up the next day — so
+// information can always be ADDED, timestamped, and shown in order beneath
+// the original.
+// ---------------------------------------------------------------------------
+
+export const complaintAdditions = pgTable("complaint_additions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  complaintId: uuid("complaint_id")
+    .notNull()
+    .references(() => complaints.id, { onDelete: "cascade" }),
+  body: text("body").notNull(), // [S]
+  addedAt: timestamp("added_at", { withTimezone: true }).notNull().defaultNow(),
+});
+
+// ---------------------------------------------------------------------------
+// Simulated Aadhaar registry — the demo's stand-in for "this person already
+// has an Aadhaar card, so they already have a number on file".
+//
+// This is NOT an Aadhaar integration and never touches UIDAI. It is a local
+// table of invented records used to demonstrate the login *shape* (you are
+// already enrolled, so you sign in — you never sign up). Every number here
+// begins `0000`, which UIDAI never issues: a real Aadhaar number's first
+// digit is 2-9, so a `0000`-prefixed value cannot collide with a real one.
+//
+// Nothing here is verified against any service, no Aadhaar number is ever
+// written to a complaint, and the reporting flows still never ask for one.
+// Disclosed in full on /whats-real.
+// ---------------------------------------------------------------------------
+
+export const aadhaarRecordsSim = pgTable("aadhaar_records_sim", {
+  // 12 digits, always `0000`-prefixed. Stored as the lookup key only.
+  aadhaar: text("aadhaar").primaryKey(),
+  holderName: text("holder_name").notNull(),
+  // The number the mock OTP is "sent" to — same 70000-xxxxx synthetic range
+  // the demo complaints use, so it can never collide with a real number.
+  mobile: text("mobile").notNull(),
+  email: text("email").notNull(),
+  state: text("state").notNull(),
+  district: text("district").notNull(),
+  pincode: text("pincode").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
 });
 
 // ---------------------------------------------------------------------------
