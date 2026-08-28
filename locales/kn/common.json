@@ -71,7 +71,7 @@
     "callLabel": "1930 ಗೆ ಕರೆ ಮಾಡಿ",
     "linksHeading": "ಈ ಮಾದರಿಯ ಬಗ್ಗೆ",
     "copyright": "Build What Moves India ಗಾಗಿ ನಿರ್ಮಿಸಲಾಗಿದೆ, ಒಂದು ಸ್ವತಂತ್ರ ನಿರ್ಮಾಪಕ ಉಪಕ್ರಮ, ಸರ್ಕಾರಿ ಹ್ಯಾಕಥಾನ್ ಅಲ್ಲ.",
-    "investigatorLink": "Investigator / staff login"
+    "investigatorLink": "ತನಿಖಾಧಿಕಾರಿ / ಸಿಬ್ಬಂದಿ ಲಾಗಿನ್"
   },
   "languageSwitcher": {
     "label": "ಭಾಷೆ",
@@ -98,27 +98,27 @@
   "errorSummaryTitle": "ಮುಂದುವರಿಯುವ ಮೊದಲು ದಯವಿಟ್ಟು ಈ ಕೆಳಗಿನವುಗಳನ್ನು ಸರಿಪಡಿಸಿ:",
   "notAnFir": "ನಿಮ್ಮ ದೂರು ಸಂಖ್ಯೆ ನೀವು ಇದನ್ನು ವರದಿ ಮಾಡಿದ್ದೀರಿ ಎಂಬುದರ ದಾಖಲೆ. ಇದು FIR (ಪ್ರಥಮ ಮಾಹಿತಿ ವರದಿ) ಅಲ್ಲ. FIR ಎಂಬುದು ಪ್ರತ್ಯೇಕವಾದ, ನಂತರದ ಹಂತ, ಪ್ರಕರಣ ಅರ್ಹವೆಂದು ಕಂಡರೆ ಪೊಲೀಸ್ ಅಧಿಕಾರಿ ದಾಖಲಿಸುತ್ತಾರೆ.",
   "guidedHelp": {
-    "openLabel": "Guided help",
-    "closeLabel": "Close guided help",
-    "title": "Guided help",
-    "disclaimer": "Scripted guidance, not a live AI conversation. It only helps you find the right report — it never files anything for you.",
-    "intro": "Tell me what happened, or choose the option closest to it below.",
+    "openLabel": "ಮಾರ್ಗದರ್ಶಿತ ಸಹಾಯ",
+    "closeLabel": "ಮಾರ್ಗದರ್ಶಿತ ಸಹಾಯವನ್ನು ಮುಚ್ಚಿ",
+    "title": "ಮಾರ್ಗದರ್ಶಿತ ಸಹಾಯ",
+    "disclaimer": "ಇದು ಸ್ಕ್ರಿಪ್ಟ್ ಮಾಡಿದ ಮಾರ್ಗದರ್ಶನ, ನೇರ AI ಸಂಭಾಷಣೆ ಅಲ್ಲ. ಇದು ಸರಿಯಾದ ದೂರನ್ನು ಹುಡುಕಲು ಮಾತ್ರ ಸಹಾಯ ಮಾಡುತ್ತದೆ — ಇದು ನಿಮಗಾಗಿ ಏನನ್ನೂ ಸಲ್ಲಿಸುವುದಿಲ್ಲ.",
+    "intro": "ಏನಾಯಿತು ಎಂದು ಹೇಳಿ, ಅಥವಾ ಕೆಳಗಿನ ಹತ್ತಿರದ ಆಯ್ಕೆಯನ್ನು ಆರಿಸಿ.",
     "options": {
-      "money": "Money was taken from my account",
-      "harassment": "Someone is harassing or threatening me",
-      "hacked": "My account was hacked",
-      "unsure": "I'm not sure / something else"
+      "money": "ನನ್ನ ಖಾತೆಯಿಂದ ಹಣ ತೆಗೆಯಲಾಗಿದೆ",
+      "harassment": "ಯಾರೋ ನನ್ನನ್ನು ಕಿರುಕುಳ ನೀಡುತ್ತಿದ್ದಾರೆ ಅಥವಾ ಬೆದರಿಸುತ್ತಿದ್ದಾರೆ",
+      "hacked": "ನನ್ನ ಖಾತೆ ಹ್ಯಾಕ್ ಆಗಿದೆ",
+      "unsure": "ನನಗೆ ಖಚಿತವಿಲ್ಲ / ಬೇರೆ ಏನೋ"
     },
     "replies": {
-      "money": "That's financial fraud. I'll take you to the money-loss report — it takes about 90 seconds and starts by asking what happened, in your own words.",
-      "harassment": "I'm sorry that's happening. I'll take you to the harassment/threats report so you can tell us what's going on.",
-      "hacked": "Let's get that reported. I'll take you to the account-compromise report.",
-      "unsure": "That's okay — you don't have to know the exact category. Start with a report and describe what happened in your own words; we'll help sort out the rest."
+      "money": "ಇದು ಆರ್ಥಿಕ ವಂಚನೆ. ನಾನು ನಿಮ್ಮನ್ನು ಹಣ ನಷ್ಟದ ದೂರಿಗೆ ಕರೆದೊಯ್ಯುತ್ತೇನೆ — ಇದಕ್ಕೆ ಸುಮಾರು 90 ಸೆಕೆಂಡುಗಳು ಬೇಕಾಗುತ್ತದೆ, ಏನಾಯಿತು ಎಂದು ನಿಮ್ಮ ಸ್ವಂತ ಮಾತುಗಳಲ್ಲಿ ಕೇಳುವುದರೊಂದಿಗೆ ಪ್ರಾರಂಭವಾಗುತ್ತದೆ.",
+      "harassment": "ಇದು ಸಂಭವಿಸುತ್ತಿರುವುದಕ್ಕೆ ವಿಷಾದಿಸುತ್ತೇನೆ. ಏನಾಗುತ್ತಿದೆ ಎಂದು ನೀವು ಹೇಳಬಹುದಾದ ಕಿರುಕುಳ/ಬೆದರಿಕೆ ದೂರಿಗೆ ನಿಮ್ಮನ್ನು ಕರೆದೊಯ್ಯುತ್ತೇನೆ.",
+      "hacked": "ಅದನ್ನು ವರದಿ ಮಾಡೋಣ. ಖಾತೆ-ರಾಜಿ ದೂರಿಗೆ ನಿಮ್ಮನ್ನು ಕರೆದೊಯ್ಯುತ್ತೇನೆ.",
+      "unsure": "ಪರವಾಗಿಲ್ಲ — ನಿಮಗೆ ನಿಖರವಾದ ವರ್ಗ ತಿಳಿದಿರಬೇಕಾಗಿಲ್ಲ. ದೂರಿನೊಂದಿಗೆ ಪ್ರಾರಂಭಿಸಿ ಮತ್ತು ಏನಾಯಿತು ಎಂದು ನಿಮ್ಮ ಸ್ವಂತ ಮಾತುಗಳಲ್ಲಿ ವಿವರಿಸಿ; ಉಳಿದದ್ದನ್ನು ವಿಂಗಡಿಸಲು ನಾವು ಸಹಾಯ ಮಾಡುತ್ತೇವೆ."
     },
-    "freeTextPrefix": "Based on what you typed, this sounds closest to: \"{option}\".",
-    "inputPlaceholder": "Or type what happened…",
-    "inputLabel": "Describe what happened",
-    "sendLabel": "Send",
-    "continueButton": "Continue to report"
+    "freeTextPrefix": "ನೀವು ಟೈಪ್ ಮಾಡಿದ್ದರ ಆಧಾರದ ಮೇಲೆ, ಇದು ಇದಕ್ಕೆ ಹತ್ತಿರವಾಗಿ ಕಾಣುತ್ತದೆ: \"{option}\".",
+    "inputPlaceholder": "ಅಥವಾ ಏನಾಯಿತು ಎಂದು ಟೈಪ್ ಮಾಡಿ…",
+    "inputLabel": "ಏನಾಯಿತು ಎಂದು ವಿವರಿಸಿ",
+    "sendLabel": "ಕಳುಹಿಸಿ",
+    "continueButton": "ದೂರಿಗೆ ಮುಂದುವರಿಸಿ"
   }
 }

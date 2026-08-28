@@ -71,7 +71,7 @@
     "callLabel": "1930 वर कॉल करा",
     "linksHeading": "या प्रोटोटाइपविषयी",
     "copyright": "Build What Moves India साठी बनवले, एक स्वतंत्र निर्माता उपक्रम, सरकारी हॅकाथॉन नाही.",
-    "investigatorLink": "Investigator / staff login"
+    "investigatorLink": "तपासणी अधिकारी / कर्मचारी लॉगिन"
   },
   "languageSwitcher": {
     "label": "भाषा",
@@ -98,27 +98,27 @@
   "errorSummaryTitle": "पुढे जाण्यापूर्वी कृपया खालील दुरुस्त करा:",
   "notAnFir": "तुमचा तक्रार क्रमांक हा तुम्ही तक्रार नोंदवल्याचा पुरावा आहे. ही FIR (प्रथम माहिती अहवाल) नाही. FIR ही नंतरची वेगळी पायरी आहे, जी प्रकरण योग्य वाटल्यास पोलिस अधिकारी नोंदवतात.",
   "guidedHelp": {
-    "openLabel": "Guided help",
-    "closeLabel": "Close guided help",
-    "title": "Guided help",
-    "disclaimer": "Scripted guidance, not a live AI conversation. It only helps you find the right report — it never files anything for you.",
-    "intro": "Tell me what happened, or choose the option closest to it below.",
+    "openLabel": "मार्गदर्शित मदत",
+    "closeLabel": "मार्गदर्शित मदत बंद करा",
+    "title": "मार्गदर्शित मदत",
+    "disclaimer": "ही स्क्रिप्टेड मार्गदर्शन आहे, थेट AI संभाषण नाही. हे फक्त तुम्हाला योग्य तक्रार शोधण्यात मदत करते — ते तुमच्यासाठी काहीही दाखल करत नाही.",
+    "intro": "काय घडले ते सांगा, किंवा खालीलपैकी सर्वात जवळचा पर्याय निवडा.",
     "options": {
-      "money": "Money was taken from my account",
-      "harassment": "Someone is harassing or threatening me",
-      "hacked": "My account was hacked",
-      "unsure": "I'm not sure / something else"
+      "money": "माझ्या खात्यातून पैसे काढले गेले",
+      "harassment": "कोणीतरी मला त्रास देत आहे किंवा धमकावत आहे",
+      "hacked": "माझे खाते हॅक झाले",
+      "unsure": "मला खात्री नाही / काहीतरी वेगळे"
     },
     "replies": {
-      "money": "That's financial fraud. I'll take you to the money-loss report — it takes about 90 seconds and starts by asking what happened, in your own words.",
-      "harassment": "I'm sorry that's happening. I'll take you to the harassment/threats report so you can tell us what's going on.",
-      "hacked": "Let's get that reported. I'll take you to the account-compromise report.",
-      "unsure": "That's okay — you don't have to know the exact category. Start with a report and describe what happened in your own words; we'll help sort out the rest."
+      "money": "हा आर्थिक फसवणुकीचा प्रकार आहे. मी तुम्हाला पैसे गमावल्याच्या तक्रारीकडे घेऊन जातो — यास सुमारे ९० सेकंद लागतात आणि सुरुवात तुमच्या स्वतःच्या शब्दांत काय घडले हे विचारून होते.",
+      "harassment": "असे घडत आहे याबद्दल मला वाईट वाटते. मी तुम्हाला छळ/धमकी तक्रारीकडे घेऊन जातो जिथे तुम्ही काय घडत आहे ते सांगू शकता.",
+      "hacked": "चला याची तक्रार करूया. मी तुम्हाला खाते-तडजोड तक्रारीकडे घेऊन जातो.",
+      "unsure": "काही हरकत नाही — तुम्हाला नेमका प्रकार माहित असण्याची गरज नाही. तक्रारीपासून सुरुवात करा आणि तुमच्या शब्दांत काय घडले ते सांगा; उरलेले आम्ही ठरवण्यात मदत करू."
     },
-    "freeTextPrefix": "Based on what you typed, this sounds closest to: \"{option}\".",
-    "inputPlaceholder": "Or type what happened…",
-    "inputLabel": "Describe what happened",
-    "sendLabel": "Send",
-    "continueButton": "Continue to report"
+    "freeTextPrefix": "तुम्ही टाईप केलेल्यावरून, हे सर्वात जवळचे वाटते: \"{option}\".",
+    "inputPlaceholder": "किंवा काय घडले ते टाईप करा…",
+    "inputLabel": "काय घडले ते सांगा",
+    "sendLabel": "पाठवा",
+    "continueButton": "तक्रारीकडे पुढे जा"
   }
 }

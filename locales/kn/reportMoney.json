@@ -232,29 +232,29 @@
     }
   },
   "saveDraft": {
-    "button": "Save draft",
-    "saving": "Saving…",
-    "savedAt": "Draft saved · {time}",
-    "error": "Couldn't save your draft. Check your connection and try again.",
-    "codeTitle": "Your resume code",
-    "codeBody": "Use this code to continue this report from another device or browser. Keep it safe — anyone with this code can open this draft. It stops working after 7 days.",
-    "codeDismiss": "Got it"
+    "button": "ಡ್ರಾಫ್ಟ್ ಉಳಿಸಿ",
+    "saving": "ಉಳಿಸಲಾಗುತ್ತಿದೆ…",
+    "savedAt": "ಡ್ರಾಫ್ಟ್ ಉಳಿಸಲಾಗಿದೆ · {time}",
+    "error": "ನಿಮ್ಮ ಡ್ರಾಫ್ಟ್ ಉಳಿಸಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ನಿಮ್ಮ ಸಂಪರ್ಕವನ್ನು ಪರಿಶೀಲಿಸಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+    "codeTitle": "ನಿಮ್ಮ ಮುಂದುವರಿಕೆ ಕೋಡ್",
+    "codeBody": "ಮತ್ತೊಂದು ಸಾಧನ ಅಥವಾ ಬ್ರೌಸರ್‌ನಿಂದ ಈ ವರದಿಯನ್ನು ಮುಂದುವರಿಸಲು ಈ ಕೋಡ್ ಬಳಸಿ. ಇದನ್ನು ಸುರಕ್ಷಿತವಾಗಿ ಇರಿಸಿ — ಈ ಕೋಡ್ ಹೊಂದಿರುವ ಯಾರಾದರೂ ಈ ಡ್ರಾಫ್ಟ್ ತೆರೆಯಬಹುದು. 7 ದಿನಗಳ ನಂತರ ಇದು ಕಾರ್ಯನಿರ್ವಹಿಸುವುದನ್ನು ನಿಲ್ಲಿಸುತ್ತದೆ.",
+    "codeDismiss": "ಅರ್ಥವಾಯಿತು"
   },
   "resumeByCode": {
     "meta": {
-      "title": "Resume a saved report: Cybercrime Report & Track",
-      "description": "Continue a report you saved earlier using your resume code."
+      "title": "ಉಳಿಸಿದ ವರದಿಯನ್ನು ಮುಂದುವರಿಸಿ: Cybercrime Report & Track",
+      "description": "ನೀವು ಮೊದಲು ಉಳಿಸಿದ ವರದಿಯನ್ನು ನಿಮ್ಮ ಮುಂದುವರಿಕೆ ಕೋಡ್ ಬಳಸಿ ಮುಂದುವರಿಸಿ."
     },
-    "heading": "Resume a saved report",
-    "description": "Paste the resume code you saved earlier.",
-    "codeLabel": "Resume code",
+    "heading": "ಉಳಿಸಿದ ವರದಿಯನ್ನು ಮುಂದುವರಿಸಿ",
+    "description": "ನೀವು ಮೊದಲು ಉಳಿಸಿದ ಮುಂದುವರಿಕೆ ಕೋಡ್ ಅಂಟಿಸಿ.",
+    "codeLabel": "ಮುಂದುವರಿಕೆ ಕೋಡ್",
     "codePlaceholder": "e.g. 3f2a1c9e-....-....-....-............xxxxxxxx",
-    "codeError": "Enter the resume code exactly as it was shown to you.",
-    "submit": "Continue this report",
-    "loading": "Looking for your draft…",
-    "notFound": "We couldn't find a draft for that code. It may have expired (drafts are kept for 7 days) or the code may not be exact.",
-    "unsupportedType": "This draft was started in a part of the reporting flow that doesn't support resuming yet.",
-    "linkPrompt": "Already started a report on another device?",
-    "linkText": "Resume it with your code"
+    "codeError": "ನಿಮಗೆ ತೋರಿಸಿದಂತೆಯೇ ಮುಂದುವರಿಕೆ ಕೋಡ್ ನಮೂದಿಸಿ.",
+    "submit": "ಈ ವರದಿಯನ್ನು ಮುಂದುವರಿಸಿ",
+    "loading": "ನಿಮ್ಮ ಡ್ರಾಫ್ಟ್ ಹುಡುಕಲಾಗುತ್ತಿದೆ…",
+    "notFound": "ಆ ಕೋಡ್‌ಗಾಗಿ ನಮಗೆ ಡ್ರಾಫ್ಟ್ ಕಂಡುಬಂದಿಲ್ಲ. ಇದರ ಅವಧಿ ಮುಗಿದಿರಬಹುದು (ಡ್ರಾಫ್ಟ್‌ಗಳನ್ನು 7 ದಿನಗಳವರೆಗೆ ಇರಿಸಲಾಗುತ್ತದೆ) ಅಥವಾ ಕೋಡ್ ನಿಖರವಾಗಿಲ್ಲದಿರಬಹುದು.",
+    "unsupportedType": "ಈ ಡ್ರಾಫ್ಟ್ ಇನ್ನೂ ಮುಂದುವರಿಕೆಯನ್ನು ಬೆಂಬಲಿಸದ ವರದಿ ಹರಿವಿನ ಭಾಗದಲ್ಲಿ ಪ್ರಾರಂಭಿಸಲಾಗಿದೆ.",
+    "linkPrompt": "ಈಗಾಗಲೇ ಮತ್ತೊಂದು ಸಾಧನದಲ್ಲಿ ವರದಿ ಪ್ರಾರಂಭಿಸಿದ್ದೀರಾ?",
+    "linkText": "ನಿಮ್ಮ ಕೋಡ್‌ನೊಂದಿಗೆ ಅದನ್ನು ಮುಂದುವರಿಸಿ"
   }
 }

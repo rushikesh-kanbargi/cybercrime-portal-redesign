@@ -232,29 +232,29 @@
     }
   },
   "saveDraft": {
-    "button": "Save draft",
-    "saving": "Saving…",
-    "savedAt": "Draft saved · {time}",
-    "error": "Couldn't save your draft. Check your connection and try again.",
-    "codeTitle": "Your resume code",
-    "codeBody": "Use this code to continue this report from another device or browser. Keep it safe — anyone with this code can open this draft. It stops working after 7 days.",
-    "codeDismiss": "Got it"
+    "button": "मसुदा जतन करा",
+    "saving": "जतन करत आहे…",
+    "savedAt": "मसुदा जतन झाला · {time}",
+    "error": "तुमचा मसुदा जतन करता आला नाही. तुमचे कनेक्शन तपासा आणि पुन्हा प्रयत्न करा.",
+    "codeTitle": "तुमचा पुन्हा सुरू करण्याचा कोड",
+    "codeBody": "दुसऱ्या डिव्हाइस किंवा ब्राउझरवरून हा अहवाल सुरू ठेवण्यासाठी हा कोड वापरा. तो सुरक्षित ठेवा — हा कोड असलेली कोणतीही व्यक्ती हा मसुदा उघडू शकते. ७ दिवसांनंतर तो काम करणे बंद करतो.",
+    "codeDismiss": "समजले"
   },
   "resumeByCode": {
     "meta": {
-      "title": "Resume a saved report: Cybercrime Report & Track",
-      "description": "Continue a report you saved earlier using your resume code."
+      "title": "जतन केलेला अहवाल पुन्हा सुरू करा: Cybercrime Report & Track",
+      "description": "तुम्ही आधी जतन केलेला अहवाल तुमच्या पुन्हा सुरू करण्याच्या कोडने पुढे सुरू ठेवा."
     },
-    "heading": "Resume a saved report",
-    "description": "Paste the resume code you saved earlier.",
-    "codeLabel": "Resume code",
+    "heading": "जतन केलेला अहवाल पुन्हा सुरू करा",
+    "description": "तुम्ही आधी जतन केलेला पुन्हा सुरू करण्याचा कोड पेस्ट करा.",
+    "codeLabel": "पुन्हा सुरू करण्याचा कोड",
     "codePlaceholder": "e.g. 3f2a1c9e-....-....-....-............xxxxxxxx",
-    "codeError": "Enter the resume code exactly as it was shown to you.",
-    "submit": "Continue this report",
-    "loading": "Looking for your draft…",
-    "notFound": "We couldn't find a draft for that code. It may have expired (drafts are kept for 7 days) or the code may not be exact.",
-    "unsupportedType": "This draft was started in a part of the reporting flow that doesn't support resuming yet.",
-    "linkPrompt": "Already started a report on another device?",
-    "linkText": "Resume it with your code"
+    "codeError": "तुम्हाला दाखवलेला पुन्हा सुरू करण्याचा कोड जसाच्या तसा टाका.",
+    "submit": "हा अहवाल पुढे सुरू ठेवा",
+    "loading": "तुमचा मसुदा शोधत आहे…",
+    "notFound": "त्या कोडसाठी आम्हाला मसुदा सापडला नाही. त्याची मुदत संपली असेल (मसुदे ७ दिवस ठेवले जातात) किंवा कोड बरोबर नसेल.",
+    "unsupportedType": "हा मसुदा अहवाल प्रक्रियेच्या अशा भागात सुरू झाला होता जो अजून पुन्हा सुरू करण्यास समर्थन देत नाही.",
+    "linkPrompt": "दुसऱ्या डिव्हाइसवर आधीच अहवाल सुरू केला आहे?",
+    "linkText": "तुमच्या कोडने तो पुन्हा सुरू करा"
   }
 }

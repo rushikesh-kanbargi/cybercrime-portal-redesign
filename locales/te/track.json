@@ -117,9 +117,9 @@
       "whatYouCanDo": "ఇది మీరు కాకపోతే, వెంటనే మీ రాష్ట్ర ఫిర్యాదు అధికారిని సంప్రదించండి."
     },
     "EVIDENCE_REQUESTED": {
-      "label": "Additional evidence requested",
-      "meaning": "The investigating officer needs more information or evidence from you to move this case forward.",
-      "whatYouCanDo": "Reply through the contact on file, or add what you can when you're contacted. Don't share OTPs, passwords, or card PINs with anyone, even someone claiming to be the investigating officer."
+      "label": "అదనపు ఆధారం అభ్యర్థించబడింది",
+      "meaning": "ఈ కేసును ముందుకు తీసుకెళ్లడానికి దర్యాప్తు అధికారికి మీ నుండి మరింత సమాచారం లేదా ఆధారం అవసరం.",
+      "whatYouCanDo": "నమోదైన సంప్రదింపు ద్వారా స్పందించండి, లేదా మిమ్మల్ని సంప్రదించినప్పుడు మీరు చేయగలిగినది జోడించండి. దర్యాప్తు అధికారి అని చెప్పుకునే ఎవరికైనా OTPలు, పాస్‌వర్డ్‌లు లేదా కార్డు పిన్‌లను పంచుకోవద్దు."
     }
   },
   "categoryLabels": {

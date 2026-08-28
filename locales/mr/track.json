@@ -117,9 +117,9 @@
       "whatYouCanDo": "हे तुम्ही केले नसेल, तर तात्काळ तुमच्या राज्याच्या तक्रार निवारण अधिकाऱ्याशी संपर्क साधा."
     },
     "EVIDENCE_REQUESTED": {
-      "label": "Additional evidence requested",
-      "meaning": "The investigating officer needs more information or evidence from you to move this case forward.",
-      "whatYouCanDo": "Reply through the contact on file, or add what you can when you're contacted. Don't share OTPs, passwords, or card PINs with anyone, even someone claiming to be the investigating officer."
+      "label": "अतिरिक्त पुरावा मागवला आहे",
+      "meaning": "हे प्रकरण पुढे नेण्यासाठी तपास अधिकाऱ्याला तुमच्याकडून अधिक माहिती किंवा पुराव्याची गरज आहे.",
+      "whatYouCanDo": "नोंदणीकृत संपर्काद्वारे उत्तर द्या, किंवा तुमच्याशी संपर्क साधला जातो तेव्हा जे शक्य असेल ते जोडा. तपास अधिकारी असल्याचा दावा करणाऱ्या कोणालाही OTP, पासवर्ड किंवा कार्ड पिन शेअर करू नका."
     }
   },
   "categoryLabels": {

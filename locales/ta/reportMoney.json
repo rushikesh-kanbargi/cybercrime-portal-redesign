@@ -232,29 +232,29 @@
     }
   },
   "saveDraft": {
-    "button": "Save draft",
-    "saving": "Saving…",
-    "savedAt": "Draft saved · {time}",
-    "error": "Couldn't save your draft. Check your connection and try again.",
-    "codeTitle": "Your resume code",
-    "codeBody": "Use this code to continue this report from another device or browser. Keep it safe — anyone with this code can open this draft. It stops working after 7 days.",
-    "codeDismiss": "Got it"
+    "button": "வரைவைச் சேமி",
+    "saving": "சேமிக்கிறது…",
+    "savedAt": "வரைவு சேமிக்கப்பட்டது · {time}",
+    "error": "உங்கள் வரைவைச் சேமிக்க முடியவில்லை. உங்கள் இணைப்பைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்.",
+    "codeTitle": "உங்கள் தொடர் குறியீடு",
+    "codeBody": "மற்றொரு சாதனம் அல்லது உலாவியிலிருந்து இந்த அறிக்கையைத் தொடர இந்தக் குறியீட்டைப் பயன்படுத்தவும். அதைப் பாதுகாப்பாக வைக்கவும் — இந்தக் குறியீடு உள்ள எவரும் இந்த வரைவைத் திறக்க முடியும். 7 நாட்களுக்குப் பிறகு இது வேலை செய்யாது.",
+    "codeDismiss": "சரி"
   },
   "resumeByCode": {
     "meta": {
-      "title": "Resume a saved report: Cybercrime Report & Track",
-      "description": "Continue a report you saved earlier using your resume code."
+      "title": "சேமித்த அறிக்கையைத் தொடரவும்: Cybercrime Report & Track",
+      "description": "முன்பு சேமித்த அறிக்கையை உங்கள் தொடர் குறியீட்டைப் பயன்படுத்தி தொடரவும்."
     },
-    "heading": "Resume a saved report",
-    "description": "Paste the resume code you saved earlier.",
-    "codeLabel": "Resume code",
+    "heading": "சேமித்த அறிக்கையைத் தொடரவும்",
+    "description": "முன்பு நீங்கள் சேமித்த தொடர் குறியீட்டை ஒட்டவும்.",
+    "codeLabel": "தொடர் குறியீடு",
     "codePlaceholder": "e.g. 3f2a1c9e-....-....-....-............xxxxxxxx",
-    "codeError": "Enter the resume code exactly as it was shown to you.",
-    "submit": "Continue this report",
-    "loading": "Looking for your draft…",
-    "notFound": "We couldn't find a draft for that code. It may have expired (drafts are kept for 7 days) or the code may not be exact.",
-    "unsupportedType": "This draft was started in a part of the reporting flow that doesn't support resuming yet.",
-    "linkPrompt": "Already started a report on another device?",
-    "linkText": "Resume it with your code"
+    "codeError": "உங்களுக்குக் காட்டப்பட்டது போலவே தொடர் குறியீட்டைச் சரியாக உள்ளிடவும்.",
+    "submit": "இந்த அறிக்கையைத் தொடரவும்",
+    "loading": "உங்கள் வரைவைத் தேடுகிறது…",
+    "notFound": "அந்தக் குறியீட்டிற்கான வரைவை எங்களால் கண்டுபிடிக்க முடியவில்லை. அதன் காலம் முடிந்திருக்கலாம் (வரைவுகள் 7 நாட்களுக்கு வைக்கப்படும்) அல்லது குறியீடு சரியாக இல்லாமல் இருக்கலாம்.",
+    "unsupportedType": "இந்த வரைவு, தொடர்வதை இன்னும் ஆதரிக்காத அறிக்கைப் பாதையின் ஒரு பகுதியில் தொடங்கப்பட்டது.",
+    "linkPrompt": "மற்றொரு சாதனத்தில் ஏற்கனவே அறிக்கையைத் தொடங்கியுள்ளீர்களா?",
+    "linkText": "உங்கள் குறியீட்டுடன் தொடரவும்"
   }
 }

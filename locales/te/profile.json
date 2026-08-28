@@ -27,16 +27,16 @@
     "deleted": "మీరు భద్రపరిచిన వివరాలు తొలగించబడ్డాయి."
   },
   "drafts": {
-    "title": "Your drafts",
-    "description": "Unfinished reports you saved. Kept for 7 days.",
-    "row": "Last saved {date}",
-    "empty": "No saved drafts.",
-    "continue": "Continue",
-    "delete": "Delete",
-    "deleteConfirm": "Delete this draft? This can't be undone.",
-    "deleteConfirmButton": "Yes, delete",
-    "deleting": "Deleting…",
-    "cancel": "Cancel",
-    "loadError": "Couldn't open this draft. It may have expired."
+    "title": "మీ డ్రాఫ్ట్‌లు",
+    "description": "మీరు సేవ్ చేసిన అసంపూర్ణ నివేదికలు. 7 రోజులు ఉంచబడతాయి.",
+    "row": "చివరిసారి సేవ్ చేయబడింది {date}",
+    "empty": "సేవ్ చేసిన డ్రాఫ్ట్‌లు లేవు.",
+    "continue": "కొనసాగించు",
+    "delete": "తొలగించు",
+    "deleteConfirm": "ఈ డ్రాఫ్ట్‌ను తొలగించాలా? దీన్ని రద్దు చేయలేరు.",
+    "deleteConfirmButton": "అవును, తొలగించు",
+    "deleting": "తొలగిస్తోంది…",
+    "cancel": "రద్దు చేయి",
+    "loadError": "ఈ డ్రాఫ్ట్‌ను తెరవలేకపోయాము. దీని గడువు ముగిసి ఉండవచ్చు."
   }
 }

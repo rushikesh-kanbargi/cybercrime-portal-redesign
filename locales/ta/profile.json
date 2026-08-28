@@ -27,16 +27,16 @@
     "deleted": "உங்கள் சேமித்த விவரங்கள் நீக்கப்பட்டன."
   },
   "drafts": {
-    "title": "Your drafts",
-    "description": "Unfinished reports you saved. Kept for 7 days.",
-    "row": "Last saved {date}",
-    "empty": "No saved drafts.",
-    "continue": "Continue",
-    "delete": "Delete",
-    "deleteConfirm": "Delete this draft? This can't be undone.",
-    "deleteConfirmButton": "Yes, delete",
-    "deleting": "Deleting…",
-    "cancel": "Cancel",
-    "loadError": "Couldn't open this draft. It may have expired."
+    "title": "உங்கள் வரைவுகள்",
+    "description": "நீங்கள் சேமித்த முடிக்கப்படாத அறிக்கைகள். 7 நாட்களுக்கு வைக்கப்படும்.",
+    "row": "கடைசியாக சேமிக்கப்பட்டது {date}",
+    "empty": "சேமிக்கப்பட்ட வரைவுகள் இல்லை.",
+    "continue": "தொடரவும்",
+    "delete": "நீக்கு",
+    "deleteConfirm": "இந்த வரைவை நீக்கவா? இதை மீட்க முடியாது.",
+    "deleteConfirmButton": "ஆம், நீக்கு",
+    "deleting": "நீக்குகிறது…",
+    "cancel": "ரத்து செய்",
+    "loadError": "இந்த வரைவைத் திறக்க முடியவில்லை. அதன் காலம் முடிந்திருக்கலாம்."
   }
 }

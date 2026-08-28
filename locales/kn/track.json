@@ -117,9 +117,9 @@
       "whatYouCanDo": "ಇದು ನೀವಲ್ಲದಿದ್ದರೆ, ತಕ್ಷಣ ನಿಮ್ಮ ರಾಜ್ಯದ ಕುಂದುಕೊರತೆ ಅಧಿಕಾರಿಯನ್ನು ಸಂಪರ್ಕಿಸಿ."
     },
     "EVIDENCE_REQUESTED": {
-      "label": "Additional evidence requested",
-      "meaning": "The investigating officer needs more information or evidence from you to move this case forward.",
-      "whatYouCanDo": "Reply through the contact on file, or add what you can when you're contacted. Don't share OTPs, passwords, or card PINs with anyone, even someone claiming to be the investigating officer."
+      "label": "ಹೆಚ್ಚುವರಿ ಸಾಕ್ಷ್ಯ ವಿನಂತಿಸಲಾಗಿದೆ",
+      "meaning": "ಈ ಪ್ರಕರಣವನ್ನು ಮುಂದಕ್ಕೆ ಕೊಂಡೊಯ್ಯಲು ತನಿಖಾಧಿಕಾರಿಗೆ ನಿಮ್ಮಿಂದ ಹೆಚ್ಚಿನ ಮಾಹಿತಿ ಅಥವಾ ಸಾಕ್ಷ್ಯ ಬೇಕಾಗಿದೆ.",
+      "whatYouCanDo": "ದಾಖಲಾದ ಸಂಪರ್ಕದ ಮೂಲಕ ಪ್ರತ್ಯುತ್ತರಿಸಿ, ಅಥವಾ ನಿಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸಿದಾಗ ನಿಮಗೆ ಸಾಧ್ಯವಾದುದನ್ನು ಸೇರಿಸಿ. ತನಿಖಾಧಿಕಾರಿ ಎಂದು ಹೇಳಿಕೊಳ್ಳುವ ಯಾರೊಂದಿಗೂ OTP, ಪಾಸ್‌ವರ್ಡ್‌ಗಳು ಅಥವಾ ಕಾರ್ಡ್ ಪಿನ್‌ಗಳನ್ನು ಹಂಚಿಕೊಳ್ಳಬೇಡಿ."
     }
   },
   "categoryLabels": {

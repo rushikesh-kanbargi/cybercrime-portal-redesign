@@ -27,16 +27,16 @@
     "deleted": "ನೀವು ಉಳಿಸಿದ ವಿವರಗಳನ್ನು ಅಳಿಸಲಾಗಿದೆ."
   },
   "drafts": {
-    "title": "Your drafts",
-    "description": "Unfinished reports you saved. Kept for 7 days.",
-    "row": "Last saved {date}",
-    "empty": "No saved drafts.",
-    "continue": "Continue",
-    "delete": "Delete",
-    "deleteConfirm": "Delete this draft? This can't be undone.",
-    "deleteConfirmButton": "Yes, delete",
-    "deleting": "Deleting…",
-    "cancel": "Cancel",
-    "loadError": "Couldn't open this draft. It may have expired."
+    "title": "ನಿಮ್ಮ ಡ್ರಾಫ್ಟ್‌ಗಳು",
+    "description": "ನೀವು ಉಳಿಸಿದ ಅಪೂರ್ಣ ವರದಿಗಳು. 7 ದಿನಗಳವರೆಗೆ ಇರಿಸಲಾಗುತ್ತದೆ.",
+    "row": "ಕೊನೆಯದಾಗಿ ಉಳಿಸಲಾಗಿದೆ {date}",
+    "empty": "ಉಳಿಸಿದ ಡ್ರಾಫ್ಟ್‌ಗಳಿಲ್ಲ.",
+    "continue": "ಮುಂದುವರಿಸಿ",
+    "delete": "ಅಳಿಸಿ",
+    "deleteConfirm": "ಈ ಡ್ರಾಫ್ಟ್ ಅಳಿಸಬೇಕೇ? ಇದನ್ನು ರದ್ದುಗೊಳಿಸಲಾಗುವುದಿಲ್ಲ.",
+    "deleteConfirmButton": "ಹೌದು, ಅಳಿಸಿ",
+    "deleting": "ಅಳಿಸಲಾಗುತ್ತಿದೆ…",
+    "cancel": "ರದ್ದುಗೊಳಿಸಿ",
+    "loadError": "ಈ ಡ್ರಾಫ್ಟ್ ತೆರೆಯಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಇದರ ಅವಧಿ ಮುಗಿದಿರಬಹುದು."
   }
 }

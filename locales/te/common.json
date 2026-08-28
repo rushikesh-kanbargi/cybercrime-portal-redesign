@@ -71,7 +71,7 @@
     "callLabel": "1930కి కాల్ చేయండి",
     "linksHeading": "ఈ ప్రోటోటైప్ గురించి",
     "copyright": "Build What Moves India కోసం నిర్మించబడింది, ఒక స్వతంత్ర నిర్మాత చొరవ, ప్రభుత్వ హ్యాకథాన్ కాదు.",
-    "investigatorLink": "Investigator / staff login"
+    "investigatorLink": "దర్యాప్తు అధికారి / సిబ్బంది లాగిన్"
   },
   "languageSwitcher": {
     "label": "భాష",
@@ -98,27 +98,27 @@
   "errorSummaryTitle": "కొనసాగించే ముందు దయచేసి కింది వాటిని సరిచేయండి:",
   "notAnFir": "మీ ఫిర్యాదు సంఖ్య మీరు దీన్ని ఫిర్యాదు చేశారనడానికి రికార్డు. ఇది FIR (ప్రథమ సమాచార నివేదిక) కాదు. FIR అనేది వేరే, తరువాతి దశ, కేసు తగినదని భావిస్తే పోలీసు అధికారి నమోదు చేస్తారు.",
   "guidedHelp": {
-    "openLabel": "Guided help",
-    "closeLabel": "Close guided help",
-    "title": "Guided help",
-    "disclaimer": "Scripted guidance, not a live AI conversation. It only helps you find the right report — it never files anything for you.",
-    "intro": "Tell me what happened, or choose the option closest to it below.",
+    "openLabel": "మార్గదర్శిత సహాయం",
+    "closeLabel": "మార్గదర్శిత సహాయాన్ని మూసివేయండి",
+    "title": "మార్గదర్శిత సహాయం",
+    "disclaimer": "ఇది స్క్రిప్టెడ్ మార్గదర్శకత్వం, ప్రత్యక్ష AI సంభాషణ కాదు. ఇది సరైన ఫిర్యాదును కనుగొనడంలో మాత్రమే సహాయపడుతుంది — ఇది మీ తరపున దేనినీ దాఖలు చేయదు.",
+    "intro": "ఏమి జరిగిందో చెప్పండి, లేదా దిగువ దగ్గరగా ఉన్న ఎంపికను ఎంచుకోండి.",
     "options": {
-      "money": "Money was taken from my account",
-      "harassment": "Someone is harassing or threatening me",
-      "hacked": "My account was hacked",
-      "unsure": "I'm not sure / something else"
+      "money": "నా ఖాతా నుండి డబ్బు తీసుకోబడింది",
+      "harassment": "ఎవరో నన్ను వేధిస్తున్నారు లేదా బెదిరిస్తున్నారు",
+      "hacked": "నా ఖాతా హ్యాక్ చేయబడింది",
+      "unsure": "నాకు ఖచ్చితంగా తెలియదు / వేరేదైనా"
     },
     "replies": {
-      "money": "That's financial fraud. I'll take you to the money-loss report — it takes about 90 seconds and starts by asking what happened, in your own words.",
-      "harassment": "I'm sorry that's happening. I'll take you to the harassment/threats report so you can tell us what's going on.",
-      "hacked": "Let's get that reported. I'll take you to the account-compromise report.",
-      "unsure": "That's okay — you don't have to know the exact category. Start with a report and describe what happened in your own words; we'll help sort out the rest."
+      "money": "ఇది ఆర్థిక మోసం. నేను మిమ్మల్ని డబ్బు నష్టం ఫిర్యాదుకు తీసుకువెళ్తాను — దీనికి సుమారు 90 సెకన్లు పడుతుంది, ఏమి జరిగిందో మీ సొంత మాటల్లో అడగడంతో మొదలవుతుంది.",
+      "harassment": "ఇలా జరుగుతున్నందుకు క్షమించండి. ఏమి జరుగుతుందో మీరు చెప్పగలిగేలా వేధింపు/బెదిరింపు ఫిర్యాదుకు మిమ్మల్ని తీసుకువెళ్తాను.",
+      "hacked": "దాన్ని నివేదిద్దాం. ఖాతా-రాజీ ఫిర్యాదుకు మిమ్మల్ని తీసుకువెళ్తాను.",
+      "unsure": "పరవాలేదు — మీకు ఖచ్చితమైన వర్గం తెలియాల్సిన అవసరం లేదు. ఫిర్యాదుతో ప్రారంభించి, ఏమి జరిగిందో మీ సొంత మాటల్లో వివరించండి; మిగిలినది క్రమబద్ధీకరించడంలో మేము సహాయం చేస్తాము."
     },
-    "freeTextPrefix": "Based on what you typed, this sounds closest to: \"{option}\".",
-    "inputPlaceholder": "Or type what happened…",
-    "inputLabel": "Describe what happened",
-    "sendLabel": "Send",
-    "continueButton": "Continue to report"
+    "freeTextPrefix": "మీరు టైప్ చేసిన దాని ఆధారంగా, ఇది దీనికి దగ్గరగా అనిపిస్తుంది: \"{option}\".",
+    "inputPlaceholder": "లేదా ఏమి జరిగిందో టైప్ చేయండి…",
+    "inputLabel": "ఏమి జరిగిందో వివరించండి",
+    "sendLabel": "పంపు",
+    "continueButton": "ఫిర్యాదుకు కొనసాగించండి"
   }
 }

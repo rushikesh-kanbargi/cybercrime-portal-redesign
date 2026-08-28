@@ -27,16 +27,16 @@
     "deleted": "तुमचे जतन केलेले तपशील हटवले गेले आहेत."
   },
   "drafts": {
-    "title": "Your drafts",
-    "description": "Unfinished reports you saved. Kept for 7 days.",
-    "row": "Last saved {date}",
-    "empty": "No saved drafts.",
-    "continue": "Continue",
-    "delete": "Delete",
-    "deleteConfirm": "Delete this draft? This can't be undone.",
-    "deleteConfirmButton": "Yes, delete",
-    "deleting": "Deleting…",
-    "cancel": "Cancel",
-    "loadError": "Couldn't open this draft. It may have expired."
+    "title": "तुमचे मसुदे",
+    "description": "तुम्ही जतन केलेले अपूर्ण अहवाल. ७ दिवस ठेवले जातात.",
+    "row": "शेवटचे जतन {date}",
+    "empty": "कोणतेही जतन केलेले मसुदे नाहीत.",
+    "continue": "पुढे सुरू ठेवा",
+    "delete": "हटवा",
+    "deleteConfirm": "हा मसुदा हटवायचा? हे पूर्ववत करता येणार नाही.",
+    "deleteConfirmButton": "होय, हटवा",
+    "deleting": "हटवत आहे…",
+    "cancel": "रद्द करा",
+    "loadError": "हा मसुदा उघडता आला नाही. कदाचित त्याची मुदत संपली असेल."
   }
 }
