@@ -15,12 +15,11 @@ import { z } from "zod";
 import { recordSuspects, type SuspectInput } from "@/lib/suspects";
 import { routeToOffice } from "@/lib/offices";
 import { getMyProfile } from "@/lib/actions/profile";
+import { getSessionUser } from "@/lib/session";
 import { extractedFieldSchema } from "@/lib/types";
 import { getTranslations } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import crypto from "node:crypto";
-import { mkdir, writeFile } from "node:fs/promises";
-import path from "node:path";
 import { headers } from "next/headers";
 import { checkRateLimit, getClientIp, hashIp } from "@/lib/rate-limit";
 import { requestLoginOtp, verifyLoginOtp } from "@/lib/actions/auth";
@@ -128,6 +127,14 @@ export async function submitMoneyReport(
   // Same generic error a real validation failure would produce — never
   // reveal to an automated caller that it was caught by the honeypot.
   if (parsed.honeypot) throw new Error("Couldn't submit your report. Please try again.");
+
+  // The page itself already redirects to /login when there's no session
+  // (D-new — signing in is required to file), so this should never actually
+  // be null here — this is a defensive re-check for a server action that
+  // could in principle be invoked directly, not the primary gate.
+  const user = await getSessionUser();
+  if (!user) throw new Error("Sign in to file a report.");
+
   const publicId = generatePublicComplaintId();
 
   const t = await getTranslations({ locale: parsed.locale, namespace: "reportMoney" });
@@ -159,6 +166,7 @@ export async function submitMoneyReport(
         publicId,
         channel: "web",
         isAnonymous: false,
+        userId: user.id,
         categoryCode: parsed.categoryCode,
         subCategoryCode: parsed.subCategoryCode,
         categorySource: parsed.categorySource,
@@ -331,22 +339,21 @@ export async function confirmUpdatesOptIn(
 // or unwinds the complaint that already exists. Genuinely optional: the
 // wizard calls this only if the citizen attached something.
 //
-// Storage (decision, undocumented in §20/§23): local filesystem under
-// `.data/evidence/` for this prototype. §19 lists Supabase Storage or
+// Storage (decision, undocumented in §20/§23): §19 lists Supabase Storage or
 // Vercel Blob for production — neither is wired to credentials in this
 // environment, and faking a cloud upload would violate D20's "simulate the
-// UX copy, never fake the integration" rule. This one writes real bytes to
-// a real (local) disk; swap the two functions below for a Blob/Storage
-// client when deploying.
-// ponytail: local disk, not S3/Blob — swap writeEvidenceFile when a real
-// storage credential exists.
+// UX copy, never fake the integration" rule. Real bytes are stored as a
+// `data:` URI directly in `evidence.storage_key` (same mechanism
+// app/api/evidence/[id]/route.ts and its investigator-side counterpart
+// already decode for seeded demo evidence) — this actually persists across
+// serverless instances/redeploys, unlike local disk, which does not. At the
+// 8MB/file, 5-files/complaint limits (lib/evidence-limits.ts) this stays a
+// reasonable row size; swap for a real Blob/Storage client if usage grows
+// past what's comfortable to keep in Postgres.
 // ---------------------------------------------------------------------------
 
-const EVIDENCE_DIR = path.join(process.cwd(), ".data", "evidence");
-
-async function writeEvidenceFile(storageKey: string, bytes: Buffer): Promise<void> {
-  await mkdir(EVIDENCE_DIR, { recursive: true });
-  await writeFile(path.join(EVIDENCE_DIR, storageKey), bytes);
+function toDataUri(mimeType: string, bytes: Buffer): string {
+  return `data:${mimeType};base64,${bytes.toString("base64")}`;
 }
 
 // Magic-byte sniff — the server never trusts the client-supplied MIME type
@@ -434,13 +441,7 @@ export async function uploadEvidence(
       continue;
     }
 
-    const storageKey = `${crypto.randomUUID()}.${EVIDENCE_MIME_EXTENSIONS[sniffed]}`;
-    try {
-      await writeEvidenceFile(storageKey, bytes);
-    } catch {
-      skipped++;
-      continue;
-    }
+    const storageKey = toDataUri(sniffed, bytes);
 
     rows.push({
       complaintId: complaint.id,

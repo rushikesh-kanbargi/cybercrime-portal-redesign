@@ -10,8 +10,17 @@ import {
 } from "@/lib/db/schema";
 import { submitMoneyReport, type SubmitMoneyReportInput } from "@/app/[locale]/report/money/actions";
 import { recordEntitiesFromNarrative } from "@/lib/entity-extraction";
+import { requestLoginOtp, verifyLoginOtp } from "@/lib/actions/auth";
 import { resetRequestMocks } from "./helpers/next-request-mocks";
 import { cleanupTestFixtures } from "./helpers/fixtures";
+
+// submitMoneyReport requires a signed-in citizen session (D-new — signing
+// in is required to file) — matches citizen-auth-and-isolation.test.ts's
+// own real-OTP-login pattern rather than mocking getSessionUser directly.
+async function signInTestCitizen(mobile: string) {
+  const { code } = await requestLoginOtp(mobile);
+  await verifyLoginOtp(mobile, code, undefined, null);
+}
 
 function baseInput(overrides: Partial<SubmitMoneyReportInput> = {}): SubmitMoneyReportInput {
   return {
@@ -35,7 +44,10 @@ function baseInput(overrides: Partial<SubmitMoneyReportInput> = {}): SubmitMoney
 }
 
 describe("submitMoneyReport — validation and trust boundary", () => {
-  beforeEach(() => resetRequestMocks());
+  beforeEach(async () => {
+    resetRequestMocks();
+    await signInTestCitizen("7999222901");
+  });
   afterAll(async () => {
     await cleanupTestFixtures();
   });
@@ -118,7 +130,10 @@ describe("submitMoneyReport — validation and trust boundary", () => {
 });
 
 describe("entity-intelligence write path — P1.1 persistence, provenance, idempotency", () => {
-  beforeEach(() => resetRequestMocks());
+  beforeEach(async () => {
+    resetRequestMocks();
+    await signInTestCitizen("7999222902");
+  });
   afterAll(async () => {
     await cleanupTestFixtures();
   });

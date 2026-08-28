@@ -7,6 +7,7 @@ import { z } from "zod";
 import { recordSuspects, type SuspectInput } from "@/lib/suspects";
 import { routeToOffice } from "@/lib/offices";
 import { getMyProfile } from "@/lib/actions/profile";
+import { getSessionUser } from "@/lib/session";
 import { getTranslations } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import { ACCOUNT_COMPROMISE_CATEGORY_CODE } from "@/lib/classify";
@@ -96,6 +97,14 @@ export async function submitHackedReport(
   input: SubmitHackedReportInput,
 ): Promise<SubmitHackedReportResult> {
   const parsed = submitHackedReportSchema.parse(input);
+
+  // The page itself already redirects to /login when there's no session
+  // (D-new — signing in is required to file) — this is a defensive
+  // re-check for a server action that could in principle be invoked
+  // directly, not the primary gate.
+  const user = await getSessionUser();
+  if (!user) throw new Error("Sign in to file a report.");
+
   const publicId = generatePublicComplaintId();
 
   const t = await getTranslations({ locale: parsed.locale, namespace: "reportHacked" });
@@ -127,6 +136,7 @@ export async function submitHackedReport(
         publicId,
         channel: "web",
         isAnonymous: false,
+        userId: user.id,
         categoryCode: ACCOUNT_COMPROMISE_CATEGORY_CODE,
         subCategoryCode: parsed.subCategoryCode,
         categorySource: parsed.categorySource,
