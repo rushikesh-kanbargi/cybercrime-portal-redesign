@@ -69,6 +69,15 @@ function suspectInputs(s: z.infer<typeof suspectSchema>): SuspectInput[] {
 }
 
 const submitMoneyReportSchema = z.object({
+  // Bot defense (user-directed, 2026-08-28) — a field a real citizen never
+  // sees or fills (hidden via CSS, not `type="hidden"`, so a screen reader
+  // still skips it — see the wizard's own rendering). Left empty by every
+  // real submission; a filled value is the signal an automated form-filler
+  // populated every input it found. Deliberately NOT paired with a timing
+  // heuristic — that has real false-positive risk against a P1.5 draft
+  // resumed and submitted quickly, or a fast/assisted typist — a real
+  // victim's report is worth more than blocking a bot faster.
+  honeypot: z.string().optional(),
   narrative: z.string().trim().min(1, "Tell us what happened."),
   occurredAt: z.coerce.date(),
   amountLost: z.coerce.number().positive("Enter the amount that was taken."),
@@ -116,6 +125,9 @@ export async function submitMoneyReport(
   input: SubmitMoneyReportInput,
 ): Promise<SubmitMoneyReportResult> {
   const parsed = submitMoneyReportSchema.parse(input);
+  // Same generic error a real validation failure would produce — never
+  // reveal to an automated caller that it was caught by the honeypot.
+  if (parsed.honeypot) throw new Error("Couldn't submit your report. Please try again.");
   const publicId = generatePublicComplaintId();
 
   const t = await getTranslations({ locale: parsed.locale, namespace: "reportMoney" });

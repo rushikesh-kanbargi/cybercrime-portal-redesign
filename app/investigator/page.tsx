@@ -184,6 +184,20 @@ export default async function InvestigatorDashboardPage() {
           >
             All cases
           </Link>
+          <Link
+            href="/investigator/entities"
+            className="rounded-md border border-border bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary/40 hover:text-primary"
+          >
+            Entities
+          </Link>
+          {investigator.role === "admin" && (
+            <Link
+              href="/investigator/integrations"
+              className="rounded-md border border-border bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary/40 hover:text-primary"
+            >
+              Integrations
+            </Link>
+          )}
           <InvestigatorLogoutButton />
         </div>
       </div>

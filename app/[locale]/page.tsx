@@ -26,6 +26,7 @@ import { ScrollReveal } from "@/components/motion/scroll-reveal";
 import { PhotoBanner } from "@/components/illustrations/photo-banner";
 import { HeroEntrance, HeroEntranceItem } from "@/components/motion/hero-entrance";
 import { Press } from "@/components/motion/press";
+import { GuidedHelpChat } from "@/components/homepage/guided-help-chat";
 
 // §9.2 / §25.2 — the home is an intent-first entry point, not a category
 // dropdown: "what happened to you?", not "which programme owns this?".
@@ -64,6 +65,7 @@ export default async function Home() {
 
   return (
     <div className="flex flex-1 flex-col gap-10 overflow-x-hidden pb-20 sm:gap-14">
+      <GuidedHelpChat />
       {/* Trust bar + hero band are one visual block (top page chrome), not
           two separate sections — grouped in their own wrapper so the
           section `gap` above doesn't insert space between them. */}

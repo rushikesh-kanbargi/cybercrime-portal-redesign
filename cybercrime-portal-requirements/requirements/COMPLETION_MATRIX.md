@@ -1,6 +1,6 @@
 # Completion Matrix
 
-**Date:** 2026-08-28. One row per `requirements/*.md` file (plus the roadmap's own P0–P3 line items), cross-checked against actual code — not the ledger's own prior claims. See `execution/STATUS.md`/`NEXT.md`/`DECISIONS.md` for full narrative detail behind every row here; this is the flat, submission-facing summary.
+**Date:** 2026-08-28 (updated after the external-dependency completion pass, ADR-013). One row per `requirements/*.md` file (plus the roadmap's own P0–P3 line items), cross-checked against actual code — not the ledger's own prior claims. See `execution/STATUS.md`/`NEXT.md`/`DECISIONS.md`/`EXTERNAL_DEPENDENCIES.md` for full narrative detail behind every row here; this is the flat, submission-facing summary.
 
 Statuses: `COMPLETE` · `EVALUATED-CLOSED` (already satisfied by existing work, no new code needed) · `DEFERRED` (needs an external provider/legal/policy decision) · `BLOCKED` (production infrastructure, deliberately out of scope this pass) · `NOT-STARTED`.
 
@@ -41,11 +41,16 @@ Statuses: `COMPLETE` · `EVALUATED-CLOSED` (already satisfied by existing work, 
 | Knowledge graph (`11-knowledge-graph.md`) | P2 | COMPLETE (MVP) | ADR-011, `/investigator/entities/[id]` — shared-indicator discovery, related-case navigation, relationship provenance, soft cluster note | Verified, tested | Relational-DB MVP, not a graph database (explicit instruction) |
 | Campaign detection | P2 | COMPLETE (soft signal) | The knowledge-graph MVP's `clusterNote` at 3+ correlated cases | Verified, tested | Never "confirmed campaign" — explicitly hedged language only |
 | Financial intelligence graph (`12-financial-intelligence.md`) | P2 | COMPLETE (MVP, scoped) | Same UPI-identifier correlation view — the only financial identifier this app extracts | Verified, tested | UTR/bank-account/beneficiary graph: NOT-STARTED, not collected anywhere yet |
-| Community intelligence | P2 | COMPLETE (narrow MVP) | ADR-012, standalone indicator reporting ("Flow 7"), no complaint required | Verified, tested | Moderation/voting/confirmation UI: DEFERRED — underspecified, risked becoming a public-accusation system |
-| Threat reputation engine (`10-entity-intelligence.md`'s 9 states) | P2 | COMPLETE (curation, not automated scoring) | ADR-012, investigator-only status curation, audited, never shown to citizens | Verified, tested | An *automated* scoring model is DEFERRED — a due-process/policy question, not an engineering one |
+| Community intelligence | P2 | COMPLETE (technical workflow, curation policy DEFERRED) | ADR-012 (submission/validation, no complaint required) + ADR-013 (moderation queue `/investigator/entities`, review, reviewer notes, decision, audit — the full Submission→Validation→Queue→Review→Decision→Audit loop) | Verified, tested | Crowd voting/confirmation UI: DEFERRED — underspecified, risked becoming a public-accusation system. See `execution/EXTERNAL_DEPENDENCIES.md` |
+| Threat reputation engine (`10-entity-intelligence.md`'s 9 states) | P2 | COMPLETE (curation, not automated scoring) | ADR-012 states + ADR-013's `lastObserved`/reviewer-note history | Verified, tested | An *automated* scoring model is DEFERRED — a due-process/policy question, not an engineering one |
 | Command center (`14-command-center.md`) | P2 | COMPLETE (MVP) | ADR-012, admin-only state-level case/financial trends on the dashboard | Verified, tested | Full spec (campaign map, response-time trends, emerging-threats detection): DEFERRED, depends on data volume/signals this app doesn't have |
 | Advanced analytics | P2 | DEFERRED | — | — | Needs real production data volume (current data is prototype-scale/synthetic) |
-| Investigator AI copilot (`15-ai-system.md`) | P2 | COMPLETE (deterministic subset) | `lib/investigation-brief.ts` — grounded, template-only summarization/timeline/missing-info brief, explicitly labeled not-AI-generated | Verified, tested | Real LLM-backed copilot (free-text Q&A, RAG): DEFERRED — no AI provider configured in this environment |
+| Investigator AI copilot (`15-ai-system.md`) | P2 | COMPLETE (provider-neutral foundation + deterministic subset) | ADR-013: `lib/ai/` (provider-neutral `AiProvider` interface, `DeterministicProvider`, authorization-aware `getCaseSummary()`, provenance model, safe-default config) backed by `lib/investigation-brief.ts` | Verified, tested | Real LLM-backed generation: DEFERRED — no AI provider configured; adding one now needs one new `AiProvider` implementation and no other code changes. See `execution/EXTERNAL_DEPENDENCIES.md` |
+| Citizen AI chat interface | — | NOT BUILT (by product rule, not a gap) | — | — | Requested directly by the user mid-session; declined — `CLAUDE.md`'s own hard rule 6 forbids a citizen-facing chatbot regardless of AI-feature authorization |
+| Bank/financial integration foundation (`18-integrations.md`) | P2/P3 | COMPLETE (contract + synthetic adapter) | ADR-013: `BankAdapter` interface, `SyntheticBankAdapter` (local, labelled, no live caller) | Verified, tested | Real bank API endpoint/authorization: DEFERRED (P3) |
+| Telecom integration foundation (`18-integrations.md`) | P2/P3 | COMPLETE (contract + synthetic adapter) | ADR-013: `TelecomAdapter` interface, `SyntheticTelecomAdapter` | Verified, tested | Real carrier API: DEFERRED (P3) |
+| Government/agency integration foundation (`18-integrations.md`) | P3 | DEFERRED (registry entry only) | Honest `not_configured` row in `lib/integrations/registry.ts` | — | No requirements-level operational detail exists to build a real contract against — not fabricated |
+| Integration registry & feature flags | P2 | COMPLETE | ADR-013: `lib/integrations/registry.ts`, `/investigator/integrations` (admin-only, shows "Not configured" honestly per instruction, never a misleading "No data found") | Verified, tested | — |
 | Citizen incident assistant (`15-ai-system.md`) | P2 | NOT BUILT (by product rule) | — | — | This project's own CLAUDE.md hard rule 6 forbids a conversational citizen chatbot regardless of AI authorization — not a gap, a deliberate constraint |
 
 ## P3 — Ecosystem / Scale
@@ -53,8 +58,8 @@ Statuses: `COMPLETE` · `EVALUATED-CLOSED` (already satisfied by existing work, 
 | Requirement | Priority | Status | Implementation | Verification | Notes |
 |---|---|---|---|---|---|
 | Authorized bank/telecom/platform integrations | P3 | DEFERRED | — | — | No real endpoint/authorization exists (`18-integrations.md`'s own instruction: never fake production integration) |
-| National threat feeds | P3 | DEFERRED | — | — | No such feed exists to integrate |
-| Cross-border workflows | P3 | DEFERRED | — | — | No legal/jurisdictional basis established |
+| National threat feeds | P3 | DEFERRED (data contract only) | Normalized `ExternalSource`/`ExternalIndicator`/`ExternalCaseReference` shapes exist (`lib/integrations/types.ts`) for a future adapter to map into | — | No feed exists to ingest from; no adapter built (unlike bank/telecom, no operational spec to build one against) |
+| Cross-border workflows | P3 | DEFERRED (one shared field only) | Optional `jurisdiction` field on `ExternalSource` | — | No legal/jurisdictional basis established; a full subsystem would be speculative per P3's own "only if required" instruction |
 | Automated disruption workflows (human-approved) | P3 | DEFERRED | — | — | Depends on the integrations above |
 | Advanced multilingual voice | P3 | DEFERRED | — | — | Needs a real speech provider |
 | Advanced predictive analytics | P3 | DEFERRED | — | — | Needs real data volume + a modeling decision |

@@ -12,7 +12,8 @@ import {
   getCaseAuditLog,
   getDashboardStats,
 } from "@/lib/actions/case-management";
-import { getEntityDetail, updateEntityStatus } from "@/lib/actions/entity-intelligence";
+import { getEntityDetail, updateEntityStatus, listEntitiesForModeration } from "@/lib/actions/entity-intelligence";
+import { getCaseSummary } from "@/lib/ai/ai-service";
 import { createInvestigatorSession } from "@/lib/investigator-auth";
 import { resetRequestMocks } from "./helpers/next-request-mocks";
 import { createTestInvestigator, createTestComplaint, linkSuspectIdentifier, cleanupTestFixtures } from "./helpers/fixtures";
@@ -631,5 +632,67 @@ describe("P2 — command center geo/financial trends, admin-only (ADR-012)", () 
     const testStateEntry = afterAdmin.geoTrends?.find((g) => g.state === "Test State");
     const beforeTestStateCount = beforeAdmin.geoTrends?.find((g) => g.state === "Test State")?.count ?? 0;
     expect(testStateEntry?.count).toBe(beforeTestStateCount + 1);
+  });
+});
+
+describe("External-dependency pass — moderation queue, reviewer notes, AI service (ADR-013)", () => {
+  beforeEach(() => resetRequestMocks({ "x-forwarded-for": "10.99.7.1" }));
+  afterAll(async () => {
+    await cleanupTestFixtures();
+  });
+
+  it("listEntitiesForModeration excludes synthetic data and filters by status", async () => {
+    const investigator = await createTestInvestigator();
+    await createInvestigatorSession(investigator.id);
+    const upi = `modqueue${Date.now()}@upi`;
+    const complaint = await createTestComplaint();
+    await linkSuspectIdentifier(complaint.id, upi);
+
+    const all = await listEntitiesForModeration();
+    expect(all.some((e) => e.valueNormalised === upi)).toBe(true);
+    expect(all.every((e) => e.reportCount >= 1)).toBe(true);
+
+    const reportedOnly = await listEntitiesForModeration("reported");
+    expect(reportedOnly.some((e) => e.valueNormalised === upi)).toBe(true);
+    expect(reportedOnly.every((e) => e.status === "reported")).toBe(true);
+
+    const confirmedOnly = await listEntitiesForModeration("confirmed");
+    expect(confirmedOnly.some((e) => e.valueNormalised === upi)).toBe(false);
+  });
+
+  it("a reviewer note is stored and surfaced in status history without requiring a status change", async () => {
+    const investigator = await createTestInvestigator();
+    await createInvestigatorSession(investigator.id);
+    const upi = `notedentity${Date.now()}@upi`;
+    const complaint = await createTestComplaint();
+    await linkSuspectIdentifier(complaint.id, upi);
+    const caseDetail = await getCaseDetail(complaint.publicId);
+    const entityId = caseDetail?.relatedEntities.find((e) => !e.isSynthetic)?.suspectIdentifierId;
+    if (!entityId) throw new Error("expected a linked entity");
+
+    const result = await updateEntityStatus(entityId, "reported", "Looks like a known scam pattern, escalating.");
+    expect(result.ok).toBe(true);
+
+    const entity = await getEntityDetail(entityId);
+    expect(entity?.statusHistory.some((h) => h.note === "Looks like a known scam pattern, escalating.")).toBe(true);
+    expect(entity?.lastObserved).toBeTruthy();
+  });
+
+  it("getCaseSummary (AI service) is grounded in real case data, labels the deterministic provider, and denies unauthenticated callers", async () => {
+    const investigator = await createTestInvestigator();
+    await createInvestigatorSession(investigator.id);
+    const complaint = await createTestComplaint({ narrative: "A very specific unique narrative for AI grounding check." });
+
+    const result = await getCaseSummary(complaint.publicId);
+    expect(result.ok).toBe(true);
+    expect(result.provider.isLive).toBe(false);
+    expect(result.provider.name).toBe("deterministic");
+    expect(result.summary).toContain(complaint.publicId);
+    expect(result.provenance?.kind).toBe("correlated_signal");
+
+    resetRequestMocks();
+    await expect(getCaseSummary(complaint.publicId)).rejects.toMatchObject({
+      digest: expect.stringContaining("NEXT_REDIRECT"),
+    });
   });
 });

@@ -25,8 +25,8 @@ export default async function EntityDetailPage({ params }: { params: Promise<{ i
   return (
     <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-4 py-10">
       <div>
-        <Link href="/investigator/cases" className="text-xs text-muted-foreground underline underline-offset-2">
-          ← All cases
+        <Link href="/investigator/entities" className="text-xs text-muted-foreground underline underline-offset-2">
+          ← All entities
         </Link>
         <div className="flex items-center gap-2">
           <h1 className="font-mono text-xl font-semibold tracking-tight text-foreground">{entity.valueNormalised}</h1>
@@ -35,7 +35,8 @@ export default async function EntityDetailPage({ params }: { params: Promise<{ i
         </div>
         <p className="text-sm text-muted-foreground">
           Reported {entity.reportCount} time{entity.reportCount === 1 ? "" : "s"} · first seen{" "}
-          {new Date(entity.firstReportedAt).toLocaleString("en-IN")}
+          {new Date(entity.firstReportedAt).toLocaleString("en-IN")} · last observed{" "}
+          {new Date(entity.lastObserved).toLocaleString("en-IN")}
         </p>
       </div>
 
@@ -54,12 +55,15 @@ export default async function EntityDetailPage({ params }: { params: Promise<{ i
           {entity.statusHistory.length > 0 && (
             <ul className="flex flex-col divide-y divide-border text-xs text-muted-foreground">
               {entity.statusHistory.map((h, i) => (
-                <li key={i} className="flex items-center justify-between gap-2 py-1.5 first:pt-0 last:pb-0">
-                  <span>{ENTITY_STATUS_LABEL[h.status]}</span>
-                  <span>
-                    {new Date(h.occurredAt).toLocaleString("en-IN")}
-                    {h.actorName ? ` · ${h.actorName}` : ""}
-                  </span>
+                <li key={i} className="flex flex-col gap-0.5 py-1.5 first:pt-0 last:pb-0">
+                  <div className="flex items-center justify-between gap-2">
+                    <span>{ENTITY_STATUS_LABEL[h.status]}</span>
+                    <span>
+                      {new Date(h.occurredAt).toLocaleString("en-IN")}
+                      {h.actorName ? ` · ${h.actorName}` : ""}
+                    </span>
+                  </div>
+                  {h.note && <p className="text-foreground">{h.note}</p>}
                 </li>
               ))}
             </ul>

@@ -240,6 +240,10 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
   }, [errors]);
   const [confirmOpen, setConfirmOpen] = React.useState(false);
   const [submitting, setSubmitting] = React.useState(false);
+  // Honeypot (user-directed bot defense, 2026-08-28) — never persisted to
+  // the localStorage draft, never rendered for a sighted or screen-reader
+  // user. See actions.ts's submitMoneyReportSchema for the server-side check.
+  const [honeypot, setHoneypot] = React.useState("");
   const [submitError, setSubmitError] = React.useState<string | null>(null);
   const [result, setResult] = React.useState<SubmitMoneyReportResult | null>(null);
   const [copied, setCopied] = React.useState(false);
@@ -498,6 +502,7 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
         ? `${draft.narrative.trim()}\n\n${t("evidence.textFallbackNarrativeLabel")}:\n${pastedEvidence}`
         : draft.narrative.trim();
       const res = await submitMoneyReport({
+        honeypot,
         narrative,
         occurredAt: new Date(draft.occurredAt),
         amountLost: Number(draft.amountLost),
@@ -1220,6 +1225,21 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
                 <AlertDescription>{submitError}</AlertDescription>
               </Alert>
             )}
+
+            {/* Honeypot — invisible to sighted users (off-screen, not
+                display:none, which some bots specifically check for) and
+                to screen readers (aria-hidden + not tab-focusable). A real
+                citizen never interacts with this. */}
+            <input
+              type="text"
+              name="website"
+              value={honeypot}
+              onChange={(e) => setHoneypot(e.target.value)}
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }}
+            />
 
             <div className="flex items-center justify-between gap-3">
               <Button variant="outline" className="min-h-11" onClick={() => setStep("evidence")} disabled={submitting}>

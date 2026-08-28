@@ -33,8 +33,18 @@ still matters. Never write copy that claims otherwise.
    in scope, gated by real authentication/authorization — not merely a
    "demonstration." See `cybercrime-portal-requirements/execution/DECISIONS.md`
    ADR-001 for the rationale and what stays constrained.
-6. **No chatbot.** The model extracts and classifies, then hands control back.
-   It never holds a conversation with the victim.
+6. ~~**No chatbot.**~~ **SUPERSEDED (2026-08-28, user-directed).** The original
+   rule — "the model extracts and classifies, then hands control back; it
+   never holds a conversation with the victim" — is overridden for a
+   deterministic, scripted "Guided Help" widget only (`components/homepage/
+   guided-help-chat.tsx`), added by explicit live instruction. It is a fixed
+   decision tree plus a local keyword heuristic (same "rules floor" as
+   `lib/classify.ts`), never a live/generative model — no AI provider is
+   configured anywhere in this app (`lib/ai/config.ts`), and the widget's
+   own UI states this plainly. See `execution/DECISIONS.md` ADR-013 for the
+   full record. This does not license an unconstrained conversational AI —
+   any future addition still needs the same explicit direction and the same
+   honesty constraint (never present scripted/local logic as a live model).
 7. **Never claim an action we do not perform.** The prototype does not freeze accounts,
    contact police, notify banks, or file anything with anyone. It prepares a report and
    says what would happen next. Copy says "this is what the cyber cell would receive",

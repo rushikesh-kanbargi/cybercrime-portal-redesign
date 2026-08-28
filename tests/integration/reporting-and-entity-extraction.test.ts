@@ -62,6 +62,17 @@ describe("submitMoneyReport — validation and trust boundary", () => {
     await expect(submitMoneyReport(baseInput({ amountLost: Number("not-a-number") }))).rejects.toThrow();
   });
 
+  // Bot defense (user-directed, 2026-08-28) — a filled honeypot is rejected
+  // with the exact same generic error a real validation failure produces.
+  it("rejects a submission with a filled honeypot field, and creates no complaint", async () => {
+    await expect(submitMoneyReport(baseInput({ honeypot: "http://spam.example" }))).rejects.toThrow();
+  });
+
+  it("a normal submission with an empty honeypot succeeds unaffected", async () => {
+    const result = await submitMoneyReport(baseInput({ honeypot: "" }));
+    expect(result.publicId).toMatch(/^CC-/);
+  });
+
   it("rejects submission without categoryConfirmedByUser === true", async () => {
     // @ts-expect-error deliberately forging an unconfirmed category
     await expect(submitMoneyReport(baseInput({ categoryConfirmedByUser: false }))).rejects.toThrow();

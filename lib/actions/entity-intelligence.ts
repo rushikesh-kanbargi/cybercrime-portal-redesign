@@ -32,6 +32,7 @@ export interface EntityCorrelatedCase {
 
 export interface EntityStatusEvent {
   status: EntityStatus;
+  note: string | null;
   actorName: string | null;
   occurredAt: string;
 }
@@ -43,6 +44,10 @@ export interface EntityDetail {
   isSynthetic: boolean;
   reportCount: number;
   firstReportedAt: string;
+  // Technical signal, never a legal/criminal conclusion (Step 12) — the
+  // most recent correlated-case report timestamp, or firstReportedAt if
+  // there's only ever been the one.
+  lastObserved: string;
   // P2/ADR-012 — investigator-curated, never auto-derived from
   // reportCount, never shown on the public checker.
   status: EntityStatus;
@@ -105,9 +110,14 @@ export async function getEntityDetail(suspectIdentifierId: string): Promise<Enti
     isSynthetic: identifier.isSynthetic,
     reportCount: identifier.reportCount,
     firstReportedAt: identifier.firstReportedAt.toISOString(),
+    lastObserved:
+      correlatedCases.length > 0
+        ? correlatedCases.reduce((latest, c) => (c.reportedAt > latest ? c.reportedAt : latest), correlatedCases[0].reportedAt)
+        : identifier.firstReportedAt.toISOString(),
     status: identifier.status,
     statusHistory: statusEvents.map((e) => ({
       status: (e.metadata as { newStatus?: EntityStatus } | null)?.newStatus ?? "reported",
+      note: (e.metadata as { note?: string } | null)?.note ?? null,
       actorName: (e.actorId && actorNameById.get(e.actorId)) ?? null,
       occurredAt: e.occurredAt.toISOString(),
     })),
@@ -132,19 +142,26 @@ export interface UpdateEntityStatusResult {
 // baseline this codebase already uses for cases (ADR-004), not a new
 // authorization tier. Every transition is audit-logged with the actor and
 // new status, which is what statusHistory above reads back.
-export async function updateEntityStatus(suspectIdentifierId: string, newStatus: string): Promise<UpdateEntityStatusResult> {
+export async function updateEntityStatus(
+  suspectIdentifierId: string,
+  newStatus: string,
+  note?: string,
+): Promise<UpdateEntityStatusResult> {
   const investigator = await requireInvestigator();
   const parsedId = uuidSchema.safeParse(suspectIdentifierId);
   const parsedStatus = entityStatusSchema.safeParse(newStatus);
   if (!parsedId.success || !parsedStatus.success) {
     return { ok: false, error: "That isn't a valid status." };
   }
+  const trimmedNote = note?.trim().slice(0, 2000) || undefined;
 
   const identifier = await db.query.suspectIdentifiers.findFirst({ where: eq(suspectIdentifiers.id, parsedId.data) });
   if (!identifier) return { ok: false, error: "That entity could not be found." };
-  if (identifier.status === parsedStatus.data) return { ok: true }; // no-op, not an error
+  if (identifier.status === parsedStatus.data && !trimmedNote) return { ok: true }; // no-op, not an error
 
-  await db.update(suspectIdentifiers).set({ status: parsedStatus.data }).where(eq(suspectIdentifiers.id, identifier.id));
+  if (identifier.status !== parsedStatus.data) {
+    await db.update(suspectIdentifiers).set({ status: parsedStatus.data }).where(eq(suspectIdentifiers.id, identifier.id));
+  }
 
   await writeAudit({
     actorType: "investigator",
@@ -152,8 +169,48 @@ export async function updateEntityStatus(suspectIdentifierId: string, newStatus:
     action: "suspect_identifier_status_changed",
     targetType: "suspect_identifier_status",
     targetId: identifier.id,
-    metadata: { previousStatus: identifier.status, newStatus: parsedStatus.data },
+    metadata: { previousStatus: identifier.status, newStatus: parsedStatus.data, note: trimmedNote },
   });
 
   return { ok: true };
+}
+
+export interface ModerationQueueRow {
+  id: string;
+  type: string;
+  valueNormalised: string;
+  status: EntityStatus;
+  reportCount: number;
+  firstReportedAt: string;
+}
+
+// The technical half of requirements' "Community Submission → Validation
+// → Moderation Queue → Review → Decision → Audit" workflow (ADR-012's
+// Community Reporting already covers Submission/Validation; this is the
+// Queue/Review step). Real, non-synthetic entities only — the checker's
+// seeded demo dataset has no moderation meaning. Investigator-only, same
+// view-open-to-all model as everything else here; no new authorization
+// tier, per instruction to only build what's compatible with existing
+// requirements.
+export async function listEntitiesForModeration(status?: string): Promise<ModerationQueueRow[]> {
+  await requireInvestigator();
+  const parsedStatus = status ? entityStatusSchema.safeParse(status) : undefined;
+
+  const rows = await db.query.suspectIdentifiers.findMany({
+    where: and(
+      eq(suspectIdentifiers.isSynthetic, false),
+      parsedStatus?.success ? eq(suspectIdentifiers.status, parsedStatus.data) : undefined,
+    ),
+    orderBy: desc(suspectIdentifiers.reportCount),
+    limit: 100, // bounded — a moderation queue is a triage tool, not a full export
+  });
+
+  return rows.map((r) => ({
+    id: r.id,
+    type: r.type,
+    valueNormalised: r.valueNormalised,
+    status: r.status,
+    reportCount: r.reportCount,
+    firstReportedAt: r.firstReportedAt.toISOString(),
+  }));
 }

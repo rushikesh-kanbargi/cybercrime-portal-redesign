@@ -34,8 +34,8 @@ Only record real blockers. Never convert an unknown dependency into an invented 
 
 ---
 
-### BLOCKER-002 — Rate limiting is not production-safe on a multi-instance deployment
-- Date: 2026-08-28
+### BLOCKER-002 — Rate limiting is not production-safe on a multi-instance deployment (also covers: no real WAF/bot-detection/DDoS mitigation)
+- Date: 2026-08-28 (updated 2026-08-28 — user directly asked for "bot/attack proofing"; a honeypot field was added to the highest-traffic public write path as a real, zero-dependency deterrent, but a real WAF/DDoS/managed bot-detection service remains this same external-provider blocker, not a separate one)
 - Requirement: Production readiness audit — Security (Abuse Resistance)
 - Severity: High
 - Blocker: `lib/rate-limit.ts` is an in-memory, single-process `Map`. Every serverless/multi-instance production deployment (e.g. Vercel) runs multiple isolated instances, each with its own independent counter — the real-world rate limit is far weaker than local single-process testing shows.
