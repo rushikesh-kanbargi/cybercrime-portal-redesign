@@ -62,6 +62,15 @@ export default async function Home() {
   const t = await getTranslations("landing");
   const howItWorksSteps = t.raw("howItWorks.steps") as Array<{ title: string; body: string }>;
   const trustSectionItems = t.raw("trustSection.items") as Array<{ title: string; body: string }>;
+  const categoryItems = t.raw("categoryPicker.items") as Array<{ title: string; cta: string; available: boolean }>;
+  // D-regression-fix — user-reported: the D-new intent-picker restructure
+  // (equal-weight cards, no single flagship) left the page with *no* call to
+  // action above the fold at all — the nearest button was a full section
+  // scroll away. This restores a real, immediate CTA in the hero itself,
+  // pointing at the one fully-built flow (money fraud), while keeping the
+  // three-card picker below untouched for anyone whose situation is
+  // different. Reuses the picker's own translated "Start now" string rather
+  // than adding a parallel hero.cta key across all six locale files.
 
   return (
     <div className="flex flex-1 flex-col gap-10 overflow-x-hidden pb-20 sm:gap-14">
@@ -107,6 +116,18 @@ export default async function Home() {
 
           <HeroEntranceItem>
             <p className="max-w-[60ch] text-lg text-muted-foreground">{t("subtitle")}</p>
+          </HeroEntranceItem>
+
+          <HeroEntranceItem>
+            <Button asChild size="lg" className="group/button mt-1 w-fit">
+              <Link href={categoryHrefs[0]}>
+                {categoryItems[0].cta}
+                <ArrowRight
+                  className="size-4 transition-transform duration-200 group-hover/button:translate-x-0.5"
+                  aria-hidden="true"
+                />
+              </Link>
+            </Button>
           </HeroEntranceItem>
         </HeroEntrance>
 
@@ -185,7 +206,7 @@ export default async function Home() {
                       ))}
                     </ul>
                     {item.available ? (
-                      <Button asChild size="sm" className="group/button mt-1 w-fit">
+                      <Button asChild size="sm" className="group/button mt-auto w-fit pt-1">
                         <span>
                           {item.cta}
                           <ArrowRight
@@ -195,7 +216,7 @@ export default async function Home() {
                         </span>
                       </Button>
                     ) : (
-                      <span className="mt-1 inline-flex items-center gap-1 text-sm font-medium text-primary">
+                      <span className="mt-auto inline-flex items-center gap-1 pt-1 text-sm font-medium text-primary">
                         {item.cta}
                         <ArrowRight
                           className="size-3.5 transition-transform duration-200 group-hover:translate-x-0.5"
