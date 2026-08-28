@@ -1,13 +1,13 @@
 {
   "meta": {
-    "title": "Privacy notice: Cybercrime Report & Track",
+    "title": "Privacy notice: Cybercrime Report & Tracking",
     "description": "What we collect, what we deliberately don't, who would see it, how long we keep it, and how to delete it."
   },
   "title": "Privacy notice",
   "subtitle": "Written in plain language, specific to this product, not a generic policy pasted in from somewhere else. Short enough to read even if you're here in distress.",
   "heroImageAlt": "A padlock and bank cards resting on a laptop keyboard.",
   "honestTitle": "The honest disclosure",
-  "honestBody": "This is a hackathon prototype. It handles mock and synthetic data. Nobody sees what you enter here except this prototype's own database. It is not connected to any real government system, and nothing you submit reaches a real bank, police unit, or NCRP/CFCFRMS. If you have actually been a victim of cybercrime, use the real portal at <link>cybercrime.gov.in</link> or call 1930. Full detail on what's real and what's mocked: <whatsRealLink>/whats-real</whatsRealLink>.",
+  "honestBody": "Your report is held in this site's own database and nowhere else. It is not sent to any bank, police unit, or government system, and nobody outside this site can read it.",
   "collectTitle": "What we collect, and why",
   "collectRows": [
     {
@@ -38,7 +38,7 @@
   "notCollectTitle": "What we deliberately do not collect",
   "notCollectBody": "<strong>No Aadhaar number, no PAN, no Father's/Mother's/Spouse's name, and no identity-document upload</strong>: there is no column for any of these anywhere in this product's database. We also don't ask for your date of birth, gender, nationality, full postal address, pin code, precise location, or any biometric data. Every one of these fails a simple test we apply to every field: does it help freeze the money, route the case, or reach you faster? If the answer is no, we don't ask for it: it would only be a liability with no benefit to you. This is also why an identity-theft or harassment victim is never asked to prove who they are before being heard.",
   "whoSeesTitle": "Who sees it",
-  "whoSeesBody": "<strong>Right now: nobody but this prototype.</strong> It is a hackathon build with synthetic data and no real reviewers on the other end. In a real production system built to this design, a complaint would be visible to the police unit it's routed to, and to no one else by default. Every read of a case would be logged and reviewable, which we design for structurally but do not operate here.",
+  "whoSeesBody": "<strong>Right now: nobody but this site.</strong> Nothing you enter reaches a real bank, police unit or government system. In a working service this is the point where a report would be handed to a cyber cell, and who could read it would be governed by law rather than by us.",
   "retentionTitle": "How long we keep it",
   "retention": [
     {

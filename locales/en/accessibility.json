@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "Accessibility statement: Cybercrime Report & Track",
+    "title": "Accessibility statement: Cybercrime Report & Tracking",
     "description": "What we're targeting, what's implemented, what was actually tested (and how), and what's still open."
   },
   "title": "Accessibility statement",
@@ -67,7 +67,7 @@
     },
     {
       "title": "Read-aloud on the emergency checklist",
-      "body": "/help/just-happened has a “Read this page aloud” button using the browser's native speechSynthesis API — no external service, works offline once the page has loaded."
+      "body": "/help/just-happened has a “Read this page aloud” button using the browser's native speechSynthesis API, no external service, works offline once the page has loaded."
     }
   ],
   "testedTitle": "What was actually tested, and how",
@@ -107,7 +107,7 @@
     },
     {
       "strong": "Read-aloud exists on one page only.",
-      "body": "CLAUDE.md's own design rule (“teen to elderly... optional read-aloud”) is currently met only on /help/just-happened, the single highest-urgency page. The report wizards, review steps, and status timeline don't have it yet — named here rather than left silently absent."
+      "body": "CLAUDE.md's own design rule (“teen to elderly... optional read-aloud”) is currently met only on /help/just-happened, the single highest-urgency page. The report wizards, review steps, and status timeline don't have it yet, named here rather than left silently absent."
     }
   ],
   "footer": "See <link>what's real vs mocked</link> for the rest of this prototype's honest scope."

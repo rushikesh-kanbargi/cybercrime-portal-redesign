@@ -1,10 +1,10 @@
 {
   "meta": {
-    "title": "It just happened: Cybercrime Report & Track",
+    "title": "It just happened: Cybercrime Report & Tracking",
     "description": "Money was just taken, or you think you're being scammed right now. Here's what to do in the next few minutes."
   },
   "title": "It just happened. Do this now.",
-  "subtitle": "Money was taken, or you think you're being scammed right now. Here's what to do, in order. No account needed, and this takes about two minutes to read.",
+  "subtitle": "Money was taken, or you think you're being scammed right now. Here's what to do, in order. This takes about two minutes to read.",
   "callNow": "Call 1930 now",
   "readAloud": "Read this page aloud",
   "readAloudStop": "Stop reading",
@@ -32,9 +32,9 @@
     }
   ],
   "deadlineTitle": "There's a 24-hour clock on the online report too",
-  "deadlineBody": "The government's own guidance says that after calling 1930, completing this online report is mandatory within 24 hours of the call, or the bank-freeze request behind it can lapse. The real portal doesn't display this deadline anywhere — file below as soon as you're done on the phone, not \"later today.\"",
+  "deadlineBody": "The government's own guidance says that after calling 1930, completing this online report is mandatory within 24 hours of the call, or the bank-freeze request behind it can lapse. The real portal doesn't display this deadline anywhere, file below as soon as you're done on the phone, not \"later today.\"",
   "readyTitle": "Ready to file?",
   "readyBody": "Money was taken from my account. Report it in under 90 seconds.",
   "readyCta": "Start now",
-  "footer": "This page is a hand-written checklist, not an AI chatbot or a source of legal advice. We'd rather give you five things a person actually wrote and checked than a confident-sounding answer to whatever you type. It can't promise your money will be recovered; nothing can. See <link>what's real vs mocked</link> in this prototype."
+  "footer": "This page is a hand-written checklist, not legal advice. We'd rather give you five things that work than a hundred that might."
 }

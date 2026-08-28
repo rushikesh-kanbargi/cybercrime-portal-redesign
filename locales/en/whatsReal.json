@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "What's real vs mocked: Cybercrime Report & Track",
+    "title": "What's real vs mocked: Cybercrime Report & Tracking",
     "description": "An honest, specific account of what this prototype actually does, what is simulated, and what we deliberately did not build."
   },
   "title": "What's real, and what's mocked",
@@ -20,7 +20,12 @@
     "otp": {
       "label": "OTP / mobile verification",
       "statusKey": "mocked",
-      "body": "No real SMS gateway exists. A fixed on-screen demo code is shown when you request an OTP, and a published fallback code works even if you never see the on-screen one. The <em>ordering</em>, capturing the report first and verifying identity afterwards, is the real design decision; the gateway behind it is simulated."
+      "body": "No real SMS gateway exists anywhere in this product. In the report and track flows a fresh code is generated per request and shown on screen, there is no fixed fallback that always works. The simulated Aadhaar sign-in is the single exception: it uses a fixed code, on purpose, so a live demo is repeatable, and that code is printed on the screen that asks for it. The <em>ordering</em>, capturing the report first and verifying identity afterwards, is the real design decision; the gateway behind it is simulated."
+    },
+    "aadhaarSignIn": {
+      "label": "Aadhaar sign-in",
+      "statusKey": "simulated",
+      "body": "The optional sign-in accepts Aadhaar-shaped numbers that this prototype invented and keeps in its own database. Nothing is sent to UIDAI or any government system, and no check against any real service happens at any point. Only numbers beginning 0000 are accepted, UIDAI never issues a number starting with 0, so a real Aadhaar number is rejected before it is looked up, logged or stored. The code is always 123456 and is shown on the screen that asks for it. No Aadhaar number is ever attached to a complaint, and you never need to sign in to report anything."
     },
     "sessions": {
       "label": "Sessions",
@@ -61,8 +66,8 @@
   "whyNotTitle": "Why Aadhaar, PAN, and DigiLocker are not here",
   "whyNotIntro": "This is a deliberate product decision, not an oversight, and not something we ran out of time for. We evaluated each one against a single question: <em>does it help freeze the money, route the case, or contact the victim faster?</em> If the answer was no, it does not belong in the product.",
   "aadhaar": {
-    "title": "Aadhaar: not collected, not integrated, not mocked",
-    "body": "Using real Aadhaar numbers is explicitly on this hackathon's prohibited list. Beyond that rule, a hackathon team has no lawful basis to authenticate against Aadhaar at all: UIDAI's own onboarding form requires a declared statutory basis (a government subsidy, benefit or service, or another Act of Parliament) that a prototype simply doesn't have, and the private-entity authentication route that once existed under Section 57 of the Aadhaar Act was removed by law in 2019, specifically to stop private parties from doing this. Even a fake \"Verify with Aadhaar\" button would be worse than omitting it: it would normalise the exact request scammers make to victims after they report a fraud."
+    "title": "Aadhaar: never in the reporting flow; simulated in the optional sign-in",
+    "body": "Using real Aadhaar numbers is explicitly on this hackathon's prohibited list. Beyond that rule, a hackathon team has no lawful basis to authenticate against Aadhaar at all: UIDAI's own onboarding form requires a declared statutory basis (a government subsidy, benefit or service, or another Act of Parliament) that a prototype simply doesn't have, and the private-entity authentication route that once existed under Section 57 of the Aadhaar Act was removed by law in 2019, specifically to stop private parties from doing this. So the reporting flow never asks for an Aadhaar number, and none is ever stored against a complaint, that is the part that matters, and it has not changed. What this build does have is an optional demo sign-in that borrows the Aadhaar-number shape to show a returning citizen being recognised rather than made to register again. It accepts only invented 0000-prefixed numbers, which UIDAI never issues, so it cannot accept anyone's real number and it authenticates against nothing but this prototype's own table of fake records."
   },
   "pan": {
     "title": "PAN: never asked, never stored",
@@ -81,8 +86,8 @@
       "body": "No sandbox exists and the official process refuses temporary test access. Any DigiLocker element in this product is a labelled design mock or it does not exist."
     },
     "aadhaar": {
-      "strong": "Aadhaar is excluded by both law and the hackathon's own rules.",
-      "body": "This is not a design preference."
+      "strong": "Real Aadhaar authentication is excluded by both law and the hackathon's own rules.",
+      "body": "This is not a design preference. The optional sign-in only ever handles invented 0000-prefixed numbers that no real Aadhaar number can match."
     },
     "dpdp": {
       "strong": "India's DPDP data-protection rules are not yet legally binding.",

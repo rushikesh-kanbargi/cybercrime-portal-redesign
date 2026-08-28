@@ -4,7 +4,7 @@ import { PhotoBanner } from "@/components/illustrations/photo-banner";
 import { Link } from "@/i18n/navigation";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { PageIcon } from "@/components/illustrations/page-icon";
-import { Phone, Globe, ShieldQuestion, Info } from "lucide-react";
+import { Phone, Globe, ShieldQuestion, Info, MessageSquare } from "lucide-react";
 
 // D54 (§33) — real, honest "Contact Us" page. The real portal lists actual
 // state grievance officer contacts, which we don't have and won't fabricate
@@ -17,6 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function ContactPage() {
   const t = await getTranslations("contact");
+  const tCommon = await getTranslations("common");
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 px-4 py-16">
@@ -44,6 +45,25 @@ export default async function ContactPage() {
       </a>
       <p className="-mt-4 text-sm text-muted-foreground">{t("helplineBody")}</p>
 
+      {/* Feedback first: the most useful thing a visitor can give us is what
+          confused them, and burying that under three disclaimers guarantees
+          nobody sends it. */}
+      <Card className="transition-[box-shadow,transform] duration-200 ease-[var(--ease-feedback)] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:shadow-md">
+        <CardHeader className="flex flex-row items-start gap-3 space-y-0">
+          <PageIcon icon={MessageSquare} tone="primary" />
+          <CardTitle className="text-base">{t("feedbackTitle")}</CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-3">
+          <p className="text-sm text-muted-foreground">{t("feedbackBody")}</p>
+          <ul className="flex list-disc flex-col gap-1.5 pl-5 text-sm text-muted-foreground">
+            <li>{t("feedbackList.one")}</li>
+            <li>{t("feedbackList.two")}</li>
+            <li>{t("feedbackList.three")}</li>
+            <li>{t("feedbackList.four")}</li>
+          </ul>
+        </CardContent>
+      </Card>
+
       <Card className="border-primary/20 bg-gradient-to-br from-primary/6 via-card to-card transition-[box-shadow,transform] duration-200 ease-[var(--ease-feedback)] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:shadow-md">
         <CardHeader className="flex flex-row items-start gap-3 space-y-0">
           <PageIcon icon={Globe} tone="primary" />
@@ -67,17 +87,14 @@ export default async function ContactPage() {
       <Card className="border-primary/20 bg-gradient-to-br from-primary/6 via-card to-card transition-[box-shadow,transform] duration-200 ease-[var(--ease-feedback)] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:shadow-md">
         <CardHeader className="flex flex-row items-start gap-3 space-y-0">
           <PageIcon icon={Info} tone="primary" />
-          <CardTitle className="text-base">{t("aboutThisPrototypeTitle")}</CardTitle>
+          <CardTitle className="text-base">{t("whoRunsTitle")}</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            {t.rich("aboutThisPrototypeBody", {
-              link: (chunks) => (
-                <Link href="/whats-real" className="underline underline-offset-2 hover:text-foreground">
-                  {chunks}
-                </Link>
-              ),
-            })}
+            {t("whoRunsBody")}{" "}
+            <Link href="/whats-real" className="underline underline-offset-2 hover:text-foreground">
+              {tCommon("nav.resourcesItems.whatsReal")}
+            </Link>
           </p>
         </CardContent>
       </Card>

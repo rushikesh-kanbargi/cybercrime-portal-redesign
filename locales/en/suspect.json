@@ -1,0 +1,51 @@
+{
+  "title": "Anything you know about who did it",
+  "description": "All of this is optional, skip anything you don't know. Even one detail here can matter: the account money was sent to is what a bank can actually act on.",
+  "fields": {
+    "suspectUpi": {
+      "label": "Their UPI ID",
+      "placeholder": "someone@bank",
+      "help": "The UPI ID the money went TO, not your own."
+    },
+    "suspectBankAccount": {
+      "label": "Their account number",
+      "placeholder": "Account the money went to",
+      "help": "The account that RECEIVED the money, if you can see it on your statement."
+    },
+    "suspectMobile": {
+      "label": "Their phone number",
+      "placeholder": "Number they called or messaged from",
+      "help": "Even if it is now switched off."
+    },
+    "suspectEmail": {
+      "label": "Their email address",
+      "placeholder": "name@example.com",
+      "help": "If they emailed you."
+    },
+    "suspectSocial": {
+      "label": "Their profile or username",
+      "placeholder": "@handle, or a profile name",
+      "help": "On WhatsApp, Instagram, Telegram, a dating site, wherever it happened."
+    },
+    "suspectUrl": {
+      "label": "Any link or website",
+      "placeholder": "https://…",
+      "help": "The link you clicked, the site you paid on, or the app's download page."
+    },
+    "platform": {
+      "label": "Where did this happen?",
+      "placeholder": "WhatsApp, Instagram, a loan app's name…",
+      "help": "The app, site or service it took place on."
+    },
+    "suspectName": {
+      "label": "The name they used",
+      "placeholder": "“Inspector Sharma from CBI”",
+      "help": "Whatever they called themselves. It is almost never their real name, and recording it still helps."
+    },
+    "suspectClaims": {
+      "label": "What did they say?",
+      "placeholder": "What they told you, what they threatened, what they asked you to do…",
+      "help": "In your own words. This is often the most useful part of a report."
+    }
+  }
+}

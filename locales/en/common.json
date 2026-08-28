@@ -1,5 +1,6 @@
 {
-  "siteName": "Cybercrime Report & Track",
+  "siteName": "CCRT",
+  "siteNameFull": "Cybercrime Report & Tracking",
   "prototypeBanner": {
     "label": "Prototype notice",
     "text": "Hackathon prototype, not an official government service.",
@@ -15,6 +16,7 @@
     "reportFraud": "Report a fraud",
     "track": "Track your complaint",
     "myComplaints": "My complaints",
+    "signIn": "Sign in",
     "contact": "Contact us",
     "opensNewTab": "Opens in a new tab, leaves this prototype",
     "resources": "Resources",
@@ -28,7 +30,7 @@
     },
     "registerComplaint": {
       "trigger": "Register a Complaint",
-      "women": "Women/Children Related Crime",
+      "women": "Harassment or Threats",
       "financial": "Financial Fraud",
       "other": "Other Cyber Crime"
     },
@@ -60,7 +62,9 @@
       "trainingResources": "Training Resources",
       "screenReader": "Screen Reader",
       "publicNotices": "RTI / CPGRAMS Public Notices"
-    }
+    },
+    "signOut": "Sign out",
+    "signingOut": "Signing out…"
   },
   "footer": {
     "tagline": "An independent hackathon prototype exploring a calmer, faster way to report cybercrime online.",

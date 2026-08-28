@@ -1,0 +1,33 @@
+{
+  "meta": {
+    "title": "Check a number, UPI ID or link",
+    "description": "Check whether a phone number, UPI ID, account or website has been reported by someone else on this prototype."
+  },
+  "title": "Check a number, UPI ID or link",
+  "subtitle": "Paste anything you were sent, a phone number, a UPI ID, an account number, or a link, and we'll tell you whether it has been reported here before.",
+  "label": "What do you want to check?",
+  "placeholder": "someone@bank, 98765 43210, or https://…",
+  "help": "We work out what kind of identifier it is. You don't need to choose.",
+  "submit": "Check it",
+  "checking": "Checking…",
+  "scopeTitle": "What this actually checks",
+  "scopeBody": "This searches only the reports filed on this prototype. It is not the national Suspect Repository and it is not connected to cybercrime.gov.in. A clean result here means nobody has reported it <strong>on this site</strong>, it does not mean the number or link is safe.",
+  "foundTitle": "Reported before",
+  "foundBody": "{count, plural, =1 {This has been reported once on this prototype.} other {This has been reported # times on this prototype.}}",
+  "foundAdvice": "Treat anything from this contact with real suspicion. If you have already paid, call 1930 now.",
+  "notFoundTitle": "Not reported here",
+  "notFoundBody": "Nobody has reported this on this prototype. That is not the same as safe, most fraud is reported late or never, so a clean result tells you very little.",
+  "notFoundAdvice": "Judge it on what it is asking you to do. Nobody legitimate needs your OTP, and no real officer arrests anyone over a video call.",
+  "typeLabel": "Read as",
+  "types": {
+    "mobile": "a phone number",
+    "email": "an email address",
+    "upi": "a UPI ID",
+    "bank_account": "an account number",
+    "url": "a link",
+    "app": "an app name",
+    "social": "a profile or handle",
+    "sms_header": "an SMS sender ID"
+  },
+  "reportInstead": "Something happened to you? File a report instead."
+}

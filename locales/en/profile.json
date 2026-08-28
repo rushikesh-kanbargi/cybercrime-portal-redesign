@@ -1,6 +1,6 @@
 {
   "meta": {
-    "title": "My complaints: Cybercrime Report & Track",
+    "title": "My complaints: Cybercrime Report & Tracking",
     "description": "The complaints linked to your account, and your saved details."
   },
   "heading": "My complaints",
@@ -15,12 +15,12 @@
   },
   "saved": {
     "title": "Your saved details",
-    "description": "State and district, saved so your next report can pre-fill them. Nothing else is stored here.",
-    "current": "State: {state} · District: {district}",
+    "description": "State, district and PIN code, saved so your next report can pre-fill them. Nothing else is stored here.",
+    "current": "State: {state} · District: {district} · PIN code: {pincode}",
     "none": "not set",
     "empty": "You haven't saved any details yet.",
     "deleteButton": "Delete my saved details",
-    "deleteConfirm": "This removes your saved state and district. Your filed complaints are not affected and stay exactly as they are.",
+    "deleteConfirm": "This removes your saved state, district and PIN code. Your filed complaints are not affected and stay exactly as they are.",
     "deleteConfirmButton": "Yes, delete",
     "deleting": "Deleting…",
     "cancel": "Cancel",

@@ -29,7 +29,56 @@
     "latestBadge": "Latest",
     "whatYouCanDoLabel": "What you can do now:",
     "notAnFirTitle": "This is not an FIR",
-    "heroImageAlt": "A simple black desk clock."
+    "heroImageAlt": "A simple black desk clock.",
+    "filedFrom": "Filed from {place}",
+    "stillNeededTitle": "Still needed from you",
+    "gaps": {
+      "transactionRef": "The transaction ID or UTR, without it the bank cannot locate the payment, so a hold cannot be requested.",
+      "suspect": "Anything about who did it, a UPI ID, an account number, a phone number or a link. The account the money went to is what a bank can actually act on.",
+      "evidence": "A screenshot or recording. Not required, but it is what turns a statement into evidence."
+    },
+    "completeTitle": "Your report is complete",
+    "completeBody": "Nothing is needed from you right now. You can still add information at any time if something changes.",
+    "handledByTitle": "Who is handling this",
+    "matchedOn": {
+      "pincode": "Matched to this unit by your PIN code.",
+      "district": "Matched by district, no unit covers your exact PIN code in this prototype.",
+      "state": "Matched by state only, so this is the closest unit rather than the exact one."
+    },
+    "officeCaveat": "This is an invented unit for the prototype, not a real police station, and nothing you filed here was sent to it. To reach a real one, call 1930.",
+    "noOfficeMatched": "We could not match your PIN code to a unit. Call 1930, they will route you to the right cyber cell.",
+    "whatYouReportedTitle": "What you reported",
+    "fields": {
+      "transactionRef": "Transaction ID / UTR",
+      "debitedFrom": "Debited from",
+      "platform": "Platform",
+      "evidence": "Files attached",
+      "evidenceCount": "{count, plural, =0 {None} =1 {1 file} other {# files}}"
+    },
+    "whoDidItTitle": "What you told us about who did it",
+    "suspectTypes": {
+      "mobile": "Phone",
+      "email": "Email",
+      "upi": "UPI ID",
+      "bank_account": "Account",
+      "url": "Link",
+      "app": "App",
+      "social": "Profile",
+      "sms_header": "SMS sender"
+    },
+    "additionsTitle": "Information you added later",
+    "additionsDescription": "Your original report is never changed. Anything you add appears here, in order.",
+    "addInformation": "Add information to this report",
+    "downloadAcknowledgement": "Print or save acknowledgement",
+    "documentsTitle": "Documents on your case",
+    "documentsDescription": "Paperwork the officer has filed. You can print or save any of these.",
+    "documentKinds": {
+      "fir": "FIR",
+      "bank_request": "Bank hold request",
+      "closure_report": "Closure report"
+    },
+    "documentIssued": "Issued {date}",
+    "viewFir": "View and print the FIR copy"
   },
   "status": {
     "RECEIVED": {
@@ -72,5 +121,67 @@
     "ONLINE_FINANCIAL_FRAUD": "Online Financial Fraud",
     "HARASSMENT": "Threats, Harassment, or Blackmail",
     "ACCOUNT_COMPROMISE": "Hacked Account"
+  },
+  "add": {
+    "title": "Add information to your report",
+    "description": "Report {publicId}. Anything you add is attached to it and is visible to whoever handles the case.",
+    "appendOnlyTitle": "Your original report will not change",
+    "appendOnlyBody": "What you first wrote stays exactly as it is, that is what makes it usable as a statement. Anything you write here is added underneath it, with the date.",
+    "label": "What would you like to add?",
+    "placeholder": "For example: they called me again from a new number, or I found the transaction reference on my bank statement.",
+    "help": "There is no minimum length. Write it however it comes.",
+    "submit": "Add to my report",
+    "adding": "Adding…",
+    "cancel": "Back to my report",
+    "doneTitle": "Added to your report",
+    "doneBody": "It now appears under your original report, with today's date.",
+    "backToCase": "Back to my report",
+    "errors": {
+      "NOT_VERIFIED": "Your access to this report has expired. Open it again from /track and verify with the code.",
+      "NOT_FOUND": "We couldn't find that report.",
+      "EMPTY": "Write something first."
+    }
+  },
+  "print": {
+    "title": "Cyber crime report acknowledgement",
+    "subtitle": "Keep this. Your bank will usually ask for it.",
+    "reportNumber": "Report number",
+    "filedOn": "Filed on",
+    "status": "Current status",
+    "amount": "Amount reported lost",
+    "transactionRef": "Transaction ID / UTR",
+    "debitedFrom": "Debited from",
+    "filedFrom": "Filed from",
+    "handledBy": "Handled by",
+    "whatWasReported": "What was reported",
+    "printButton": "Print or save as PDF",
+    "backToCase": "Back to my report",
+    "loading": "Preparing your acknowledgement…",
+    "unavailableTitle": "We can't show this yet",
+    "unavailableBody": "Open the report and verify it with your code first.",
+    "disclaimerTitle": "This is a prototype acknowledgement",
+    "disclaimerBody": "This document was produced by an independent hackathon prototype. It is not an official NCRP acknowledgement, this report number is not a real NCRP complaint number, and nothing in it was filed with cybercrime.gov.in, any bank, or any police unit. To file a real complaint, use cybercrime.gov.in or call 1930."
+  },
+  "fir": {
+    "title": "First Information Report, copy",
+    "issuedOn": "Registered on {date}",
+    "linkedReport": "Linked report number",
+    "reportFiledOn": "Report filed on",
+    "amount": "Amount reported lost",
+    "transactionRef": "Transaction ID / UTR",
+    "registeredAt": "Registered at",
+    "investigatingOfficer": "Investigating officer",
+    "sections": "Sections and remarks",
+    "accusedIdentifiers": "Identifiers reported for the accused",
+    "complainantStatement": "Complainant's statement",
+    "printButton": "Print or save as PDF",
+    "backToCase": "Back to my report",
+    "loading": "Preparing your FIR copy…",
+    "unavailableTitle": "We can't show this yet",
+    "unavailableBody": "Open the report and verify it with your code first.",
+    "noFirTitle": "No FIR has been registered on this report",
+    "noFirBody": "An FIR is registered by the police when a case is taken forward. If one is registered on your report, a copy will appear here and on your case page.",
+    "disclaimerTitle": "This is a prototype document, not a real FIR",
+    "disclaimerBody": "This copy was produced by an independent hackathon prototype. No FIR has been registered with any police station, this number is not a real FIR number, and nothing here was filed with cybercrime.gov.in or any police system. To register a real FIR, go to a police station, or call 1930."
   }
 }

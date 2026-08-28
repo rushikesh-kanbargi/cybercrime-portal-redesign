@@ -1,11 +1,17 @@
 {
   "heroEyebrow": "Independent hackathon prototype, not a government site",
-  "title": "Something happened to you online.",
-  "subtitle": "Tell us what happened, in your own words. No account, no ID upload, no forms: just a calm way to get it reported.",
+  "title": "The sooner you report, the more can be done.",
+  "subtitle": "Tell us what happened, in your own words. No ID upload, no forms: sign in once and we fill in what we already know.",
   "trust": [
-    { "label": "No login needed to start" },
-    { "label": "Report in under 90 seconds" },
-    { "label": "Nothing you submit is sold or shared" }
+    {
+      "label": "Signed in once, then straight to it"
+    },
+    {
+      "label": "Report in under 90 seconds"
+    },
+    {
+      "label": "Nothing you submit is sold or shared"
+    }
   ],
   "hero": {
     "reportLabel": "Report",
@@ -14,27 +20,49 @@
   },
   "categoryPicker": {
     "title": "What happened to you?",
-    "subtitle": "Pick the closest match. We'll get you to the right place either way.",
+    "subtitle": "Pick the closest match, the examples show what's inside each one. We'll get you to the right place either way.",
     "availableBadge": "Available now",
     "notBuiltBadge": "Not built in this prototype yet",
     "items": [
       {
         "title": "Money was taken from my account",
-        "body": "Report it in under 90 seconds. We'll ask for the essentials only.",
+        "body": "Any fraud where money left you, however it started.",
         "cta": "Start now",
-        "available": true
+        "available": true,
+        "examples": [
+          "UPI, net banking or card fraud",
+          "A KYC, OTP or “account will be blocked” call",
+          "Fake investment or trading app",
+          "Fake police, CBI or “digital arrest” call",
+          "Job, task or work-from-home scam",
+          "Matrimonial or romance fraud"
+        ]
       },
       {
         "title": "Threats, harassment, or blackmail",
-        "body": "Someone is threatening you, harassing you, or trying to blackmail you online.",
+        "body": "Someone is threatening, harassing or pressuring you online.",
         "cta": "Start now",
-        "available": true
+        "available": true,
+        "examples": [
+          "Blackmail over photos or videos",
+          "Threats or intimidation",
+          "Stalking, or someone who won't stop",
+          "A fake profile pretending to be you",
+          "Loan app agents contacting your family or office"
+        ]
       },
       {
-        "title": "Hacked account, or something else happened",
-        "body": "Your account was taken over, or what happened doesn't fit the categories above.",
+        "title": "Account hacked, identity misused, or something else",
+        "body": "Your account, device or identity has been taken over or used without you.",
         "cta": "Start now",
-        "available": true
+        "available": true,
+        "examples": [
+          "Social media or email account hacked",
+          "Phone or laptop compromised",
+          "Files locked, or data leaked (ransomware)",
+          "Your Aadhaar, PAN or documents used to take a loan, card or SIM",
+          "Anything that doesn't fit the two above"
+        ]
       }
     ]
   },
@@ -65,8 +93,8 @@
     "title": "Why this is safe to use right now",
     "items": [
       {
-        "title": "No login needed to start",
-        "body": "Start typing immediately. Creating an account is optional, only if you want to come back and track later."
+        "title": "Signed in once, then straight to it",
+        "body": "One sign-in with the number you already have. After that your details fill themselves in, every time."
       },
       {
         "title": "Report in under 90 seconds",

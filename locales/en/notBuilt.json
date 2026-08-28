@@ -2,39 +2,9 @@
   "badge": "Not built in this prototype yet",
   "callNow": "Call 1930 now",
   "categories": {
-    "check-suspect": {
-      "meta": {
-        "title": "Check a suspect: Cybercrime Report & Track",
-        "description": "This category is not built in this prototype. Here's what it is, why it isn't built, and what to actually do right now."
-      },
-      "title": "Check a suspect (number, email, website, or app)",
-      "subtitle": "You want to check whether a phone number, email address, website, or app has already been reported as a suspect before you trust it.",
-      "whatThisIsTitle": "What this category is",
-      "whatThisIsBody": "On the real national portal, this is the Suspect Repository: a lookup where you can check a mobile number, email address, website, or app name against entries built from prior citizen complaints, before you trust it with money or personal information.",
-      "notBuiltTitle": "This isn't built here",
-      "notBuiltBody": "There is no suspect-lookup database on this prototype. Building one honestly would need access to the real repository of reported suspects, which we don't have and won't fake with made-up entries. Only one journey is finished end to end: money taken from a bank account or UPI.",
-      "whyTitle": "Why",
-      "whyBody": "This is a three day hackathon build. Starting five reporting flows and finishing none of them would have been worse than finishing one properly, so we built the financial fraud journey completely, from writing your story to getting a trackable Complaint ID, and named everything else we didn't get to instead of hiding it. See the full list of <link>what's real and what's mocked</link>.",
-      "whatToDoNowTitle": "What to do right now",
-      "steps": [
-        {
-          "title": "Use the real Suspect Repository",
-          "body": "cybercrime.gov.in has a live Suspect Repository where you can check a mobile number, email, website, or app before you trust it."
-        },
-        {
-          "title": "Verify payment details independently",
-          "body": "Before paying anyone, confirm their identity through a channel you already trust, your bank's official app or a company's official website, not a link or number they gave you."
-        },
-        {
-          "title": "Call 1930 if you're mid-scam",
-          "body": "If you're in the middle of a suspicious call or payment request right now, call before you send anything else."
-        }
-      ],
-      "moneyNote": "If a suspect you were checking already took money from you, our one finished journey covers that part."
-    },
     "report-suspect": {
       "meta": {
-        "title": "Report a suspect: Cybercrime Report & Track",
+        "title": "Report a suspect: Cybercrime Report & Tracking",
         "description": "This category is not built in this prototype. Here's what it is, why it isn't built, and what to actually do right now."
       },
       "title": "Report a suspect to I4C, or report abuse to a social platform",
@@ -44,7 +14,7 @@
       "notBuiltTitle": "This isn't built here",
       "notBuiltBody": "Neither of these is built on this prototype. Reporting a suspect to I4C needs access to the real repository we don't have; reporting abuse to a platform depends on that platform's own systems, not ours.",
       "whyTitle": "Why",
-      "whyBody": "This is a three day hackathon build. Starting five reporting flows and finishing none of them would have been worse than finishing one properly, so we built the financial fraud journey completely, from writing your story to getting a trackable Complaint ID, and named everything else we didn't get to instead of hiding it. See the full list of <link>what's real and what's mocked</link>.",
+      "whyBody": "The idea is simple: you should be able to check a thing before you trust it, and report a thing after you don't. What is missing here is the data behind it, the real repository is built from complaints across the whole country, and we have no access to it. Rather than invent entries, we built the parts we could stand behind and named the rest. See <link>what's real and what's mocked</link>.",
       "whatToDoNowTitle": "What to do right now",
       "steps": [
         {
@@ -64,7 +34,7 @@
     },
     "volunteer-account": {
       "meta": {
-        "title": "Volunteer registration, login, and terms: Cybercrime Report & Track",
+        "title": "Volunteer registration, login, and terms: Cybercrime Report & Tracking",
         "description": "This category is not built in this prototype. Here's what it is, why it isn't built, and what to actually do right now."
       },
       "title": "Cyber volunteer registration, login, and terms",
@@ -74,7 +44,7 @@
       "notBuiltTitle": "This isn't built here",
       "notBuiltBody": "Registration, login, and a real terms-of-service document all need an account and verification system this prototype doesn't build. Inventing a fake login here would be exactly the fake interactivity this project refuses to ship.",
       "whyTitle": "Why",
-      "whyBody": "This is a three day hackathon build. Starting five reporting flows and finishing none of them would have been worse than finishing one properly, so we built the financial fraud journey completely, from writing your story to getting a trackable Complaint ID, and named everything else we didn't get to instead of hiding it. See the full list of <link>what's real and what's mocked</link>.",
+      "whyBody": "The idea is simple: you should be able to check a thing before you trust it, and report a thing after you don't. What is missing here is the data behind it, the real repository is built from complaints across the whole country, and we have no access to it. Rather than invent entries, we built the parts we could stand behind and named the rest. See <link>what's real and what's mocked</link>.",
       "whatToDoNowTitle": "What to do right now",
       "steps": [
         {
@@ -94,7 +64,7 @@
     },
     "media-gallery": {
       "meta": {
-        "title": "Photo, video, and radio gallery: Cybercrime Report & Track",
+        "title": "Photo, video, and radio gallery: Cybercrime Report & Tracking",
         "description": "This category is not built in this prototype. Here's what it is, why it isn't built, and what to actually do right now."
       },
       "title": "Photo, video, and radio gallery",
@@ -104,7 +74,7 @@
       "notBuiltTitle": "This isn't built here",
       "notBuiltBody": "We have no real media assets from that programme, and won't fill this page with stock photos or fabricated videos dressed up as official content. That would be dishonest, not a shortcut.",
       "whyTitle": "Why",
-      "whyBody": "This is a three day hackathon build. Starting five reporting flows and finishing none of them would have been worse than finishing one properly, so we built the financial fraud journey completely, from writing your story to getting a trackable Complaint ID, and named everything else we didn't get to instead of hiding it. See the full list of <link>what's real and what's mocked</link>.",
+      "whyBody": "The idea is simple: you should be able to check a thing before you trust it, and report a thing after you don't. What is missing here is the data behind it, the real repository is built from complaints across the whole country, and we have no access to it. Rather than invent entries, we built the parts we could stand behind and named the rest. See <link>what's real and what's mocked</link>.",
       "whatToDoNowTitle": "What to do right now",
       "steps": [
         {
@@ -120,7 +90,7 @@
     },
     "daily-digest": {
       "meta": {
-        "title": "Daily digest: Cybercrime Report & Track",
+        "title": "Daily digest: Cybercrime Report & Tracking",
         "description": "This category is not built in this prototype. Here's what it is, why it isn't built, and what to actually do right now."
       },
       "title": "Daily digest",
@@ -130,7 +100,7 @@
       "notBuiltTitle": "This isn't built here",
       "notBuiltBody": "Building this honestly would mean either connecting to a real, live incident feed we don't have, or inventing today's numbers ourselves. We refuse to do the second one, so there is no digest here, not a fake one with made-up figures.",
       "whyTitle": "Why",
-      "whyBody": "This is a three day hackathon build. Starting five reporting flows and finishing none of them would have been worse than finishing one properly, so we built the financial fraud journey completely, from writing your story to getting a trackable Complaint ID, and named everything else we didn't get to instead of hiding it. See the full list of <link>what's real and what's mocked</link>.",
+      "whyBody": "The idea is simple: you should be able to check a thing before you trust it, and report a thing after you don't. What is missing here is the data behind it, the real repository is built from complaints across the whole country, and we have no access to it. Rather than invent entries, we built the parts we could stand behind and named the rest. See <link>what's real and what's mocked</link>.",
       "whatToDoNowTitle": "What to do right now",
       "steps": [
         {
@@ -146,7 +116,7 @@
     },
     "training-resources": {
       "meta": {
-        "title": "Training resources: Cybercrime Report & Track",
+        "title": "Training resources: Cybercrime Report & Tracking",
         "description": "This category is not built in this prototype. Here's what it is, why it isn't built, and what to actually do right now."
       },
       "title": "Training resources",
@@ -156,7 +126,7 @@
       "notBuiltTitle": "This isn't built here",
       "notBuiltBody": "We're a citizen-facing hackathon prototype with no institutional training content to host honestly, and no standing to author it.",
       "whyTitle": "Why",
-      "whyBody": "This is a three day hackathon build. Starting five reporting flows and finishing none of them would have been worse than finishing one properly, so we built the financial fraud journey completely, from writing your story to getting a trackable Complaint ID, and named everything else we didn't get to instead of hiding it. See the full list of <link>what's real and what's mocked</link>.",
+      "whyBody": "The idea is simple: you should be able to check a thing before you trust it, and report a thing after you don't. What is missing here is the data behind it, the real repository is built from complaints across the whole country, and we have no access to it. Rather than invent entries, we built the parts we could stand behind and named the rest. See <link>what's real and what's mocked</link>.",
       "whatToDoNowTitle": "What to do right now",
       "steps": [
         {
@@ -172,7 +142,7 @@
     },
     "screen-reader": {
       "meta": {
-        "title": "Screen reader tool: Cybercrime Report & Track",
+        "title": "Screen reader tool: Cybercrime Report & Tracking",
         "description": "This category is not built in this prototype. Here's what it is, why it isn't built, and what to actually do right now."
       },
       "title": "Dedicated screen reader tool",
@@ -182,7 +152,7 @@
       "notBuiltTitle": "This isn't built here",
       "notBuiltBody": "We didn't build a separate screen-reader tool. Instead, every page here is built with semantic HTML, labelled controls, and visible focus states, so your own screen reader, NVDA, JAWS, VoiceOver, or TalkBack, already works properly, without us needing to bundle one.",
       "whyTitle": "Why",
-      "whyBody": "This is a three day hackathon build. Starting five reporting flows and finishing none of them would have been worse than finishing one properly, so we built the financial fraud journey completely, from writing your story to getting a trackable Complaint ID, and named everything else we didn't get to instead of hiding it. See the full list of <link>what's real and what's mocked</link>.",
+      "whyBody": "The idea is simple: you should be able to check a thing before you trust it, and report a thing after you don't. What is missing here is the data behind it, the real repository is built from complaints across the whole country, and we have no access to it. Rather than invent entries, we built the parts we could stand behind and named the rest. See <link>what's real and what's mocked</link>.",
       "whatToDoNowTitle": "What to do right now",
       "steps": [
         {
@@ -198,7 +168,7 @@
     },
     "public-notices": {
       "meta": {
-        "title": "RTI and CPGRAMS public notices: Cybercrime Report & Track",
+        "title": "RTI and CPGRAMS public notices: Cybercrime Report & Tracking",
         "description": "This category is not built in this prototype. Here's what it is, why it isn't built, and what to actually do right now."
       },
       "title": "RTI and CPGRAMS public notices",
@@ -208,7 +178,7 @@
       "notBuiltTitle": "This isn't built here",
       "notBuiltBody": "We're an independent hackathon prototype, not a government department. We have no real notices to publish, so we won't invent any to fill this space.",
       "whyTitle": "Why",
-      "whyBody": "This is a three day hackathon build. Starting five reporting flows and finishing none of them would have been worse than finishing one properly, so we built the financial fraud journey completely, from writing your story to getting a trackable Complaint ID, and named everything else we didn't get to instead of hiding it. See the full list of <link>what's real and what's mocked</link>.",
+      "whyBody": "The idea is simple: you should be able to check a thing before you trust it, and report a thing after you don't. What is missing here is the data behind it, the real repository is built from complaints across the whole country, and we have no access to it. Rather than invent entries, we built the parts we could stand behind and named the rest. See <link>what's real and what's mocked</link>.",
       "whatToDoNowTitle": "What to do right now",
       "steps": [
         {

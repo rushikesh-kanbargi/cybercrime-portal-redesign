@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "Threats, Harassment, or Blackmail: Cybercrime Report & Track",
-    "description": "Report online harassment, threats, or blackmail in a few plain-language steps. No login required."
+    "title": "Threats, Harassment, or Blackmail: Cybercrime Report & Tracking",
+    "description": "Report online harassment, threats, or blackmail in a few plain-language steps."
   },
   "progress": {
     "lastQuestion": "Last question",
@@ -96,7 +96,7 @@
     "fileTooLarge": "“{name}” is too large (max {maxSize} per file).",
     "unsupportedType": "“{name}” isn't an image or PDF. You can skip evidence and submit without it.",
     "scanNoticeTitle": "About the files you attach",
-    "scanNoticeBody": "This is a hackathon prototype: files are checked and marked “simulated clean”, not scanned by a real anti-malware engine. Don't attach anything you wouldn't want stored on a demo system.",
+    "scanNoticeBody": "Your files are checked for type and size, then marked “simulated clean”. No antivirus actually runs here, in a working system, this is exactly where malware scanning would sit, before a file ever reaches an officer.",
     "back": "Back",
     "skip": "Skip",
     "continue": "Continue",
@@ -136,7 +136,7 @@
     "download": "Download",
     "smsPreviewLabel": "Here's the SMS we'd send you (simulated, nothing is actually sent)",
     "evidenceUploading": "Uploading your evidence…",
-    "evidenceDone": "Evidence attached and marked “simulated clean”: not a real virus scan.",
+    "evidenceDone": "Your files are checked for type and size, then marked “simulated clean”. No antivirus actually runs here, in a working system, this is exactly where malware scanning would sit, before a file ever reaches an officer.",
     "evidencePartial": "Some evidence files were attached; others couldn't be saved (unsupported type or too large). Your report itself was still filed.",
     "evidenceError": "Evidence couldn't be attached, but your report was still filed successfully.",
     "checklistTitle": "Do these things now",
@@ -152,7 +152,7 @@
     "updatesSkipped": "Skipped: your Complaint ID above still works on its own.",
     "mobileLabel": "Mobile number",
     "demoCodeTitle": "Demo code: {code}",
-    "demoCodeBody": "This is a hackathon prototype; no real SMS is sent. In production this code would arrive by text.",
+    "demoCodeBody": "No real SMS is sent. The code is shown on your screen instead. In a working system it would arrive by text, and the rest of this step would be identical.",
     "otpLabel": "Enter the code",
     "sendCode": "Send code",
     "sendingCode": "Sending…",
@@ -163,7 +163,9 @@
     "otpGenericError": "Something went wrong confirming that code. Please try again.",
     "backHome": "Back to home",
     "downloadFilename": "complaint-{publicId}.txt",
-    "downloadFileBody": "Cybercrime Report: Confirmation\n\nComplaint ID: {publicId}\n\nThis is NOT an FIR.\nKeep this ID safe; you will need it for any follow-up.\n"
+    "downloadFileBody": "Cybercrime Report: Confirmation\n\nComplaint ID: {publicId}\n\nThis is NOT an FIR.\nKeep this ID safe; you will need it for any follow-up.\n",
+    "officeTitle": "If you want to follow up in person",
+    "officeCaveat": "This unit is invented for the prototype, and nothing you filed here was sent to it. To reach a real cyber cell, call 1930."
   },
   "genericSubmitError": "Something went wrong submitting your report. Please try again.",
   "smsTemplate": "Your cybercrime report is filed. Complaint ID: {publicId}. This is NOT an FIR. Save this ID; you will need it for any follow-up.",
@@ -211,14 +213,16 @@
       "THREATS_INTIMIDATION": "Threats or intimidation",
       "STALKING": "Stalking",
       "IMPERSONATION": "Impersonation (fake profile)",
-      "OTHER_HARASSMENT": "Other harassment"
+      "OTHER_HARASSMENT": "Other harassment",
+      "LOAN_APP_HARASSMENT": "Loan App Harassment"
     },
     "reasons": {
       "sextortion": "you mentioned photos, video, or being asked to pay to stop something being shared",
       "threats": "you mentioned a threat",
       "stalking": "you mentioned being followed or watched",
       "impersonation": "you mentioned a fake account or someone pretending to be you",
-      "noPatternDetected": "you can pick the closest match"
+      "noPatternDetected": "you can pick the closest match",
+      "loanApp": "We think this because you mentioned a loan app, recovery agents, or messages sent to your contacts. Whatever you owe, this is illegal, and you are the victim here."
     }
   }
 }

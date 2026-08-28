@@ -27,6 +27,9 @@ const NAMESPACES = [
   "advisories",
   "cyberAwareness",
   "contact",
+  "suspect",
+  "check",
+  "submitConfirm",
 ] as const;
 
 export default getRequestConfig(async ({ requestLocale }) => {

@@ -142,6 +142,13 @@ export default async function Home() {
               body: string;
               cta: string;
               available: boolean;
+              // The kinds of case that live inside this tile. Three tiles
+              // alone made a victim guess — identity theft is not obviously
+              // "money taken from my account" and not obviously "hacked", so
+              // someone in that situation had nothing to recognise. Listing
+              // what is inside turns a classification problem into a
+              // recognition one, without adding a dropdown tree.
+              examples: string[];
             }>
           ).map((item, i) => {
             const Icon = categoryIcons[i];
@@ -167,6 +174,14 @@ export default async function Home() {
                     </div>
                     <h3 className="text-lg font-medium text-foreground">{item.title}</h3>
                     <p className="text-sm text-muted-foreground">{item.body}</p>
+                    <ul className="flex flex-col gap-1 text-xs text-muted-foreground">
+                      {item.examples.map((example) => (
+                        <li key={example} className="flex gap-1.5">
+                          <span aria-hidden="true">·</span>
+                          <span>{example}</span>
+                        </li>
+                      ))}
+                    </ul>
                     {item.available ? (
                       <Button asChild size="sm" className="group/button mt-1 w-fit">
                         <span>

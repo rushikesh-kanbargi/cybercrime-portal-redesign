@@ -1,17 +1,27 @@
 {
   "meta": {
-    "title": "Contact Us: Cybercrime Report & Track",
-    "description": "How to get real help for a cybercrime, and what this independent prototype can and can't do."
+    "title": "Contact Us: Cybercrime Report & Tracking",
+    "description": "Who runs this site, how to send feedback, and where the real help is."
   },
   "title": "Contact Us",
-  "subtitle": "For anything time-sensitive or real, use the channels below, not this prototype.",
+  "subtitle": "Who runs this, how to tell us it's wrong, and where the real help lives.",
   "heroImageAlt": "A person holding a smartphone with a security app open, next to a laptop.",
-  "helplineTitle": "For an actual cybercrime, right now",
-  "helplineBody": "Call 1930, India's national cybercrime helpline. It's the fastest real channel for financial fraud, harassment, hacked accounts, or anything else covered on this site.",
-  "portalTitle": "The real national portal",
-  "portalBody": "cybercrime.gov.in is the official government portal operated by I4C under the Ministry of Home Affairs. It is the authoritative source for filing an official complaint and for every category this prototype hasn't built.",
+  "helplineTitle": "Need help right now?",
+  "helplineBody": "Call 1930, India's national cybercrime helpline. It is answered in your own language, it works even if you never open a website, and for money that has just left your account it is the fastest thing you can do.",
+  "portalTitle": "The official portal",
+  "portalBody": "cybercrime.gov.in is run by I4C under the Ministry of Home Affairs. It is where an official complaint is registered, and it covers every category this site doesn't.",
   "noDirectoryTitle": "Why there's no officer directory here",
-  "noDirectoryBody": "The real portal lists contact details for state-level grievance and nodal officers. We don't have that data, it changes over time and by jurisdiction, and inventing names, numbers, or emails would be exactly the kind of fabricated content this project refuses to ship. If you need a specific state officer, that directory lives on the real portal, not here.",
+  "noDirectoryBody": "The real portal lists contact details for state-level grievance and nodal officers. We don't have that data, it changes by jurisdiction and over time, and inventing names, numbers or emails would be exactly the kind of fabricated content this project refuses to ship. That directory lives on the real portal.",
   "aboutThisPrototypeTitle": "About this prototype",
-  "aboutThisPrototypeBody": "This is an independent hackathon build, not a government service and not affiliated with I4C or the Ministry of Home Affairs. There is no support team behind this page to email or call. See <link>what's real vs mocked</link> for the full, honest breakdown of what this prototype actually does."
+  "aboutThisPrototypeBody": "This is an independent hackathon build, not a government service and not affiliated with I4C or the Ministry of Home Affairs. There is no support team behind this page to email or call. See <link>what's real vs mocked</link> for the full, honest breakdown of what this prototype actually does.",
+  "feedbackTitle": "Tell us what's wrong with this",
+  "feedbackBody": "Something confusing, a word that made you hesitate, a step you couldn't finish, a screen that didn't work on your phone, that is the most useful thing you can send us. Design feedback from someone who has actually been through this is worth more than any amount of guessing on our side.",
+  "feedbackList": {
+    "one": "Copy that was unclear, or asked you something you didn't want to answer",
+    "two": "Anything that felt like it was blaming you",
+    "three": "A step where you got stuck, or gave up",
+    "four": "Anything that didn't work in Hindi, on a small screen, or on a slow connection"
+  },
+  "whoRunsTitle": "Who runs this site",
+  "whoRunsBody": "An independent two-person team, built for the Build What Moves India challenge. No government body, department or agency is involved in it, endorses it, or is responsible for it. There is no organisation behind this beyond the people who wrote it."
 }
