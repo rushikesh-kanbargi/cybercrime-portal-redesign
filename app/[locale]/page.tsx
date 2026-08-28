@@ -151,7 +151,7 @@ export default async function Home() {
           others — this is one intent picker, not "the flagship + two
           afterthoughts" (D25 still holds: real links only, never a fake
           flow or a disabled button). */}
-      <div className="mx-auto w-full max-w-4xl px-4">
+      <div className="mx-auto w-full max-w-6xl px-4">
         <div className="flex flex-col gap-1 text-center sm:text-left">
           <h2 className="text-2xl font-semibold tracking-tight text-foreground">
             {t("categoryPicker.title")}
