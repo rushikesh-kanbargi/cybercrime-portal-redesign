@@ -31,7 +31,7 @@ import { SignOutButton } from "./sign-out-button";
 // The desktop bar uses horizontal scroll as a safety net at narrow desktop
 // widths rather than wrapping or truncating labels.
 const EXTERNAL_LINK_CLASSES =
-  "flex items-center gap-1.5 rounded-md px-2.5 py-2 text-sm text-foreground outline-none select-none focus:bg-muted focus:text-foreground";
+  "flex items-center gap-1.5 rounded-md px-2 py-2 text-sm text-foreground outline-none select-none focus:bg-muted focus:text-foreground";
 
 export async function SiteHeader() {
   const t = await getTranslations("common");
@@ -45,7 +45,7 @@ export async function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <ScrollProgress />
-      <div className="mx-auto flex max-w-[1500px] items-center justify-between gap-2 px-4 py-3">
+      <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-2 px-4 py-3">
         <Link
           href="/"
           className="flex shrink-0 items-center gap-2.5 text-foreground"
@@ -76,7 +76,14 @@ export async function SiteHeader() {
           // overflow there; below that, every real screen (MacBooks included,
           // ~1280-1728px effective) gets the mobile hamburger instead of a
           // cramped, clipping bar.
-          className="hidden min-w-0 flex-1 items-center justify-center gap-1 overflow-x-auto py-1 text-sm [-ms-overflow-style:none] [scrollbar-width:none] min-[1280px]:flex [&::-webkit-scrollbar]:hidden"
+          // `safe center`, not plain `center`: centering an overflowing flex
+          // container clips equal amounts off BOTH ends (e.g. signed-in users
+          // get an extra "My complaints" item + a wider "Sign out" button,
+          // pushing total width past what fits at realistic desktop widths).
+          // `safe` falls back to start-alignment once content overflows, so
+          // the leftmost item stays intact and overflow-x-auto's scroll
+          // remains reachable instead of silently truncating both edges.
+          className="hidden min-w-0 flex-1 items-center justify-[safe_center] gap-0.5 overflow-x-auto py-1 text-sm [-ms-overflow-style:none] [scrollbar-width:none] min-[1280px]:flex [&::-webkit-scrollbar]:hidden"
         >
           {/* D54 — the persistent logo already links home; the real
               site's separate flat "Home" item is dropped here so six
@@ -88,7 +95,7 @@ export async function SiteHeader() {
             <DropdownMenuTrigger asChild>
               <button
                 type="button"
-                className="inline-flex shrink-0 items-center gap-0.5 rounded-md px-2.5 py-2 font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-muted hover:text-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground"
+                className="inline-flex shrink-0 items-center gap-0.5 rounded-md px-2 py-2 font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-muted hover:text-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground"
               >
                 {t("nav.registerComplaint.trigger")}
                 <ChevronDown className="size-3.5" aria-hidden="true" />
@@ -109,7 +116,7 @@ export async function SiteHeader() {
 
           <Link
             href="/track"
-            className="shrink-0 rounded-md px-2.5 py-2 font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            className="shrink-0 rounded-md px-2 py-2 font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           >
             {t("nav.track")}
           </Link>
@@ -119,7 +126,7 @@ export async function SiteHeader() {
             <DropdownMenuTrigger asChild>
               <button
                 type="button"
-                className="inline-flex shrink-0 items-center gap-0.5 rounded-md px-2.5 py-2 font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-muted hover:text-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground"
+                className="inline-flex shrink-0 items-center gap-0.5 rounded-md px-2 py-2 font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-muted hover:text-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground"
               >
                 {t("nav.reportCheckSuspect.trigger")}
                 <ChevronDown className="size-3.5" aria-hidden="true" />
@@ -174,7 +181,7 @@ export async function SiteHeader() {
             <DropdownMenuTrigger asChild>
               <button
                 type="button"
-                className="inline-flex shrink-0 items-center gap-0.5 rounded-md px-2.5 py-2 font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-muted hover:text-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground"
+                className="inline-flex shrink-0 items-center gap-0.5 rounded-md px-2 py-2 font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-muted hover:text-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground"
               >
                 {t("nav.cyberVolunteersNav.trigger")}
                 <ChevronDown className="size-3.5" aria-hidden="true" />
@@ -205,7 +212,7 @@ export async function SiteHeader() {
             <DropdownMenuTrigger asChild>
               <button
                 type="button"
-                className="inline-flex shrink-0 items-center gap-0.5 rounded-md px-2.5 py-2 font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-muted hover:text-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground"
+                className="inline-flex shrink-0 items-center gap-0.5 rounded-md px-2 py-2 font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-muted hover:text-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground"
               >
                 {t("nav.resources")}
                 <ChevronDown className="size-3.5" aria-hidden="true" />
@@ -259,29 +266,29 @@ export async function SiteHeader() {
 
           <Link
             href="/contact"
-            className="shrink-0 rounded-md px-2.5 py-2 font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            className="shrink-0 rounded-md px-2 py-2 font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           >
             {t("nav.contact")}
           </Link>
-
-          {user && (
-            <Link
-              href="/profile"
-              className="shrink-0 rounded-md px-2.5 py-2 font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-            >
-              {t("nav.myComplaints")}
-            </Link>
-          )}
         </nav>
 
         <div className="flex shrink-0 items-center gap-2 py-1 sm:gap-3">
           {/* py-1 matches the nav's own py-1 above, so both blocks stay the
               same height and centered flush with each other. Sign in/out
-              lives here (not in the crowded inline nav) as a real button,
-              matching Call 1930's shape but a distinct secondary fill —
-              icon-only (accessible name still present, sr-only) to keep the
-              full nav fitting from min-[1280px] up rather than a much
-              wider, MacBook-hostile threshold. */}
+              (and, when signed in, "My complaints") live here rather than in
+              the scrollable nav: that nav's content already sits right at the
+              edge of what fits in the max-w-[1600px] row at min-[1280px], and
+              a signed-in citizen's extra item was pushing "Contact us" and
+              itself past the visible edge (never widen this row to fit —
+              trim what's asking for space instead). */}
+          {user && (
+            <Link
+              href="/profile"
+              className="hidden min-h-11 shrink-0 items-center rounded-md px-2 py-2 text-sm font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-muted hover:text-foreground min-[1280px]:inline-flex"
+            >
+              {t("nav.myComplaints")}
+            </Link>
+          )}
           {user ? (
             <SignOutButton className="hidden min-h-11 shrink-0 items-center gap-1.5 rounded-md border border-input bg-secondary/60 px-3 py-2 text-sm font-medium whitespace-nowrap text-secondary-foreground transition-colors hover:bg-secondary min-[1280px]:inline-flex" />
           ) : (
