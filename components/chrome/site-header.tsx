@@ -76,14 +76,14 @@ export async function SiteHeader() {
           // overflow there; below that, every real screen (MacBooks included,
           // ~1280-1728px effective) gets the mobile hamburger instead of a
           // cramped, clipping bar.
-          // `safe center`, not plain `center`: centering an overflowing flex
-          // container clips equal amounts off BOTH ends (e.g. signed-in users
-          // get an extra "My complaints" item + a wider "Sign out" button,
-          // pushing total width past what fits at realistic desktop widths).
-          // `safe` falls back to start-alignment once content overflows, so
-          // the leftmost item stays intact and overflow-x-auto's scroll
-          // remains reachable instead of silently truncating both edges.
-          className="hidden min-w-0 flex-1 items-center justify-[safe_center] gap-0.5 overflow-x-auto py-1 text-sm [-ms-overflow-style:none] [scrollbar-width:none] min-[1280px]:flex [&::-webkit-scrollbar]:hidden"
+          // Centered only when signed out: that state has one fewer item
+          // (no "My complaints") and a narrower button cluster, so there's
+          // real slack to center into. Signed in, the extra item leaves the
+          // nav sitting right at the edge of what fits — centering an
+          // overflowing flex row clips equal amounts off both ends, so that
+          // state stays left-aligned instead (`safe center` would also work,
+          // but plain start-alignment is simplest given it's already snug).
+          className={`hidden min-w-0 flex-1 items-center gap-0.5 overflow-x-auto py-1 text-sm [-ms-overflow-style:none] [scrollbar-width:none] min-[1280px]:flex [&::-webkit-scrollbar]:hidden ${user ? "" : "justify-center"}`}
         >
           {/* D54 — the persistent logo already links home; the real
               site's separate flat "Home" item is dropped here so six
