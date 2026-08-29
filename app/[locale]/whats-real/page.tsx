@@ -6,6 +6,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { PageIcon } from "@/components/illustrations/page-icon";
+import { TableOfContents } from "@/components/chrome/table-of-contents";
 import { Eye } from "lucide-react";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -43,9 +44,17 @@ export default async function WhatsRealPage() {
   const limitations = t.raw("limitations") as Record<string, { strong: string; body: string }>;
   const richStrong = { strong: (chunks: React.ReactNode) => <strong className="text-foreground">{chunks}</strong> };
   const richEm = { em: (chunks: React.ReactNode) => <em>{chunks}</em> };
+  const tCommon = await getTranslations("common");
+  const tocItems = [
+    { href: "#key-fact", label: t("keyFactTitle") },
+    { href: "#feature-by-feature", label: t("featureByFeatureTitle") },
+    { href: "#why-not", label: t("whyNotTitle") },
+    { href: "#limitations", label: t("limitationsTitle") },
+  ];
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-10 px-4 py-12">
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 py-12 lg:grid lg:grid-cols-[1fr_260px] lg:items-start lg:gap-10">
+    <div className="flex w-full max-w-2xl flex-col gap-10 lg:mx-auto">
       <div className="grid items-center gap-6 lg:grid-cols-[1.3fr_1fr]">
         <div className="animate-enter flex flex-col gap-3">
           <PageIcon icon={Eye} size="lg" />
@@ -61,7 +70,7 @@ export default async function WhatsRealPage() {
         />
       </div>
 
-      <Card className="border-primary/20 bg-gradient-to-br from-primary/8 via-card to-card">
+      <Card id="key-fact" className="scroll-mt-24 border-primary/20 bg-gradient-to-br from-primary/8 via-card to-card">
         <CardHeader>
           <CardTitle>{t("keyFactTitle")}</CardTitle>
         </CardHeader>
@@ -79,7 +88,7 @@ export default async function WhatsRealPage() {
         </CardContent>
       </Card>
 
-      <div className="flex flex-col gap-2">
+      <div id="feature-by-feature" className="flex flex-col gap-2 scroll-mt-24">
         <h2 className="text-xl font-semibold tracking-tight text-foreground">{t("featureByFeatureTitle")}</h2>
         <p className="text-sm text-muted-foreground">{t("featureByFeatureIntro")}</p>
       </div>
@@ -99,7 +108,7 @@ export default async function WhatsRealPage() {
         </CardContent>
       </Card>
 
-      <div className="flex flex-col gap-4">
+      <div id="why-not" className="flex flex-col gap-4 scroll-mt-24">
         <h2 className="text-xl font-semibold tracking-tight text-foreground">{t("whyNotTitle")}</h2>
         <p className="text-sm text-muted-foreground">{t.rich("whyNotIntro", richEm)}</p>
 
@@ -135,7 +144,7 @@ export default async function WhatsRealPage() {
 
       <Separator />
 
-      <div className="flex flex-col gap-4">
+      <div id="limitations" className="flex flex-col gap-4 scroll-mt-24">
         <h2 className="text-xl font-semibold tracking-tight text-foreground">{t("limitationsTitle")}</h2>
         <p className="text-sm text-muted-foreground">{t("noBugs")}</p>
         <ul className="flex flex-col gap-3 text-sm text-muted-foreground">
@@ -175,6 +184,11 @@ export default async function WhatsRealPage() {
           ),
         })}
       </p>
+    </div>
+
+    <div className="lg:sticky lg:top-24">
+      <TableOfContents title={tCommon("onThisPage")} items={tocItems} />
+    </div>
     </div>
   );
 }

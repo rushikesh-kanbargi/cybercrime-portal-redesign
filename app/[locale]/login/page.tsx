@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect, type FormEvent } from "react";
+import { useState, useRef, useEffect, type FormEvent, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
@@ -16,6 +17,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { PageIcon } from "@/components/illustrations/page-icon";
+import { GuideFigure } from "@/components/illustrations/guide-figure";
+import { Float } from "@/components/motion/float";
 import { IdCard, ShieldAlert, ArrowLeft, PhoneCall } from "lucide-react";
 import {
   startAadhaarSignIn,
@@ -43,9 +46,18 @@ interface Started {
   demoCode: string;
 }
 
-export default function LoginPage() {
+// Only an internal, same-origin path is ever honored — a bare query param is
+// attacker-controlled input, so an absolute/protocol-relative value here
+// would be an open redirect straight out of a sign-in flow.
+function safeNextPath(value: string | null): string {
+  if (value && value.startsWith("/") && !value.startsWith("//")) return value;
+  return "/profile";
+}
+
+function LoginForm() {
   const t = useTranslations("auth.signIn");
   const router = useRouter();
+  const nextPath = safeNextPath(useSearchParams().get("next"));
 
   const [step, setStep] = useState<Step>("aadhaar");
   const [aadhaar, setAadhaar] = useState("");
@@ -92,7 +104,7 @@ export default function LoginPage() {
         setError(t(`errors.${result.code}`));
         return;
       }
-      router.push("/profile");
+      router.push(nextPath);
       router.refresh();
     } finally {
       setPending(false);
@@ -108,8 +120,8 @@ export default function LoginPage() {
   const digits = normalizeAadhaar(aadhaar);
 
   return (
-    <div className="mx-auto flex w-full max-w-xl flex-1 flex-col gap-6 px-4 py-10 sm:py-16">
-      <Card className="animate-enter border-primary/20 bg-gradient-to-br from-primary/8 via-card to-card">
+    <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-4 py-10 sm:py-16 lg:grid lg:grid-cols-[1fr_360px] lg:items-start lg:gap-10">
+      <Card className="animate-enter border-primary/20 bg-gradient-to-br from-primary/8 via-card to-card lg:mx-auto lg:w-full lg:max-w-xl">
         <CardHeader>
           <div className="mb-1 flex items-center gap-3">
             <PageIcon icon={IdCard} size="lg" />
@@ -250,21 +262,35 @@ export default function LoginPage() {
           for exactly the people least able to afford one — someone using a
           borrowed phone, someone whose SIM the fraudster has already taken,
           someone who simply has no Aadhaar number. 1930 is a real helpline and
-          this is a real link to it. */}
-      <Alert>
-        <PhoneCall className="size-4" aria-hidden="true" />
-        <AlertTitle>{t("noAadhaarTitle")}</AlertTitle>
-        <AlertDescription className="flex flex-col items-start gap-3">
-          <p>{t("noAadhaarBody")}</p>
-          <Button asChild size="lg" className="min-h-11">
-            <a href="tel:1930">
-              <PhoneCall className="size-4" aria-hidden="true" />
-              {t("callHelpline")}
-            </a>
-          </Button>
-        </AlertDescription>
-      </Alert>
-
+          this is a real link to it. A real side rail on wide screens (never
+          hidden, never demoted — just placed beside the form instead of
+          stacked under it), stacking below the card again on mobile. */}
+      <div className="flex flex-col gap-4 lg:sticky lg:top-24">
+        <Float distance={5} duration={3.8}>
+          <GuideFigure pose="wave" className="mx-auto w-20 lg:mx-0" />
+        </Float>
+        <Alert>
+          <PhoneCall className="size-4" aria-hidden="true" />
+          <AlertTitle>{t("noAadhaarTitle")}</AlertTitle>
+          <AlertDescription className="flex flex-col items-start gap-3">
+            <p>{t("noAadhaarBody")}</p>
+            <Button asChild size="lg" className="min-h-11">
+              <a href="tel:1930">
+                <PhoneCall className="size-4" aria-hidden="true" />
+                {t("callHelpline")}
+              </a>
+            </Button>
+          </AlertDescription>
+        </Alert>
+      </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }

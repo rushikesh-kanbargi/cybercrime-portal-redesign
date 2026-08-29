@@ -22,7 +22,7 @@ export default async function ReportMoneyPage() {
   const user = await getSessionUser();
   if (!user) {
     const locale = await getLocale();
-    redirect({ href: "/login", locale });
+    redirect({ href: { pathname: "/login", query: { next: "/report/money" } }, locale });
   }
 
   // §14.6 point 3 — on a second report, state/district pre-fill from the

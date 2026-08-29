@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { Plug, ArrowLeft } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { requireInvestigator } from "@/lib/investigator-auth";
@@ -33,23 +31,14 @@ const HEALTH_VARIANT: Record<IntegrationHealth, "outline" | "default" | "destruc
 // every "real" row shows "Not configured" honestly, per the instruction
 // to prefer that over a misleading "No data found."
 export default async function IntegrationsPage() {
-  const investigator = await requireInvestigator("admin");
+  await requireInvestigator("admin");
   const integrations = listIntegrations();
 
   return (
-    <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-6 px-4 py-10">
+    <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-6 px-4 py-8">
       <div>
-        <Link href="/investigator" className="inline-flex items-center gap-1.5 text-xs text-muted-foreground underline underline-offset-2">
-          <ArrowLeft className="size-3.5" aria-hidden="true" />
-          Dashboard
-        </Link>
-        <div className="mt-1 flex items-center gap-2">
-          <Plug className="size-5 text-primary" aria-hidden="true" />
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground">Integrations</h1>
-        </div>
-        <p className="text-sm text-muted-foreground">
-          Signed in as {investigator.displayName} · admin
-        </p>
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">Integrations</h1>
+        <p className="text-sm text-muted-foreground">External provider status, admin-only.</p>
       </div>
 
       <Card>
@@ -61,6 +50,7 @@ export default async function IntegrationsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border text-left text-xs text-muted-foreground">
@@ -83,6 +73,7 @@ export default async function IntegrationsPage() {
               ))}
             </tbody>
           </table>
+          </div>
         </CardContent>
       </Card>
     </div>

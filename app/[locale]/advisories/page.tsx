@@ -4,6 +4,7 @@ import { PhotoBanner } from "@/components/illustrations/photo-banner";
 import { Link } from "@/i18n/navigation";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { PageIcon } from "@/components/illustrations/page-icon";
+import { TableOfContents } from "@/components/chrome/table-of-contents";
 import { Megaphone } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -22,10 +23,13 @@ interface ListItem {
 
 export default async function AdvisoriesPage() {
   const t = await getTranslations("advisories");
+  const tCommon = await getTranslations("common");
   const items = t.raw("items") as ListItem[];
+  const tocItems = items.map((item, i) => ({ href: `#advisory-${i}`, label: item.title }));
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-10 px-4 py-16">
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 py-16 lg:grid lg:grid-cols-[1fr_260px] lg:items-start lg:gap-10">
+    <div className="flex w-full max-w-2xl flex-col gap-10 lg:mx-auto">
       <div className="grid items-center gap-6 lg:grid-cols-[1.3fr_1fr]">
         <div className="animate-enter flex flex-col gap-4">
           <PageIcon icon={Megaphone} size="lg" />
@@ -45,8 +49,9 @@ export default async function AdvisoriesPage() {
         {items.map((item, i) => (
           <Card
             key={item.title}
+            id={`advisory-${i}`}
             className={cn(
-              "transition-[box-shadow,transform] duration-200 ease-[var(--ease-feedback)] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:shadow-md",
+              "scroll-mt-24 transition-[box-shadow,transform] duration-200 ease-[var(--ease-feedback)] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:shadow-md",
               i % 2 === 0
                 ? "border-primary/20 bg-gradient-to-br from-primary/6 via-card to-card"
                 : "border-brand-gold/20 bg-gradient-to-br from-brand-gold/6 via-card to-card",
@@ -71,6 +76,11 @@ export default async function AdvisoriesPage() {
           ),
         })}
       </p>
+    </div>
+
+    <div className="lg:sticky lg:top-24">
+      <TableOfContents title={tCommon("onThisPage")} items={tocItems} />
+    </div>
     </div>
   );
 }

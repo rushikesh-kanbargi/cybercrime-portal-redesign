@@ -33,7 +33,7 @@ export function buildInvestigationBrief(caseDetail: CaseDetail): InvestigationBr
   const location = [caseDetail.district, caseDetail.state].filter(Boolean).join(", ") || "not provided";
 
   const summary =
-    `${caseDetail.publicId} — ${caseDetail.categoryCode.replace(/_/g, " ")}, status ${CASE_STATUS_LABEL[caseDetail.status]}. ` +
+    `${caseDetail.publicId}: ${caseDetail.categoryCode.replace(/_/g, " ")}, status ${CASE_STATUS_LABEL[caseDetail.status]}. ` +
     `${caseDetail.assignedInvestigator ? `Assigned to ${caseDetail.assignedInvestigator.displayName}.` : "Unassigned."} ` +
     `Reported from ${location}. ` +
     `${caseDetail.riskLevel !== "standard" ? `Risk indicator: ${caseDetail.riskLevel}.` : ""}`.trim();
@@ -46,21 +46,21 @@ export function buildInvestigationBrief(caseDetail: CaseDetail): InvestigationBr
   if (caseDetail.duplicateCandidates.length > 0) {
     const strongest = caseDetail.duplicateCandidates[0];
     keyFacts.push(
-      `${caseDetail.duplicateCandidates.length} potential duplicate/related case(s) found — strongest: ${strongest.publicId} (${strongest.classification.replace(/_/g, " ")}, ${strongest.confidence}% confidence)`,
+      `${caseDetail.duplicateCandidates.length} potential duplicate/related case(s) found. Strongest: ${strongest.publicId} (${strongest.classification.replace(/_/g, " ")}, ${strongest.confidence}% confidence)`,
     );
   }
 
   const entitySummary =
     caseDetail.relatedEntities.length === 0
       ? ["No linked entities."]
-      : caseDetail.relatedEntities.map((e) => `${e.type} — reported ${e.reportCount} time(s) total${e.isSynthetic ? " (synthetic)" : ""}`);
+      : caseDetail.relatedEntities.map((e) => `${e.type}: reported ${e.reportCount} time(s) total${e.isSynthetic ? " (synthetic)" : ""}`);
 
   // Deterministic, disclosed checks only — never a model's guess at what
   // "should" exist.
   const missingInformation: string[] = [];
   if (!caseDetail.amountLost) missingInformation.push("No amount lost recorded.");
   if (!caseDetail.occurredAt) missingInformation.push("No incident date/time recorded.");
-  if (!caseDetail.contactMobile) missingInformation.push("No reporter contact number on file — updates cannot be sent.");
+  if (!caseDetail.contactMobile) missingInformation.push("No reporter contact number on file. Updates cannot be sent.");
   if (caseDetail.evidenceFiles.length === 0) missingInformation.push("No evidence attached.");
   if (!caseDetail.assignedInvestigator) missingInformation.push("Case is unassigned.");
   if (caseDetail.notes.length === 0) missingInformation.push("No internal notes recorded yet.");

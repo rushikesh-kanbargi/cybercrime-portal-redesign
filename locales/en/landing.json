@@ -1,7 +1,7 @@
 {
   "heroEyebrow": "Independent hackathon prototype, not a government site",
   "title": "The sooner you report, the more can be done.",
-  "subtitle": "Tell us what happened, in your own words. No ID upload, no forms: sign in once and we fill in what we already know.",
+  "subtitle": "Take a breath. You're in the right place. Tell us what happened, in your own words. No ID upload, no forms: sign in once and we fill in what we already know.",
   "trust": [
     {
       "label": "Signed in once, then straight to it"
@@ -20,7 +20,7 @@
   },
   "categoryPicker": {
     "title": "What happened to you?",
-    "subtitle": "Pick the closest match, the examples show what's inside each one. We'll get you to the right place either way.",
+    "subtitle": "Not sure exactly what to call it? That's okay. Pick whatever feels closest. The examples show what's inside each one, and we'll get you to the right place either way.",
     "availableBadge": "Available now",
     "notBuiltBadge": "Not built in this prototype yet",
     "items": [

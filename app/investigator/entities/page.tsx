@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ShieldQuestion, Inbox } from "lucide-react";
+import { Inbox } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { requireInvestigator } from "@/lib/investigator-auth";
 import { listEntitiesForModeration } from "@/lib/actions/entity-intelligence";
 import { ENTITY_STATUSES, ENTITY_STATUS_LABEL, type EntityStatus } from "@/lib/entity-status";
-import { InvestigatorLogoutButton } from "@/components/investigator/logout-button";
 
 export const metadata: Metadata = {
   title: "Entities",
@@ -22,36 +21,25 @@ export default async function EntitiesModerationPage({
 }: {
   searchParams: Promise<{ status?: string }>;
 }) {
-  const investigator = await requireInvestigator();
+  await requireInvestigator();
   const params = await searchParams;
   const status = ENTITY_STATUSES.includes(params.status as EntityStatus) ? (params.status as EntityStatus) : undefined;
 
   const entities = await listEntitiesForModeration(status);
 
   return (
-    <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-6 px-4 py-10">
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-2">
-          <ShieldQuestion className="size-5 text-primary" aria-hidden="true" />
-          <div>
-            <h1 className="text-2xl font-semibold tracking-tight text-foreground">Entities</h1>
-            <p className="text-sm text-muted-foreground">
-              Signed in as {investigator.displayName} · <span className="capitalize">{investigator.role}</span>
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-3">
-          <Link href="/investigator" className="text-sm text-primary underline underline-offset-2 hover:no-underline">
-            Dashboard
-          </Link>
-          <InvestigatorLogoutButton />
-        </div>
+    <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-6 px-4 py-8">
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">Entities</h1>
+        <p className="text-sm text-muted-foreground">
+          Real, citizen-reported identifiers, correlated across cases.
+        </p>
       </div>
 
       <div className="flex flex-wrap items-center gap-2 text-sm">
         <Link
           href="/investigator/entities"
-          className={`rounded-full border px-3 py-1 transition-colors ${!status ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:border-primary/30 hover:text-foreground"}`}
+          className={`inline-flex min-h-11 items-center rounded-full border px-3.5 py-2 transition-colors ${!status ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:border-primary/30 hover:text-foreground"}`}
         >
           All
         </Link>
@@ -59,7 +47,7 @@ export default async function EntitiesModerationPage({
           <Link
             key={s}
             href={`/investigator/entities?status=${s}`}
-            className={`rounded-full border px-3 py-1 transition-colors ${status === s ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:border-primary/30 hover:text-foreground"}`}
+            className={`inline-flex min-h-11 items-center rounded-full border px-3.5 py-2 transition-colors ${status === s ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground hover:border-primary/30 hover:text-foreground"}`}
           >
             {ENTITY_STATUS_LABEL[s]}
           </Link>
@@ -92,7 +80,7 @@ export default async function EntitiesModerationPage({
                   >
                     <div className="flex items-center gap-2">
                       <Badge variant="outline">{e.type}</Badge>
-                      <span className="font-mono text-sm text-foreground">{e.valueNormalised}</span>
+                      <span className="min-w-0 font-mono text-sm break-all text-foreground">{e.valueNormalised}</span>
                     </div>
                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <span>

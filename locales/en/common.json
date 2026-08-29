@@ -64,7 +64,14 @@
       "publicNotices": "RTI / CPGRAMS Public Notices"
     },
     "signOut": "Sign out",
-    "signingOut": "Signing out…"
+    "signingOut": "Signing out…",
+    "compact": {
+      "report": "Report",
+      "track": "Track",
+      "checkSuspect": "Check Suspect",
+      "volunteers": "Volunteers",
+      "contact": "Contact"
+    }
   },
   "footer": {
     "tagline": "An independent hackathon prototype exploring a calmer, faster way to report cybercrime online.",
@@ -77,7 +84,7 @@
     "openLabel": "Guided help",
     "closeLabel": "Close guided help",
     "title": "Guided help",
-    "disclaimer": "Scripted guidance, not a live AI conversation. It only helps you find the right report — it never files anything for you.",
+    "disclaimer": "Scripted guidance, not a live AI conversation. It only helps you find the right report. It never files anything for you.",
     "intro": "Tell me what happened, or choose the option closest to it below.",
     "options": {
       "money": "Money was taken from my account",
@@ -86,16 +93,17 @@
       "unsure": "I'm not sure / something else"
     },
     "replies": {
-      "money": "That's financial fraud. I'll take you to the money-loss report — it takes about 90 seconds and starts by asking what happened, in your own words.",
+      "money": "That's financial fraud. I'll take you to the money-loss report. It takes about 90 seconds and starts by asking what happened, in your own words.",
       "harassment": "I'm sorry that's happening. I'll take you to the harassment/threats report so you can tell us what's going on.",
       "hacked": "Let's get that reported. I'll take you to the account-compromise report.",
-      "unsure": "That's okay — you don't have to know the exact category. Start with a report and describe what happened in your own words; we'll help sort out the rest."
+      "unsure": "That's okay. You don't have to know the exact category. Start with a report and describe what happened in your own words; we'll help sort out the rest."
     },
     "freeTextPrefix": "Based on what you typed, this sounds closest to: \"{option}\".",
     "inputPlaceholder": "Or type what happened…",
     "inputLabel": "Describe what happened",
     "sendLabel": "Send",
-    "continueButton": "Continue to report"
+    "continueButton": "Continue to report",
+    "typingLabel": "Guided help is typing…"
   },
   "languageSwitcher": {
     "label": "Language",
@@ -119,6 +127,16 @@
     "download": "Download",
     "change": "Change"
   },
+  "errorBoundary": {
+    "title": "Something went wrong",
+    "body": "We couldn't load this page. Try again, or call 1930 if this is urgent and you'd rather not wait.",
+    "tryAgain": "Try again"
+  },
+  "onThisPage": "On this page",
   "errorSummaryTitle": "Please fix the following before continuing:",
-  "notAnFir": "Your Complaint ID is a record that you reported this. It is not an FIR (First Information Report). An FIR is a separate, later step that a police officer registers if the case warrants it."
+  "notAnFir": "Your Complaint ID is a record that you reported this. It is not an FIR (First Information Report). An FIR is a separate, later step that a police officer registers if the case warrants it.",
+  "themeToggle": {
+    "toDark": "Switch to dark mode",
+    "toLight": "Switch to light mode"
+  }
 }

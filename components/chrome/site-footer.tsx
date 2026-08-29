@@ -36,7 +36,7 @@ export async function SiteFooter() {
             <p className="max-w-sm text-sm text-muted-foreground">{t("footer.tagline")}</p>
             <a
               href="tel:1930"
-              className="mt-1 inline-flex w-fit items-center gap-2 rounded-md border border-border bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary/40 hover:text-primary"
+              className="mt-1 inline-flex min-h-11 w-fit items-center gap-2 rounded-md border border-border bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary/40 hover:text-primary"
             >
               <Phone className="size-3.5" aria-hidden="true" />
               {t("footer.callLabel")}
@@ -59,7 +59,7 @@ export async function SiteFooter() {
                   <li key={href}>
                     <Link
                       href={href}
-                      className="flex items-center gap-2 rounded-md px-2 py-1.5 -ml-2 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                      className="flex min-h-11 items-center gap-2 rounded-md px-2 py-1.5 -ml-2 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                     >
                       <Icon className="size-4 shrink-0 text-primary/70" aria-hidden="true" />
                       {t(`nav.resourcesItems.${key}`)}
@@ -78,7 +78,10 @@ export async function SiteFooter() {
           {/* Plain next/link, not the locale-aware <Link> — /investigator
               sits outside the [locale] tree by design (its own root layout,
               no citizen chrome/i18n; see app/investigator/layout.tsx). */}
-          <NextLink href="/investigator/login" className="underline underline-offset-2 hover:text-foreground">
+          <NextLink
+            href="/investigator/login"
+            className="flex min-h-11 items-center underline underline-offset-2 hover:text-foreground"
+          >
             {t("footer.investigatorLink")}
           </NextLink>
         </div>

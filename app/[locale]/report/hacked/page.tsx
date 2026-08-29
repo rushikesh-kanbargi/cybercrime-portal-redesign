@@ -20,7 +20,7 @@ export default async function ReportHackedPage() {
   const user = await getSessionUser();
   if (!user) {
     const locale = await getLocale();
-    redirect({ href: "/login", locale });
+    redirect({ href: { pathname: "/login", query: { next: "/report/hacked" } }, locale });
   }
 
   const savedProfile = await getMyProfile();

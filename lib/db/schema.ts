@@ -157,6 +157,11 @@ export const profiles = pgTable("profiles", {
   state: text("state"),
   district: text("district"),
   pincode: text("pincode"),
+  // A second way to reach this citizen if the registered mobile becomes
+  // unreachable (SIM taken, phone lost) — the exact scenario this product
+  // already worries about elsewhere. Editable from /profile, never required.
+  alternateMobile: text("alternate_mobile"),
+  addressLine: text("address_line"),
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .notNull()
     .defaultNow(),

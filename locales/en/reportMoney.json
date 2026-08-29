@@ -4,8 +4,8 @@
     "description": "Report financial fraud in under 90 seconds. Sign in once; the rest fills itself in."
   },
   "progress": {
-    "lastQuestion": "Last question",
-    "moreQuestions": "{count, plural, one {# more question} other {# more questions}}",
+    "lastQuestion": "Last question, almost there",
+    "moreQuestions": "{count, plural, one {# more question to go} other {# more questions to go}}",
     "steps": [
       "Tell us",
       "Confirm",
@@ -27,7 +27,7 @@
     "savedAt": "Draft saved · {time}",
     "error": "Couldn't save your draft. Check your connection and try again.",
     "codeTitle": "Your resume code",
-    "codeBody": "Use this code to continue this report from another device or browser. Keep it safe — anyone with this code can open this draft. It stops working after 7 days.",
+    "codeBody": "Use this code to continue this report from another device or browser. Keep it safe. Anyone with this code can open this draft. It stops working after 7 days.",
     "codeDismiss": "Got it"
   },
   "resumeByCode": {
@@ -49,7 +49,7 @@
   },
   "narrate": {
     "title": "Tell us what happened",
-    "description": "Write it in your own words. There's no right way to say it, and no minimum length.",
+    "description": "Write it in your own words. There's no right way to say it, and no minimum length. Whatever you remember is enough to start.",
     "narrativeLabel": "What happened",
     "narrativePlaceholder": "I got a call saying my KYC expired. They sent a link. ₹18,000 left my account.",
     "narrativeError": "Tell us what happened; even a rough description helps.",
@@ -187,6 +187,7 @@
     "skip": "Skip",
     "otpMismatch": "That code didn't match.",
     "otpGenericError": "Something went wrong confirming that code. Please try again.",
+    "trackButton": "Track this complaint",
     "backHome": "Back to home",
     "downloadFilename": "complaint-{publicId}.txt",
     "downloadFileBody": "Cybercrime Report: Confirmation\n\nComplaint ID: {publicId}\n\nThis is NOT an FIR.\nKeep this ID safe; you will need it for any follow-up.\n",

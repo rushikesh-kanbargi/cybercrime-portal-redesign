@@ -13,7 +13,7 @@ export default function InvestigatorError({ reset }: { error: Error & { digest?:
       <p className="text-sm text-muted-foreground">
         We couldn&apos;t load this page. Try again, or sign in again if the problem continues.
       </p>
-      <Button onClick={reset}>Try again</Button>
+      <Button className="min-h-11" onClick={reset}>Try again</Button>
     </div>
   );
 }

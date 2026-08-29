@@ -12,8 +12,10 @@
 
 import { eq, inArray, desc } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { complaints, complaintStatuses, profiles, auditLogs } from "@/lib/db/schema";
+import { complaints, complaintStatuses, profiles, auditLogs, aadhaarRecordsSim } from "@/lib/db/schema";
 import { getSessionUser } from "@/lib/session";
+import { maskAadhaar } from "@/lib/aadhaar-sim";
+import { maskMobile } from "@/lib/otp";
 
 export interface MyComplaintRow {
   publicId: string;
@@ -63,6 +65,8 @@ export interface MyProfileData {
   state: string | null;
   district: string | null;
   pincode: string | null;
+  alternateMobile: string | null;
+  addressLine: string | null;
 }
 
 // The autofill surface (§14.6) — read for both the /profile "saved
@@ -81,6 +85,84 @@ export async function getMyProfile(): Promise<MyProfileData | null> {
     state: profile.state,
     district: profile.district,
     pincode: profile.pincode,
+    alternateMobile: profile.alternateMobile,
+    addressLine: profile.addressLine,
+  };
+}
+
+const MOBILE_PATTERN = /^[0-9+ ]{7,15}$/;
+
+export type UpdateExtraDetailsResult = { ok: true } | { ok: false; error: "INVALID_MOBILE" };
+
+// A second way to reach this citizen if the registered mobile becomes
+// unreachable — editable from /profile, entirely optional, never touches
+// Aadhaar or the identity read above. Upserts because a citizen who never
+// triggered the profile-creation paths in auth.ts/aadhaar-login.ts (no
+// complaint filed, no prior sign-in profile row) may not have a `profiles`
+// row yet.
+export async function updateMyExtraDetails(input: {
+  alternateMobile: string;
+  addressLine: string;
+}): Promise<UpdateExtraDetailsResult> {
+  const user = await getSessionUser();
+  if (!user) return { ok: false, error: "INVALID_MOBILE" };
+
+  const alternateMobile = input.alternateMobile.trim();
+  const addressLine = input.addressLine.trim();
+  if (alternateMobile && !MOBILE_PATTERN.test(alternateMobile)) {
+    return { ok: false, error: "INVALID_MOBILE" };
+  }
+
+  await db
+    .insert(profiles)
+    .values({
+      userId: user.id,
+      alternateMobile: alternateMobile || null,
+      addressLine: addressLine || null,
+    })
+    .onConflictDoUpdate({
+      target: profiles.userId,
+      set: {
+        alternateMobile: alternateMobile || null,
+        addressLine: addressLine || null,
+        updatedAt: new Date(),
+      },
+    });
+
+  return { ok: true };
+}
+
+export interface MyIdentityData {
+  holderName: string;
+  maskedAadhaar: string;
+  maskedMobile: string;
+  email: string;
+}
+
+// The same masked identity shown once during the Aadhaar sign-in step
+// (lib/actions/aadhaar-login.ts), re-derived by a live lookup on the
+// session's own mobile number — never written to `users` or `profiles`.
+// Aadhaar stays "looked up and dropped" everywhere in this codebase; this
+// only lets a signed-in citizen see that same read again instead of losing
+// it the moment the sign-in screen is gone.
+//
+// Returns null for a citizen who signed in through the mobile-only OTP path
+// (lib/actions/auth.ts, used by "want updates on this complaint?") — that
+// path never touches `aadhaar_records_sim`, so there is nothing to show.
+export async function getMyIdentity(): Promise<MyIdentityData | null> {
+  const user = await getSessionUser();
+  if (!user) return null;
+
+  const record = await db.query.aadhaarRecordsSim.findFirst({
+    where: eq(aadhaarRecordsSim.mobile, user.mobile),
+  });
+  if (!record) return null;
+
+  return {
+    holderName: record.holderName,
+    maskedAadhaar: maskAadhaar(record.aadhaar),
+    maskedMobile: maskMobile(record.mobile),
+    email: record.email,
   };
 }
 

@@ -27,7 +27,7 @@ export function DeleteProfileButton() {
 
   if (!confirming) {
     return (
-      <Button variant="outline" size="sm" onClick={() => setConfirming(true)}>
+      <Button variant="outline" size="sm" className="min-h-11" onClick={() => setConfirming(true)}>
         {t("deleteButton")}
       </Button>
     );
@@ -40,6 +40,7 @@ export function DeleteProfileButton() {
         <Button
           variant="destructive"
           size="sm"
+          className="min-h-11"
           disabled={pending}
           onClick={async () => {
             setPending(true);
@@ -54,7 +55,7 @@ export function DeleteProfileButton() {
         >
           {pending ? t("deleting") : t("deleteConfirmButton")}
         </Button>
-        <Button variant="ghost" size="sm" disabled={pending} onClick={() => setConfirming(false)}>
+        <Button variant="ghost" size="sm" className="min-h-11" disabled={pending} onClick={() => setConfirming(false)}>
           {t("cancel")}
         </Button>
       </div>

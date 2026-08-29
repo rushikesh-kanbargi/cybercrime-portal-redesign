@@ -56,20 +56,20 @@ export function DraftRowActions({ draftId }: { draftId: string }) {
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex gap-2">
-        <Button size="sm" variant="outline" onClick={handleContinue} disabled={continuing}>
+      <div className="flex flex-wrap gap-2">
+        <Button size="sm" className="min-h-11" variant="outline" onClick={handleContinue} disabled={continuing}>
           {t("continue")}
         </Button>
         {!confirmingDelete ? (
-          <Button size="sm" variant="ghost" onClick={() => setConfirmingDelete(true)}>
+          <Button size="sm" className="min-h-11" variant="ghost" onClick={() => setConfirmingDelete(true)}>
             {t("delete")}
           </Button>
         ) : (
           <>
-            <Button size="sm" variant="destructive" disabled={deleting} onClick={handleDelete}>
+            <Button size="sm" className="min-h-11" variant="destructive" disabled={deleting} onClick={handleDelete}>
               {deleting ? t("deleting") : t("deleteConfirmButton")}
             </Button>
-            <Button size="sm" variant="ghost" disabled={deleting} onClick={() => setConfirmingDelete(false)}>
+            <Button size="sm" className="min-h-11" variant="ghost" disabled={deleting} onClick={() => setConfirmingDelete(false)}>
               {t("cancel")}
             </Button>
           </>

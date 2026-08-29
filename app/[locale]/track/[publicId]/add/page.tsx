@@ -15,7 +15,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { PageIcon } from "@/components/illustrations/page-icon";
-import { FilePlus2, ArrowLeft, CheckCircle2 } from "lucide-react";
+import { GuideFigure } from "@/components/illustrations/guide-figure";
+import { Float } from "@/components/motion/float";
+import { CircleCheck, FilePlus2, ArrowLeft, CheckCircle2 } from "lucide-react";
 import { submitAddition } from "./actions";
 
 // Append-only. See the schema note on `complaint_additions` — a filed report
@@ -27,6 +29,7 @@ export default function AddInformationPage({
 }) {
   const { publicId } = use(params);
   const t = useTranslations("track.add");
+  const tLanding = useTranslations("landing");
   const [body, setBody] = useState("");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -49,8 +52,8 @@ export default function AddInformationPage({
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-xl flex-1 flex-col gap-6 px-4 py-10 sm:py-16">
-      <Card>
+    <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-4 py-10 sm:py-16 lg:grid lg:grid-cols-[1fr_320px] lg:items-start lg:gap-10">
+      <Card className="lg:mx-auto lg:w-full lg:max-w-xl">
         <CardHeader>
           <div className="mb-1">
             <PageIcon icon={done ? CheckCircle2 : FilePlus2} size="lg" />
@@ -119,6 +122,29 @@ export default function AddInformationPage({
           )}
         </CardContent>
       </Card>
+
+      {!done && (
+        <div className="hidden flex-col gap-4 lg:sticky lg:top-24 lg:flex">
+          <Float distance={5} duration={3.8}>
+            <GuideFigure pose="wave" className="w-20" />
+          </Float>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">{tLanding("trustSection.title")}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="flex flex-col gap-3">
+                {(tLanding.raw("trust") as Array<{ label: string }>).map((item) => (
+                  <li key={item.label} className="flex items-start gap-2 text-sm text-foreground">
+                    <CircleCheck className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
+                    {item.label}
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }

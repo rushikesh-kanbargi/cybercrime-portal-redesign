@@ -1,5 +1,10 @@
-import { ShieldCheck, FileCheck2, Check } from "lucide-react";
+"use client";
+
+import { FileCheck2, Check } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
 import { Float } from "@/components/motion/float";
+
+const EASE_STANDARD = [0.16, 1, 0.3, 1] as const;
 
 // The confirmation screen's own illustrated moment, in the same hand-built
 // SVG/CSS idiom as ReportFlowIllustration on the homepage — no stock
@@ -10,6 +15,8 @@ import { Float } from "@/components/motion/float";
 // "celebratory" ring burst instead of a static circle. Entirely aria-hidden
 // decoration — the real content is the Complaint ID card next to it.
 export function ConfirmationIllustration() {
+  const reduceMotion = useReducedMotion();
+
   return (
     <div
       aria-hidden="true"
@@ -50,9 +57,27 @@ export function ConfirmationIllustration() {
         />
       </svg>
 
-      <span className="relative inline-flex size-16 items-center justify-center rounded-full bg-success text-success-foreground shadow-[0_1px_1px_rgba(0,0,0,0.03),0_12px_28px_-10px_rgba(0,0,0,0.28)] sm:size-[4.5rem]">
-        <ShieldCheck className="size-8 sm:size-9" />
-      </span>
+      <motion.span
+        initial={reduceMotion ? undefined : { scale: 0.6, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 380, damping: 22 }}
+        className="relative inline-flex size-16 items-center justify-center rounded-full bg-success text-success-foreground shadow-[0_1px_1px_rgba(0,0,0,0.03),0_12px_28px_-10px_rgba(0,0,0,0.28)] sm:size-[4.5rem]"
+      >
+        {/* Drawn, not dropped in: the check traces itself right after the
+            badge settles, so "confirmed" reads as a moment, not a static icon. */}
+        <svg viewBox="0 0 24 24" className="size-8 sm:size-9" fill="none">
+          <motion.path
+            d="M5 12.5l4.5 4.5L19 7.5"
+            stroke="currentColor"
+            strokeWidth={2.5}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            initial={reduceMotion ? undefined : { pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{ duration: 0.45, delay: 0.3, ease: EASE_STANDARD }}
+          />
+        </svg>
+      </motion.span>
 
       <Float distance={4} duration={3} className="absolute top-4 left-[18%] sm:left-[22%]">
         <div className="inline-flex size-8 items-center justify-center rounded-xl border border-border bg-background text-brand-gold-ink shadow-sm">

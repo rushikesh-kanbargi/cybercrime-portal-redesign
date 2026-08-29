@@ -12,7 +12,7 @@ import { LogOut } from "lucide-react";
 // want the next person on that phone to read. The session cookie is httpOnly,
 // so only the server can clear it — hence a POST rather than a client-side
 // cookie wipe.
-export function SignOutButton({ className }: { className?: string }) {
+export function SignOutButton({ className, iconOnly }: { className?: string; iconOnly?: boolean }) {
   const t = useTranslations("common.nav");
   const router = useRouter();
   const [pending, setPending] = useState(false);
@@ -39,7 +39,11 @@ export function SignOutButton({ className }: { className?: string }) {
       }
     >
       <LogOut className="size-3.5" aria-hidden="true" />
-      {pending ? t("signingOut") : t("signOut")}
+      {iconOnly ? (
+        <span className="sr-only">{pending ? t("signingOut") : t("signOut")}</span>
+      ) : (
+        pending ? t("signingOut") : t("signOut")
+      )}
     </button>
   );
 }

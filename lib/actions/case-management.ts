@@ -372,7 +372,7 @@ export async function getDashboardStats(): Promise<DashboardStats> {
 
   const publicIdByCaseId = new Map(rows.filter((r) => r.caseId).map((r) => [r.caseId as string, r.publicId]));
   const recentActivity: ActivityRow[] = events.slice(0, ACTIVITY_LIMIT).map((e) => ({
-    publicId: publicIdByCaseId.get(e.caseId) ?? "—",
+    publicId: publicIdByCaseId.get(e.caseId) ?? "N/A",
     type: e.type,
     status: e.status,
     summary: e.summary,

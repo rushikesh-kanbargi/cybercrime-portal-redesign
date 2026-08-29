@@ -16,6 +16,7 @@ import { PrototypeBanner } from "@/components/chrome/prototype-banner";
 import { SiteHeader } from "@/components/chrome/site-header";
 import { SiteFooter } from "@/components/chrome/site-footer";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/components/theme-provider";
 import { routing } from "@/i18n/routing";
 import "./globals.css";
 
@@ -89,20 +90,25 @@ export default async function RootLayout({
   return (
     <html
       lang={locale}
+      // next-themes sets class="dark" client-side before hydration paints,
+      // which is an expected, one-time mismatch against the server markup.
+      suppressHydrationWarning
       className={`${notoSans.variable} ${notoTamil.variable} ${notoTelugu.variable} ${notoKannada.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        <NextIntlClientProvider>
-          <AmbientBackdrop />
-          <SkipLink />
-          <PrototypeBanner />
-          <SiteHeader />
-          <main id="main-content" className="flex-1 flex flex-col">
-            {children}
-          </main>
-          <SiteFooter />
-          <Toaster />
-        </NextIntlClientProvider>
+      <body className="min-h-full flex flex-col overflow-x-hidden">
+        <ThemeProvider>
+          <NextIntlClientProvider>
+            <AmbientBackdrop />
+            <SkipLink />
+            <PrototypeBanner />
+            <SiteHeader />
+            <main id="main-content" className="flex-1 flex flex-col">
+              {children}
+            </main>
+            <SiteFooter />
+            <Toaster />
+          </NextIntlClientProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

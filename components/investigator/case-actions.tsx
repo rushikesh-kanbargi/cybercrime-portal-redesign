@@ -14,7 +14,7 @@ import {
 } from "@/lib/actions/case-management";
 
 const selectClassName =
-  "h-8 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm dark:bg-input/30";
+  "h-11 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm dark:bg-input/30";
 
 const STATUS_OPTIONS: Array<{ value: CaseStatus; label: string }> = [
   { value: "received", label: "Received" },
@@ -47,7 +47,7 @@ export function AssignToMeButton({ publicId, investigatorId }: { publicId: strin
 
   return (
     <div className="flex flex-col gap-1">
-      <Button type="button" size="sm" onClick={handleClick} disabled={busy}>
+      <Button type="button" size="sm" className="min-h-11" onClick={handleClick} disabled={busy}>
         {busy ? "Assigning…" : "Assign to me"}
       </Button>
       {error && <p className="text-xs text-destructive">{error}</p>}
@@ -107,7 +107,7 @@ export function AssignToInvestigatorForm({
             </option>
           ))}
         </select>
-        <Button type="submit" size="sm" variant="outline" disabled={busy || targetId === currentAssigneeId}>
+        <Button type="submit" size="sm" className="min-h-11" variant="outline" disabled={busy || targetId === currentAssigneeId}>
           {busy ? "Assigning…" : "Assign"}
         </Button>
       </div>
@@ -154,7 +154,7 @@ export function StatusChangeForm({ publicId, currentStatus }: { publicId: string
             </option>
           ))}
         </select>
-        <Button type="submit" size="sm" disabled={busy || status === currentStatus}>
+        <Button type="submit" size="sm" className="min-h-11" disabled={busy || status === currentStatus}>
           {busy ? "Saving…" : "Save"}
         </Button>
       </div>
@@ -197,7 +197,7 @@ export function RequestEvidenceForm({ publicId }: { publicId: string }) {
         onChange={(e) => setMessage(e.target.value)}
       />
       {error && <p className="text-xs text-destructive">{error}</p>}
-      <Button type="submit" size="sm" disabled={busy || !message.trim()}>
+      <Button type="submit" size="sm" className="min-h-11" disabled={busy || !message.trim()}>
         {busy ? "Sending…" : "Send request"}
       </Button>
     </form>
@@ -233,12 +233,12 @@ export function AddNoteForm({ publicId }: { publicId: string }) {
       <Textarea
         id="case-note"
         rows={3}
-        placeholder="Internal only — never shown to the citizen."
+        placeholder="Internal only, never shown to the citizen."
         value={body}
         onChange={(e) => setBody(e.target.value)}
       />
       {error && <p className="text-xs text-destructive">{error}</p>}
-      <Button type="submit" size="sm" disabled={busy || !body.trim()}>
+      <Button type="submit" size="sm" className="min-h-11" disabled={busy || !body.trim()}>
         {busy ? "Adding…" : "Add note"}
       </Button>
     </form>

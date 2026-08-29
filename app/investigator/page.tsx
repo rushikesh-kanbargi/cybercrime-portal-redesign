@@ -7,16 +7,15 @@ import {
   Search,
   CheckCircle2,
   Archive,
-  LayoutDashboard,
   Activity as ActivityIcon,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getDashboardStats, type ActivityRow, type CaseSummaryRow, type CaseStatus } from "@/lib/actions/case-management";
 import { requireInvestigator } from "@/lib/investigator-auth";
-import { InvestigatorLogoutButton } from "@/components/investigator/logout-button";
 import { CASE_STATUSES, CASE_STATUS_LABEL } from "@/lib/case-status-labels";
 import { BarChart, DonutChart, DONUT_COLORS } from "@/components/investigator/charts";
+import { RollingNumber } from "@/components/motion/rolling-number";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -66,23 +65,28 @@ function KpiCard({
   href,
   icon: Icon,
   tone = "primary",
+  index = 0,
 }: {
   label: string;
   value: number;
   href?: string;
   icon: typeof FolderOpen;
   tone?: KpiTone;
+  index?: number;
 }) {
   const t = KPI_TONE_CLASSES[tone];
   const content = (
-    <Card className={`h-full transition-colors ${t.border} ${href ? "hover:border-primary/50" : ""}`}>
+    <Card
+      className={`animate-enter h-full transition-colors ${t.border} ${href ? "hover:border-primary/50" : ""}`}
+      style={{ animationDelay: `${index * 60}ms` }}
+    >
       <CardContent className="flex items-center gap-3 py-4">
         <span className={`flex size-9 shrink-0 items-center justify-center rounded-lg ${t.iconWrap}`} aria-hidden="true">
           <Icon className={`size-4.5 ${t.icon}`} />
         </span>
         <div className="flex flex-col">
           <span className="text-2xl font-semibold tabular-nums text-foreground" aria-hidden="true">
-            {value}
+            <RollingNumber value={value} />
           </span>
           <span className="text-xs text-muted-foreground">{label}</span>
         </div>
@@ -164,53 +168,22 @@ export default async function InvestigatorDashboardPage() {
   const stats = await getDashboardStats();
 
   return (
-    <div className="mx-auto flex w-full max-w-[1400px] flex-1 flex-col gap-6 px-4 py-10 xl:px-8">
-      <div className="flex flex-col gap-4 rounded-xl border border-primary/20 bg-gradient-to-br from-primary/8 via-card to-card p-5 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
-          <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-            <LayoutDashboard className="size-5" aria-hidden="true" />
-          </span>
-          <div>
-            <h1 className="text-2xl font-semibold tracking-tight text-foreground">Dashboard</h1>
-            <p className="text-sm text-muted-foreground">
-              Signed in as {investigator.displayName} · <span className="capitalize">{investigator.role}</span>
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-3">
-          <Link
-            href="/investigator/cases"
-            className="rounded-md border border-border bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary/40 hover:text-primary"
-          >
-            All cases
-          </Link>
-          <Link
-            href="/investigator/entities"
-            className="rounded-md border border-border bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary/40 hover:text-primary"
-          >
-            Entities
-          </Link>
-          {investigator.role === "admin" && (
-            <Link
-              href="/investigator/integrations"
-              className="rounded-md border border-border bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:border-primary/40 hover:text-primary"
-            >
-              Integrations
-            </Link>
-          )}
-          <InvestigatorLogoutButton />
-        </div>
+    <div className="mx-auto flex w-full max-w-[1400px] flex-1 flex-col gap-6 px-4 py-8 xl:px-8">
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight text-foreground">Dashboard</h1>
+        <p className="text-sm text-muted-foreground">Welcome back, {investigator.displayName.split(" ")[0]}.</p>
       </div>
 
       {/* KPI cards */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-        <KpiCard label="Open cases" value={stats.totals.open} href="/investigator/cases" icon={FolderOpen} tone="primary" />
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
+        <KpiCard label="Open cases" value={stats.totals.open} href="/investigator/cases" icon={FolderOpen} tone="primary" index={0} />
         <KpiCard
           label="Assigned to me"
           value={stats.workload.mine}
           href="/investigator/cases?mine=1"
           icon={UserCircle2}
           tone="primary"
+          index={1}
         />
         <KpiCard
           label="Unassigned"
@@ -218,6 +191,7 @@ export default async function InvestigatorDashboardPage() {
           href="/investigator/cases?unassigned=1"
           icon={UserX}
           tone="warning"
+          index={2}
         />
         <KpiCard
           label="Under investigation"
@@ -225,6 +199,7 @@ export default async function InvestigatorDashboardPage() {
           href="/investigator/cases?status=under_investigation"
           icon={Search}
           tone="primary"
+          index={3}
         />
         <KpiCard
           label="Resolved"
@@ -232,8 +207,9 @@ export default async function InvestigatorDashboardPage() {
           href="/investigator/cases?status=resolved"
           icon={CheckCircle2}
           tone="success"
+          index={4}
         />
-        <KpiCard label="Closed" value={stats.totals.closed} href="/investigator/cases?status=closed" icon={Archive} tone="muted" />
+        <KpiCard label="Closed" value={stats.totals.closed} href="/investigator/cases?status=closed" icon={Archive} tone="muted" index={5} />
       </div>
 
       {/* Case status distribution — donut + accessible data table side by side */}
@@ -245,7 +221,8 @@ export default async function InvestigatorDashboardPage() {
           </CardHeader>
           <CardContent className="flex flex-col items-center gap-6 sm:flex-row sm:items-start">
             <DonutChart data={CASE_STATUSES.map((s) => ({ label: CASE_STATUS_LABEL[s], value: stats.statusCounts[s] }))} />
-            <table className="w-full flex-1 text-sm">
+            <div className="w-full min-w-0 flex-1 overflow-x-auto">
+            <table className="w-full text-sm">
               <caption className="sr-only">Case counts by status</caption>
               <thead>
                 <tr className="sr-only">
@@ -282,6 +259,7 @@ export default async function InvestigatorDashboardPage() {
                 })}
               </tbody>
             </table>
+            </div>
           </CardContent>
         </Card>
 
@@ -313,6 +291,7 @@ export default async function InvestigatorDashboardPage() {
             {stats.workloadByInvestigator.length === 0 ? (
               <p className="text-sm text-muted-foreground">No cases are assigned to anyone yet.</p>
             ) : (
+              <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border text-left text-xs text-muted-foreground">
@@ -333,6 +312,7 @@ export default async function InvestigatorDashboardPage() {
                   ))}
                 </tbody>
               </table>
+              </div>
             )}
           </CardContent>
         </Card>
@@ -342,9 +322,9 @@ export default async function InvestigatorDashboardPage() {
       {stats.geoTrends && stats.financialTrend && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Command center — situational overview</CardTitle>
+            <CardTitle className="text-base">Command center: situational overview</CardTitle>
             <CardDescription>
-              Locally derived from this app&apos;s own case data — not a real national/state feed. Aggregated to
+              Locally derived from this app&apos;s own case data. Not a real national/state feed. Aggregated to
               state level only.
             </CardDescription>
           </CardHeader>
@@ -356,6 +336,7 @@ export default async function InvestigatorDashboardPage() {
             {stats.geoTrends.length === 0 ? (
               <p className="text-sm text-muted-foreground">No cases yet.</p>
             ) : (
+              <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border text-left text-xs text-muted-foreground">
@@ -380,6 +361,7 @@ export default async function InvestigatorDashboardPage() {
                   ))}
                 </tbody>
               </table>
+              </div>
             )}
           </CardContent>
         </Card>
@@ -420,7 +402,7 @@ export default async function InvestigatorDashboardPage() {
                 <li key={i} className="flex flex-col gap-0.5 py-2 first:pt-0 last:pb-0 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex items-center gap-2">
                     <Link
-                      href={a.publicId === "—" ? "/investigator/cases" : `/investigator/cases/${a.publicId}`}
+                      href={a.publicId === "N/A" ? "/investigator/cases" : `/investigator/cases/${a.publicId}`}
                       className="font-mono text-xs text-primary underline underline-offset-2 hover:no-underline"
                     >
                       {a.publicId}

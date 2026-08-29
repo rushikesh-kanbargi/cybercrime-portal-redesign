@@ -7,7 +7,7 @@ import { updateEntityStatus } from "@/lib/actions/entity-intelligence";
 import { ENTITY_STATUSES, ENTITY_STATUS_LABEL, type EntityStatus } from "@/lib/entity-status";
 
 const selectClassName =
-  "h-8 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30";
+  "h-11 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm dark:bg-input/30";
 
 // P2 — Threat Reputation curation (ADR-012). Any-to-any transition, no
 // state-machine restriction — nothing in requirements/10-entity-
@@ -57,7 +57,7 @@ export function EntityStatusControl({ suspectIdentifierId, currentStatus }: { su
             </option>
           ))}
         </select>
-        <Button type="button" size="sm" variant="outline" onClick={handleSave} disabled={saving || (status === currentStatus && !note.trim())}>
+        <Button type="button" size="sm" className="min-h-11" variant="outline" onClick={handleSave} disabled={saving || (status === currentStatus && !note.trim())}>
           {saving ? "Saving…" : "Save"}
         </Button>
       </div>
@@ -69,7 +69,7 @@ export function EntityStatusControl({ suspectIdentifierId, currentStatus }: { su
         maxLength={2000}
         disabled={saving}
         aria-label="Reviewer note"
-        className="h-8 w-full rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
+        className="h-11 w-full rounded-lg border border-input bg-transparent px-2.5 py-1 text-base outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm dark:bg-input/30"
       />
       {error && (
         <p className="text-xs text-destructive" role="alert">

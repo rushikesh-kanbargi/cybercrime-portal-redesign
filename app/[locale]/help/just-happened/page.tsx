@@ -6,6 +6,8 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { ArrowRight, Phone, LifeBuoy, Clock } from "lucide-react";
 import { PageIcon } from "@/components/illustrations/page-icon";
+import { GuideFigure } from "@/components/illustrations/guide-figure";
+import { TableOfContents } from "@/components/chrome/table-of-contents";
 import { ReadAloudButton } from "@/components/accessibility/read-aloud-button";
 import { cn } from "@/lib/utils";
 
@@ -24,9 +26,15 @@ export default async function JustHappenedPage() {
     t("deadlineTitle"),
     t("deadlineBody"),
   ].join(" ");
+  const tCommon = await getTranslations("common");
+  const tocItems = [
+    ...steps.map((step, i) => ({ href: `#step-${i}`, label: `${i + 1}. ${step.title}` })),
+    { href: "#deadline", label: t("deadlineTitle") },
+  ];
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 px-4 py-12">
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-12 lg:grid lg:grid-cols-[1fr_260px] lg:items-start lg:gap-10">
+    <div className="flex w-full max-w-2xl flex-col gap-8 lg:mx-auto">
       {/* No hero photo on this page, deliberately — this is the fastest path
           to 1930, and a third-party image CDN call has no business being on
           the critical path for a page a panicking victim opens first. */}
@@ -56,7 +64,9 @@ export default async function JustHappenedPage() {
         {steps.map((step, i) => (
           <Card
             key={step.title}
+            id={`step-${i}`}
             className={cn(
+              "scroll-mt-24",
               i % 2 === 0
                 ? "border-primary/20 bg-gradient-to-br from-primary/6 via-card to-card"
                 : "border-brand-gold/20 bg-gradient-to-br from-brand-gold/6 via-card to-card",
@@ -74,7 +84,7 @@ export default async function JustHappenedPage() {
         ))}
       </div>
 
-      <Alert className="border-warning/30 bg-warning/8">
+      <Alert id="deadline" className="scroll-mt-24 border-warning/30 bg-warning/8">
         <Clock />
         <AlertTitle>{t("deadlineTitle")}</AlertTitle>
         <AlertDescription>{t("deadlineBody")}</AlertDescription>
@@ -104,6 +114,12 @@ export default async function JustHappenedPage() {
           ),
         })}
       </p>
+    </div>
+
+    <div className="flex flex-col gap-4 lg:sticky lg:top-24">
+      <GuideFigure pose="wave" className="mx-auto w-16 lg:mx-0" />
+      <TableOfContents title={tCommon("onThisPage")} items={tocItems} />
+    </div>
     </div>
   );
 }

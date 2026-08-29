@@ -124,7 +124,7 @@ export async function getEntityDetail(suspectIdentifierId: string): Promise<Enti
     correlatedCases,
     clusterNote:
       correlatedCases.length >= CLUSTER_THRESHOLD
-        ? `Reported by ${correlatedCases.length} separate complaints — a possible correlated cluster, not confirmed as a single actor or campaign.`
+        ? `Reported by ${correlatedCases.length} separate complaints. A possible correlated cluster, not confirmed as a single actor or campaign.`
         : null,
   };
 }

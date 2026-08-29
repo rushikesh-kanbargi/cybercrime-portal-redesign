@@ -5,6 +5,7 @@ import { Link } from "@/i18n/navigation";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { PageIcon } from "@/components/illustrations/page-icon";
+import { TableOfContents } from "@/components/chrome/table-of-contents";
 import { Accessibility } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -19,9 +20,17 @@ export default async function AccessibilityPage() {
   const implemented = t.raw("implemented") as Array<{ title: string; body: string }>;
   const tested = t.raw("tested") as Array<{ strong: string; body: string }>;
   const gaps = t.raw("gaps") as Array<{ strong: string; body: string }>;
+  const tCommon = await getTranslations("common");
+  const tocItems = [
+    { href: "#target-scope", label: t("targetTitle") },
+    { href: "#implemented", label: t("implementedTitle") },
+    { href: "#tested", label: t("testedTitle") },
+    { href: "#gaps", label: t("gapsTitle") },
+  ];
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 px-4 py-12">
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-12 lg:grid lg:grid-cols-[1fr_260px] lg:items-start lg:gap-10">
+    <div className="flex w-full max-w-2xl flex-col gap-8 lg:mx-auto">
       <div className="grid items-center gap-6 lg:grid-cols-[1.3fr_1fr]">
         <div className="animate-enter flex flex-col gap-3">
           <PageIcon icon={Accessibility} size="lg" />
@@ -37,7 +46,7 @@ export default async function AccessibilityPage() {
         />
       </div>
 
-      <Card className="border-primary/20 bg-gradient-to-br from-primary/8 via-card to-card">
+      <Card id="target-scope" className="scroll-mt-24 border-primary/20 bg-gradient-to-br from-primary/8 via-card to-card">
         <CardHeader>
           <CardTitle>{t("targetTitle")}</CardTitle>
         </CardHeader>
@@ -53,7 +62,7 @@ export default async function AccessibilityPage() {
         </CardContent>
       </Card>
 
-      <div className="flex flex-col gap-4">
+      <div id="implemented" className="flex flex-col gap-4 scroll-mt-24">
         <h2 className="text-xl font-semibold tracking-tight text-foreground">{t("implementedTitle")}</h2>
         {implemented.map((item, i) => (
           <Card
@@ -76,7 +85,7 @@ export default async function AccessibilityPage() {
 
       <Separator />
 
-      <div className="flex flex-col gap-3">
+      <div id="tested" className="flex flex-col gap-3 scroll-mt-24">
         <h2 className="text-xl font-semibold tracking-tight text-foreground">{t("testedTitle")}</h2>
         <p className="text-sm text-muted-foreground">{t("testedIntro")}</p>
         <ul className="flex flex-col gap-3 text-sm text-muted-foreground">
@@ -90,7 +99,7 @@ export default async function AccessibilityPage() {
 
       <Separator />
 
-      <div className="flex flex-col gap-3">
+      <div id="gaps" className="flex flex-col gap-3 scroll-mt-24">
         <h2 className="text-xl font-semibold tracking-tight text-foreground">{t("gapsTitle")}</h2>
         <p className="text-sm text-muted-foreground">{t("gapsIntro")}</p>
         <ul className="flex flex-col gap-3 text-sm text-muted-foreground">
@@ -111,6 +120,11 @@ export default async function AccessibilityPage() {
           ),
         })}
       </p>
+    </div>
+
+    <div className="lg:sticky lg:top-24">
+      <TableOfContents title={tCommon("onThisPage")} items={tocItems} />
+    </div>
     </div>
   );
 }

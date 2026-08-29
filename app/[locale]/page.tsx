@@ -1,12 +1,10 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import {
   ArrowRight,
   Phone,
   CircleCheck,
-  Banknote,
   MessageSquareText,
   FileCheck2,
   Search,
@@ -15,8 +13,6 @@ import {
   ShieldOff,
   ShieldCheck,
   CircleHelp,
-  ShieldAlert,
-  KeyRound,
 } from "lucide-react";
 import { ReportFlowIllustration } from "@/components/illustrations/report-flow";
 import { PageIcon } from "@/components/illustrations/page-icon";
@@ -27,6 +23,7 @@ import { PhotoBanner } from "@/components/illustrations/photo-banner";
 import { HeroEntrance, HeroEntranceItem } from "@/components/motion/hero-entrance";
 import { Press } from "@/components/motion/press";
 import { GuidedHelpChat } from "@/components/homepage/guided-help-chat";
+import { CategoryPicker } from "@/components/homepage/category-picker";
 
 // §9.2 / §25.2 — the home is an intent-first entry point, not a category
 // dropdown: "what happened to you?", not "which programme owns this?".
@@ -51,7 +48,6 @@ import { GuidedHelpChat } from "@/components/homepage/guided-help-chat";
 // read as "this site is about money fraud" even though the comment above
 // always intended intent-first parity. Now one grid, three equal-weight
 // cards, differing only by an honest availability badge — not by size.
-const categoryIcons = [Banknote, ShieldAlert, KeyRound] as const;
 const categoryHrefs = ["/report/money", "/report/harassment", "/report/hacked"] as const;
 const howItWorksIcons = [MessageSquareText, CircleCheck, FileCheck2, Search] as const;
 const trustIcons = [UserX, Timer, ShieldOff] as const;
@@ -152,84 +148,7 @@ export default async function Home() {
           afterthoughts" (D25 still holds: real links only, never a fake
           flow or a disabled button). */}
       <div className="mx-auto w-full max-w-6xl px-4">
-        <div className="flex flex-col gap-1 text-center sm:text-left">
-          <h2 className="text-2xl font-semibold tracking-tight text-foreground">
-            {t("categoryPicker.title")}
-          </h2>
-          <p className="text-muted-foreground">{t("categoryPicker.subtitle")}</p>
-        </div>
-        <div className="mt-6 grid gap-4 sm:grid-cols-3">
-          {(
-            t.raw("categoryPicker.items") as Array<{
-              title: string;
-              body: string;
-              cta: string;
-              available: boolean;
-              // The kinds of case that live inside this tile. Three tiles
-              // alone made a victim guess — identity theft is not obviously
-              // "money taken from my account" and not obviously "hacked", so
-              // someone in that situation had nothing to recognise. Listing
-              // what is inside turns a classification problem into a
-              // recognition one, without adding a dropdown tree.
-              examples: string[];
-            }>
-          ).map((item, i) => {
-            const Icon = categoryIcons[i];
-            return (
-              <Link
-                key={item.title}
-                href={categoryHrefs[i]}
-                className="group block rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-              >
-                <Press className="h-full">
-                  <div
-                    className={
-                      item.available
-                        ? "flex h-full flex-col gap-3 rounded-2xl border border-primary/25 bg-gradient-to-br from-primary/10 via-card to-card p-6 transition-shadow duration-200 ease-[var(--ease-feedback)] group-hover:shadow-lg"
-                        : "flex h-full flex-col gap-3 rounded-2xl border border-border bg-card p-6 transition-shadow duration-200 ease-[var(--ease-feedback)] group-hover:shadow-lg"
-                    }
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <PageIcon icon={Icon} />
-                      <Badge variant={item.available ? "default" : "outline"} className="shrink-0">
-                        {item.available ? t("categoryPicker.availableBadge") : t("categoryPicker.notBuiltBadge")}
-                      </Badge>
-                    </div>
-                    <h3 className="text-lg font-medium text-foreground">{item.title}</h3>
-                    <p className="text-sm text-muted-foreground">{item.body}</p>
-                    <ul className="flex flex-col gap-1 text-xs text-muted-foreground">
-                      {item.examples.map((example) => (
-                        <li key={example} className="flex gap-1.5">
-                          <span aria-hidden="true">·</span>
-                          <span>{example}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    {item.available ? (
-                      <Button asChild size="sm" className="group/button mt-auto w-fit pt-1">
-                        <span>
-                          {item.cta}
-                          <ArrowRight
-                            className="size-3.5 transition-transform duration-200 group-hover/button:translate-x-0.5"
-                            aria-hidden="true"
-                          />
-                        </span>
-                      </Button>
-                    ) : (
-                      <span className="mt-auto inline-flex items-center gap-1 pt-1 text-sm font-medium text-primary">
-                        {item.cta}
-                        <ArrowRight
-                          className="size-3.5 transition-transform duration-200 group-hover:translate-x-0.5"
-                          aria-hidden="true"
-                        />
-                      </span>
-                    )}
-                  </div>
-                </Press>
-              </Link>
-            );
-          })}
-        </div>
+        <CategoryPicker />
 
         <p className="mt-6 text-sm text-muted-foreground">
           {t("emergency.text")}{" "}

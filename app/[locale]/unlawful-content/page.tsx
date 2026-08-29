@@ -5,6 +5,7 @@ import { Link } from "@/i18n/navigation";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { PageIcon } from "@/components/illustrations/page-icon";
+import { TableOfContents } from "@/components/chrome/table-of-contents";
 import { Scale, TriangleAlert } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -26,9 +27,16 @@ export default async function UnlawfulContentPage() {
   const t = await getTranslations("unlawfulContent");
   const categoriesItems = t.raw("categoriesItems") as ListItem[];
   const whatToDoItems = t.raw("whatToDoItems") as ListItem[];
+  const tCommon = await getTranslations("common");
+  const tocItems = [
+    { href: "#categories", label: t("categoriesTitle") },
+    { href: "#safety-note", label: t("safetyNoteTitle") },
+    { href: "#what-to-do", label: t("whatToDoTitle") },
+  ];
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-10 px-4 py-16">
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 py-16 lg:grid lg:grid-cols-[1fr_260px] lg:items-start lg:gap-10">
+    <div className="flex w-full max-w-2xl flex-col gap-10 lg:mx-auto">
       <div className="grid items-center gap-6 lg:grid-cols-[1.3fr_1fr]">
         <div className="animate-enter flex flex-col gap-4">
           <PageIcon icon={Scale} size="lg" />
@@ -44,7 +52,7 @@ export default async function UnlawfulContentPage() {
         />
       </div>
 
-      <div className="flex flex-col gap-4">
+      <div id="categories" className="flex flex-col gap-4 scroll-mt-24">
         <h2 className="text-xl font-semibold tracking-tight text-foreground">{t("categoriesTitle")}</h2>
         <div className="flex flex-col gap-4">
           {categoriesItems.map((item, i) => (
@@ -70,7 +78,7 @@ export default async function UnlawfulContentPage() {
 
       <Separator />
 
-      <Card className="border-2 border-brand-gold/25 bg-gradient-to-br from-brand-gold/8 to-transparent">
+      <Card id="safety-note" className="scroll-mt-24 border-2 border-brand-gold/25 bg-gradient-to-br from-brand-gold/8 to-transparent">
         <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-start">
           <PageIcon icon={TriangleAlert} tone="gold" />
           <div className="flex flex-col gap-1">
@@ -80,7 +88,7 @@ export default async function UnlawfulContentPage() {
         </CardContent>
       </Card>
 
-      <div className="flex flex-col gap-4">
+      <div id="what-to-do" className="flex flex-col gap-4 scroll-mt-24">
         <h2 className="text-xl font-semibold tracking-tight text-foreground">{t("whatToDoTitle")}</h2>
         <div className="flex flex-col gap-4">
           {whatToDoItems.map((item, i) => (
@@ -113,6 +121,11 @@ export default async function UnlawfulContentPage() {
           ),
         })}
       </p>
+    </div>
+
+    <div className="lg:sticky lg:top-24">
+      <TableOfContents title={tCommon("onThisPage")} items={tocItems} />
+    </div>
     </div>
   );
 }

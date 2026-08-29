@@ -35,7 +35,7 @@
     "passwords": {
       "label": "Passwords",
       "statusKey": "real",
-      "body": "Citizens never have a password anywhere in this product — reporting and tracking never require one. The one exception is the investigator/admin side: those accounts authenticate with a real, hashed password behind a separate login at /investigator/login, provisioned by a script, never a public sign-up form."
+      "body": "Citizens never have a password anywhere in this product. Reporting and tracking never require one. The one exception is the investigator/admin side: those accounts authenticate with a real, hashed password behind a separate login at /investigator/login, provisioned by a script, never a public sign-up form."
     },
     "scanning": {
       "label": "Evidence \"scanning\"",

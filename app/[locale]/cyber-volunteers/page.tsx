@@ -4,6 +4,7 @@ import { PhotoBanner } from "@/components/illustrations/photo-banner";
 import { Link } from "@/i18n/navigation";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { PageIcon } from "@/components/illustrations/page-icon";
+import { TableOfContents } from "@/components/chrome/table-of-contents";
 import { Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -25,9 +26,17 @@ interface ListItem {
 export default async function CyberVolunteersPage() {
   const t = await getTranslations("cyberVolunteers");
   const howItWorksItems = t.raw("howItWorksItems") as ListItem[];
+  const tCommon = await getTranslations("common");
+  const tocItems = [
+    { href: "#what-it-is", label: t("whatItIsTitle") },
+    { href: "#how-it-works", label: t("howItWorksTitle") },
+    { href: "#what-volunteers-do", label: t("whatVolunteersDoTitle") },
+    { href: "#not-here", label: t("notHereTitle") },
+  ];
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-10 px-4 py-16">
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 py-16 lg:grid lg:grid-cols-[1fr_260px] lg:items-start lg:gap-10">
+    <div className="flex w-full max-w-2xl flex-col gap-10 lg:mx-auto">
       <div className="grid items-center gap-6 lg:grid-cols-[1.3fr_1fr]">
         <div className="animate-enter flex flex-col gap-4">
           <PageIcon icon={Users} size="lg" />
@@ -49,12 +58,12 @@ export default async function CyberVolunteersPage() {
         </CardContent>
       </Card>
 
-      <div className="flex flex-col gap-3">
+      <div id="what-it-is" className="flex flex-col gap-3 scroll-mt-24">
         <h2 className="text-xl font-semibold tracking-tight text-foreground">{t("whatItIsTitle")}</h2>
         <p className="text-sm text-muted-foreground">{t("whatItIsBody")}</p>
       </div>
 
-      <div className="flex flex-col gap-4">
+      <div id="how-it-works" className="flex flex-col gap-4 scroll-mt-24">
         <h2 className="text-xl font-semibold tracking-tight text-foreground">{t("howItWorksTitle")}</h2>
         <div className="flex flex-col gap-4">
           {howItWorksItems.map((item, i) => (
@@ -78,7 +87,7 @@ export default async function CyberVolunteersPage() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-3">
+      <div id="what-volunteers-do" className="flex flex-col gap-3 scroll-mt-24">
         <h2 className="text-xl font-semibold tracking-tight text-foreground">
           {t("whatVolunteersDoTitle")}
         </h2>
@@ -93,7 +102,7 @@ export default async function CyberVolunteersPage() {
         </p>
       </div>
 
-      <Card>
+      <Card id="not-here" className="scroll-mt-24">
         <CardHeader>
           <CardTitle className="text-base">{t("notHereTitle")}</CardTitle>
         </CardHeader>
@@ -119,6 +128,11 @@ export default async function CyberVolunteersPage() {
           ),
         })}
       </p>
+    </div>
+
+    <div className="lg:sticky lg:top-24">
+      <TableOfContents title={tCommon("onThisPage")} items={tocItems} />
+    </div>
     </div>
   );
 }

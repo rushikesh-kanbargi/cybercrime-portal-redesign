@@ -14,7 +14,7 @@ import { SUSPECT_IDENTIFIER_TYPES, type SuspectIdentifierType } from "@/lib/type
 import type { SuspectCheckTier } from "@/lib/suspect-identifier";
 
 const selectClassName =
-  "h-8 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm dark:bg-input/30";
+  "h-11 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm dark:bg-input/30";
 
 interface CheckResult {
   tier: SuspectCheckTier;
@@ -174,7 +174,7 @@ export function CheckerForm() {
                   {t("report.done")}
                 </p>
               ) : (
-                <Button type="button" size="sm" variant="outline" onClick={handleReport} disabled={reportStage === "reporting"}>
+                <Button type="button" size="sm" className="min-h-11" variant="outline" onClick={handleReport} disabled={reportStage === "reporting"}>
                   {reportStage === "reporting" ? t("report.submitting") : t("report.button")}
                 </Button>
               )}

@@ -23,13 +23,17 @@ export default async function EntityDetailPage({ params }: { params: Promise<{ i
   if (!entity) notFound();
 
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-4 py-10">
-      <div>
-        <Link href="/investigator/entities" className="text-xs text-muted-foreground underline underline-offset-2">
-          ← All entities
+    <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-4 py-8">
+      <nav aria-label="Breadcrumb" className="text-xs text-muted-foreground">
+        <Link href="/investigator/entities" className="hover:text-foreground hover:underline">
+          Entities
         </Link>
-        <div className="flex items-center gap-2">
-          <h1 className="font-mono text-xl font-semibold tracking-tight text-foreground">{entity.valueNormalised}</h1>
+        <span className="mx-1.5" aria-hidden="true">/</span>
+        <span className="font-mono text-foreground">{entity.valueNormalised}</span>
+      </nav>
+      <div>
+        <div className="flex flex-wrap items-center gap-2">
+          <h1 className="font-mono text-xl font-semibold tracking-tight break-all text-foreground">{entity.valueNormalised}</h1>
           <Badge variant="outline">{entity.type}</Badge>
           {entity.isSynthetic && <Badge variant="outline">synthetic (checker demo data)</Badge>}
         </div>
@@ -46,7 +50,7 @@ export default async function EntityDetailPage({ params }: { params: Promise<{ i
         <CardHeader>
           <CardTitle className="text-base">Status</CardTitle>
           <CardDescription>
-            A report alone is never Confirmed automatically — this reflects investigator review, not the report
+            A report alone is never Confirmed automatically. This reflects investigator review, not the report
             count.
           </CardDescription>
         </CardHeader>
@@ -84,7 +88,7 @@ export default async function EntityDetailPage({ params }: { params: Promise<{ i
           <CardTitle className="text-base">Correlated cases ({entity.correlatedCases.length})</CardTitle>
           <CardDescription>
             Every complaint that reported this identifier. A shared identifier is correlation, not proof of a single
-            actor — verify independently before treating cases as linked.
+            actor. Verify independently before treating cases as linked.
           </CardDescription>
         </CardHeader>
         <CardContent>

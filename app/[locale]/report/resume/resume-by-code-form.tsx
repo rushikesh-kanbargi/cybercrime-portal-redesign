@@ -71,37 +71,35 @@ export function ResumeByCodeForm() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-6 px-4 py-10">
-      <Card>
-        <CardHeader>
-          <CardTitle>{t("heading")}</CardTitle>
-          <CardDescription>{t("description")}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="resume-code">{t("codeLabel")}</Label>
-              <Input
-                id="resume-code"
-                value={code}
-                onChange={(e) => setCode(e.target.value)}
-                placeholder={t("codePlaceholder")}
-                autoComplete="off"
-                autoCapitalize="off"
-                spellCheck={false}
-              />
-            </div>
-            {error && (
-              <p className="text-sm text-destructive" role="alert">
-                {error}
-              </p>
-            )}
-            <Button type="submit" disabled={loading || code.trim().length === 0}>
-              {loading ? t("loading") : t("submit")}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>{t("heading")}</CardTitle>
+        <CardDescription>{t("description")}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="resume-code">{t("codeLabel")}</Label>
+            <Input
+              id="resume-code"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              placeholder={t("codePlaceholder")}
+              autoComplete="off"
+              autoCapitalize="off"
+              spellCheck={false}
+            />
+          </div>
+          {error && (
+            <p className="text-sm text-destructive" role="alert">
+              {error}
+            </p>
+          )}
+          <Button type="submit" disabled={loading || code.trim().length === 0}>
+            {loading ? t("loading") : t("submit")}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   );
 }

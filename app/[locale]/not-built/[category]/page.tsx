@@ -5,6 +5,7 @@ import { Link } from "@/i18n/navigation";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { PageIcon } from "@/components/illustrations/page-icon";
+import { CategoryPicker } from "@/components/homepage/category-picker";
 import {
   Phone,
   ArrowLeft,
@@ -99,7 +100,8 @@ export default async function NotBuiltCategoryPage({
   const Icon = categoryIcons[category];
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-8 px-4 py-12">
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-12 lg:grid lg:grid-cols-[1fr_320px] lg:items-start lg:gap-10">
+    <div className="flex w-full max-w-2xl flex-col gap-8 lg:mx-auto">
       <div className="animate-enter flex flex-col gap-3">
         <div className="flex items-start justify-between gap-3">
           <PageIcon icon={Icon} size="lg" />
@@ -193,6 +195,11 @@ export default async function NotBuiltCategoryPage({
         <ArrowLeft className="size-3.5" aria-hidden="true" />
         {t("backToHome")}
       </Link>
+    </div>
+
+    <div className="lg:sticky lg:top-24">
+      <CategoryPicker variant="compact" />
+    </div>
     </div>
   );
 }

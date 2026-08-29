@@ -10,6 +10,7 @@
   },
   "case": {
     "heading": "Complaint {publicId}",
+    "loading": "Looking up your case…",
     "notFoundTitle": "We couldn't find that",
     "notFoundBody": "Check for a typo, or look in the SMS we sent you.",
     "notFoundLink": "Try a different Complaint ID",

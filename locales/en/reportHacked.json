@@ -4,8 +4,8 @@
     "description": "Report a hacked social media account, email, or device in a few plain-language steps."
   },
   "progress": {
-    "lastQuestion": "Last question",
-    "moreQuestions": "{count, plural, one {# more question} other {# more questions}}",
+    "lastQuestion": "Last question, almost there",
+    "moreQuestions": "{count, plural, one {# more question to go} other {# more questions to go}}",
     "steps": [
       "Tell us",
       "A few details",
@@ -23,7 +23,7 @@
   },
   "narrate": {
     "title": "Tell us what happened",
-    "description": "Write it in your own words. There's no right way to say it, and no minimum length.",
+    "description": "Write it in your own words. There's no right way to say it, and no minimum length. Whatever you remember is enough to start.",
     "narrativeLabel": "What's happening",
     "narrativePlaceholder": "e.g. My Instagram got hacked and I can't log in, or Someone changed my email password...",
     "narrativeError": "Tell us what happened.",
@@ -159,6 +159,7 @@
     "skip": "Skip",
     "otpMismatch": "That code didn't match.",
     "otpGenericError": "Something went wrong confirming that code. Please try again.",
+    "trackButton": "Track this complaint",
     "backHome": "Back to home",
     "downloadFilename": "complaint-{publicId}.txt",
     "downloadFileBody": "Cybercrime Report: Confirmation\n\nComplaint ID: {publicId}\n\nThis is NOT an FIR.\nKeep this ID safe; you will need it for any follow-up.\n",

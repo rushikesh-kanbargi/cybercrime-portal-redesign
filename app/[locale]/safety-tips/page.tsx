@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { PageIcon } from "@/components/illustrations/page-icon";
+import { TableOfContents } from "@/components/chrome/table-of-contents";
 import { ShieldCheck, LifeBuoy, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -16,11 +17,18 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function SafetyTipsPage() {
   const t = await getTranslations("safetyTips");
+  const tCommon = await getTranslations("common");
   const beforeItems = t.raw("beforeItHappens.items") as Array<{ title: string; body: string }>;
   const patternItems = t.raw("commonScamPatterns.items") as Array<{ title: string; body: string }>;
+  const tocItems = [
+    { href: "#before-it-happens", label: t("beforeItHappens.title") },
+    { href: "#if-it-just-happened", label: t("ifItJustHappened.title") },
+    { href: "#common-scam-patterns", label: t("commonScamPatterns.title") },
+  ];
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-col gap-12 px-4 py-16">
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-16 lg:grid lg:grid-cols-[1fr_260px] lg:items-start lg:gap-10">
+    <div className="flex w-full max-w-2xl flex-col gap-12 lg:mx-auto">
       {/* Real photography merged into the header itself (a grid column next
           to the title), not a separate block below it — same idea as the
           homepage hero's own text+illustration split. Licensed free to use
@@ -43,7 +51,7 @@ export default async function SafetyTipsPage() {
         />
       </div>
 
-      <div className="flex flex-col gap-4">
+      <div id="before-it-happens" className="flex flex-col gap-4 scroll-mt-24">
         <h2 className="text-2xl font-semibold tracking-tight text-foreground">
           {t("beforeItHappens.title")}
         </h2>
@@ -71,7 +79,7 @@ export default async function SafetyTipsPage() {
 
       <Separator />
 
-      <Card className="border-2 border-brand-gold/25 bg-gradient-to-br from-brand-gold/8 to-transparent">
+      <Card id="if-it-just-happened" className="scroll-mt-24 border-2 border-brand-gold/25 bg-gradient-to-br from-brand-gold/8 to-transparent">
         <CardContent className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-3">
             <PageIcon icon={LifeBuoy} tone="gold" />
@@ -93,7 +101,7 @@ export default async function SafetyTipsPage() {
 
       <Separator />
 
-      <div className="flex flex-col gap-4">
+      <div id="common-scam-patterns" className="flex flex-col gap-4 scroll-mt-24">
         <h2 className="text-2xl font-semibold tracking-tight text-foreground">
           {t("commonScamPatterns.title")}
         </h2>
@@ -128,6 +136,11 @@ export default async function SafetyTipsPage() {
           ),
         })}
       </p>
+    </div>
+
+    <div className="lg:sticky lg:top-24">
+      <TableOfContents title={tCommon("onThisPage")} items={tocItems} />
+    </div>
     </div>
   );
 }

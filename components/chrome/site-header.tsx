@@ -1,7 +1,8 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { Phone, ChevronDown, Menu, ExternalLink } from "lucide-react";
+import { Phone, ChevronDown, Menu, ExternalLink, LogIn } from "lucide-react";
 import { LanguageSwitcher } from "./language-switcher";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { SiteMark } from "./site-mark";
 import { ScrollProgress } from "./scroll-progress";
 import {
@@ -65,7 +66,17 @@ export async function SiteHeader() {
 
         <nav
           aria-label={t("nav.label")}
-          className="hidden min-w-0 flex-1 items-center gap-0 overflow-x-auto text-[13px] md:flex"
+          // Scrollbar hidden visually (still scrollable by drag/trackpad/wheel):
+          // a visible native scrollbar reserves extra box height, which throws
+          // off vertical centering against the button cluster on the right.
+          // `py-1` gives keyboard focus rings room to render without being
+          // clipped by the same overflow-x-auto (it forces overflow-y to clip
+          // too — CSS overflow spec). Full desktop nav only renders at
+          // min-[1280px] (see button cluster below): measured to have zero
+          // overflow there; below that, every real screen (MacBooks included,
+          // ~1280-1728px effective) gets the mobile hamburger instead of a
+          // cramped, clipping bar.
+          className="hidden min-w-0 flex-1 items-center justify-center gap-1 overflow-x-auto py-1 text-sm [-ms-overflow-style:none] [scrollbar-width:none] min-[1280px]:flex [&::-webkit-scrollbar]:hidden"
         >
           {/* D54 — the persistent logo already links home; the real
               site's separate flat "Home" item is dropped here so six
@@ -77,7 +88,7 @@ export async function SiteHeader() {
             <DropdownMenuTrigger asChild>
               <button
                 type="button"
-                className="inline-flex shrink-0 items-center gap-1 rounded-md px-2 py-2 font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-muted hover:text-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground"
+                className="inline-flex shrink-0 items-center gap-0.5 rounded-md px-2.5 py-2 font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-muted hover:text-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground"
               >
                 {t("nav.registerComplaint.trigger")}
                 <ChevronDown className="size-3.5" aria-hidden="true" />
@@ -98,7 +109,7 @@ export async function SiteHeader() {
 
           <Link
             href="/track"
-            className="shrink-0 rounded-md px-2 py-2 font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            className="shrink-0 rounded-md px-2.5 py-2 font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           >
             {t("nav.track")}
           </Link>
@@ -108,7 +119,7 @@ export async function SiteHeader() {
             <DropdownMenuTrigger asChild>
               <button
                 type="button"
-                className="inline-flex shrink-0 items-center gap-1 rounded-md px-2 py-2 font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-muted hover:text-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground"
+                className="inline-flex shrink-0 items-center gap-0.5 rounded-md px-2.5 py-2 font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-muted hover:text-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground"
               >
                 {t("nav.reportCheckSuspect.trigger")}
                 <ChevronDown className="size-3.5" aria-hidden="true" />
@@ -163,7 +174,7 @@ export async function SiteHeader() {
             <DropdownMenuTrigger asChild>
               <button
                 type="button"
-                className="inline-flex shrink-0 items-center gap-1 rounded-md px-2 py-2 font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-muted hover:text-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground"
+                className="inline-flex shrink-0 items-center gap-0.5 rounded-md px-2.5 py-2 font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-muted hover:text-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground"
               >
                 {t("nav.cyberVolunteersNav.trigger")}
                 <ChevronDown className="size-3.5" aria-hidden="true" />
@@ -194,7 +205,7 @@ export async function SiteHeader() {
             <DropdownMenuTrigger asChild>
               <button
                 type="button"
-                className="inline-flex shrink-0 items-center gap-1 rounded-md px-2 py-2 font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-muted hover:text-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground"
+                className="inline-flex shrink-0 items-center gap-0.5 rounded-md px-2.5 py-2 font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-muted hover:text-foreground data-[state=open]:bg-muted data-[state=open]:text-foreground"
               >
                 {t("nav.resources")}
                 <ChevronDown className="size-3.5" aria-hidden="true" />
@@ -248,41 +259,49 @@ export async function SiteHeader() {
 
           <Link
             href="/contact"
-            className="shrink-0 rounded-md px-2 py-2 font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            className="shrink-0 rounded-md px-2.5 py-2 font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           >
             {t("nav.contact")}
           </Link>
 
+          {user && (
+            <Link
+              href="/profile"
+              className="shrink-0 rounded-md px-2.5 py-2 font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              {t("nav.myComplaints")}
+            </Link>
+          )}
+        </nav>
+
+        <div className="flex shrink-0 items-center gap-2 py-1 sm:gap-3">
+          {/* py-1 matches the nav's own py-1 above, so both blocks stay the
+              same height and centered flush with each other. Sign in/out
+              lives here (not in the crowded inline nav) as a real button,
+              matching Call 1930's shape but a distinct secondary fill —
+              icon-only (accessible name still present, sr-only) to keep the
+              full nav fitting from min-[1280px] up rather than a much
+              wider, MacBook-hostile threshold. */}
           {user ? (
-            <>
-              <Link
-                href="/profile"
-                className="shrink-0 rounded-md px-2 py-2 font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-              >
-                {t("nav.myComplaints")}
-              </Link>
-              <SignOutButton />
-            </>
+            <SignOutButton className="hidden min-h-11 shrink-0 items-center gap-1.5 rounded-md border border-input bg-secondary/60 px-3 py-2 text-sm font-medium whitespace-nowrap text-secondary-foreground transition-colors hover:bg-secondary min-[1280px]:inline-flex" />
           ) : (
             // Signing in is never required to report — it only gets a
             // returning citizen back to their own list (§12). The link is a
             // real destination either way, so it is never a dead affordance.
             <Link
               href="/login"
-              className="shrink-0 rounded-md px-2 py-2 font-medium whitespace-nowrap text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              className="hidden min-h-11 shrink-0 items-center gap-1.5 rounded-md border border-input bg-secondary/60 px-3 py-2 text-sm font-medium whitespace-nowrap text-secondary-foreground transition-colors hover:bg-secondary min-[1280px]:inline-flex"
             >
+              <LogIn className="size-3.5" aria-hidden="true" />
               {t("nav.signIn")}
             </Link>
           )}
-        </nav>
-
-        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
                 type="button"
                 aria-label={t("nav.label")}
-                className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-foreground transition-colors hover:bg-muted md:hidden"
+                className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-foreground transition-colors hover:bg-muted min-[1280px]:hidden"
               >
                 <Menu className="size-4.5" aria-hidden="true" />
               </button>
@@ -428,6 +447,11 @@ export async function SiteHeader() {
               )}
             </DropdownMenuContent>
           </DropdownMenu>
+          <ThemeToggle
+            darkLabel={t("themeToggle.toDark")}
+            lightLabel={t("themeToggle.toLight")}
+            className="border border-input bg-secondary/60 hover:bg-secondary"
+          />
           <LanguageSwitcher />
           <a
             href="tel:1930"

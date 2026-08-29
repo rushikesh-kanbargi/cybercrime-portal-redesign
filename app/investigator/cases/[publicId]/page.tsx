@@ -54,12 +54,16 @@ export default async function InvestigatorCaseDetailPage({
   ]);
 
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-10 xl:px-8">
+    <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-8 xl:px-8">
+      <nav aria-label="Breadcrumb" className="text-xs text-muted-foreground">
+        <Link href="/investigator/cases" className="hover:text-foreground hover:underline">
+          Cases
+        </Link>
+        <span className="mx-1.5" aria-hidden="true">/</span>
+        <span className="font-mono text-foreground">{caseDetail.publicId}</span>
+      </nav>
       <div className="flex flex-col gap-4 rounded-xl border border-primary/20 bg-gradient-to-br from-primary/8 via-card to-card p-5 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <Link href="/investigator/cases" className="text-xs text-muted-foreground underline underline-offset-2">
-            ← All cases
-          </Link>
           <h1 className="font-mono text-2xl font-semibold tracking-tight text-foreground">{caseDetail.publicId}</h1>
           <p className="text-sm text-muted-foreground">{caseDetail.categoryCode.replace(/_/g, " ")}</p>
         </div>
@@ -72,7 +76,7 @@ export default async function InvestigatorCaseDetailPage({
           )}
           {caseDetail.riskLevel !== "standard" && (
             <p className="max-w-xs text-xs text-muted-foreground sm:text-right">
-              {caseDetail.riskReasons.join("; ")} — a triage aid, not a verdict.
+              {caseDetail.riskReasons.join("; ")}. A triage aid, not a verdict.
             </p>
           )}
         </div>
@@ -134,7 +138,7 @@ export default async function InvestigatorCaseDetailPage({
                 Investigation brief
               </CardTitle>
               <CardDescription>
-                Compiled from this case&apos;s own recorded data — not AI-generated, nothing inferred beyond simple
+                Compiled from this case&apos;s own recorded data. Not AI-generated, nothing inferred beyond simple
                 checks below.
               </CardDescription>
             </CardHeader>
@@ -294,14 +298,14 @@ export default async function InvestigatorCaseDetailPage({
             Related entities ({caseDetail.relatedEntities.length})
           </CardTitle>
           <CardDescription>
-            Suspicious Entity Checker signals this case contributed to. A report is not proof of guilt — it
+            Suspicious Entity Checker signals this case contributed to. A report is not proof of guilt. It
             reflects what this citizen told us, nothing has been independently verified.
           </CardDescription>
         </CardHeader>
         <CardContent>
           {caseDetail.relatedEntities.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              None recorded for this case — only a UPI ID detected in the money-flow narrative is captured today
+              None recorded for this case. Only a UPI ID detected in the money-flow narrative is captured today
               (P1.1); other identifier types and report categories aren&apos;t extracted yet, so this is
               often expected to be empty, not a bug.
             </p>
@@ -338,7 +342,7 @@ export default async function InvestigatorCaseDetailPage({
             Potential duplicates ({caseDetail.duplicateCandidates.length})
           </CardTitle>
           <CardDescription>
-            Other reports that share strong signals with this one. A candidate is not a merge — nothing here
+            Other reports that share strong signals with this one. A candidate is not a merge. Nothing here
             changes automatically; review and act on it yourself.
           </CardDescription>
         </CardHeader>
@@ -349,15 +353,18 @@ export default async function InvestigatorCaseDetailPage({
             <ul className="flex flex-col divide-y divide-border text-sm">
               {caseDetail.duplicateCandidates.map((c) => (
                 <li key={c.publicId} className="flex flex-col gap-1 py-3 first:pt-0 last:pb-0">
-                  <div className="flex items-center justify-between gap-2">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
                     <Link
                       href={`/investigator/cases/${c.publicId}`}
                       className="font-mono text-xs text-primary underline underline-offset-2 hover:no-underline"
                     >
                       {c.publicId}
                     </Link>
-                    <Badge variant={c.classification === "potential_duplicate" ? "default" : "outline"}>
-                      {c.classification === "potential_duplicate" ? "Potential duplicate" : "Related — insufficient evidence to classify as duplicate"}
+                    <Badge
+                      variant={c.classification === "potential_duplicate" ? "default" : "outline"}
+                      className="h-auto whitespace-normal text-left"
+                    >
+                      {c.classification === "potential_duplicate" ? "Potential duplicate" : "Related, insufficient evidence to classify as duplicate"}
                     </Badge>
                   </div>
                   <span className="text-xs text-muted-foreground">Confidence: {c.confidence}%</span>

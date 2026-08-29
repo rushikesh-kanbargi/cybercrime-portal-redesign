@@ -145,7 +145,7 @@ export function FileUpload({
                 type="button"
                 onClick={() => removeFile(index)}
                 aria-label={removeFileLabel(file.name)}
-                className="shrink-0 rounded-sm p-1 text-muted-foreground hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                className="flex size-11 shrink-0 items-center justify-center rounded-sm text-muted-foreground hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
               >
                 <X className="size-4" aria-hidden="true" />
               </button>

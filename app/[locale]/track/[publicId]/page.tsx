@@ -18,6 +18,8 @@ import { Badge } from "@/components/ui/badge";
 import { OtpInput } from "@/components/auth/otp-input";
 import { StatusTimeline, type TimelineStatus } from "@/components/tracking/status-timeline";
 import { PageIcon } from "@/components/illustrations/page-icon";
+import { GuideFigure } from "@/components/illustrations/guide-figure";
+import { Float } from "@/components/motion/float";
 import {
   Info,
   ShieldCheck,
@@ -26,6 +28,7 @@ import {
   KeyRound,
   ClipboardList,
   CheckCircle2,
+  CircleCheck,
   FileText,
   type LucideIcon,
 } from "lucide-react";
@@ -101,6 +104,7 @@ export default function TrackCasePage({
   const t = useTranslations("track");
   const tErrors = useTranslations("errors");
   const tCommon = useTranslations("common");
+  const tLanding = useTranslations("landing");
   const [stage, setStage] = useState<Stage>({ name: "loading" });
   const [otp, setOtp] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -171,7 +175,8 @@ export default function TrackCasePage({
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-4 py-10">
+    <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-4 py-10 lg:grid lg:grid-cols-[1fr_360px] lg:items-start lg:gap-10">
+    <div className="flex w-full max-w-2xl flex-col gap-6 lg:mx-auto">
       <div className="flex items-center justify-between gap-4">
         <h1 className="animate-enter text-lg font-semibold text-foreground">
           {t("case.heading", { publicId })}
@@ -187,10 +192,17 @@ export default function TrackCasePage({
 
       {stage.name === "loading" ? (
         <Card>
-          <CardContent className="flex flex-col gap-3">
+          <CardContent className="flex flex-col gap-4">
+            <div className="flex items-center gap-3">
+              <Float distance={3} duration={2.6}>
+                <GuideFigure pose="search" className="w-12" />
+              </Float>
+              <p className="text-sm font-medium text-foreground">{t("case.loading")}</p>
+            </div>
             <Skeleton className="h-5 w-2/3" />
             <Skeleton className="h-4 w-full" />
             <Skeleton className="h-4 w-5/6" />
+            <Skeleton className="h-4 w-1/2" />
           </CardContent>
         </Card>
       ) : null}
@@ -225,7 +237,7 @@ export default function TrackCasePage({
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
             {stage.name === "need-verification" && !stage.demoCode ? (
-              <Button onClick={requestCode} type="button">
+              <Button onClick={requestCode} type="button" size="lg" className="min-h-11">
                 {t("case.sendCode")}
               </Button>
             ) : (
@@ -256,7 +268,7 @@ export default function TrackCasePage({
                       {error}
                     </p>
                   ) : null}
-                  <Button type="submit" disabled={otp.length !== 6 || stage.name === "verifying"}>
+                  <Button type="submit" size="lg" className="min-h-11" disabled={otp.length !== 6 || stage.name === "verifying"}>
                     {stage.name === "verifying" ? t("case.verifying") : t("case.verify")}
                   </Button>
                 </form>
@@ -557,6 +569,28 @@ export default function TrackCasePage({
           </Alert>
         </>
       ) : null}
+    </div>
+
+    <div className="hidden flex-col gap-4 lg:sticky lg:top-24 lg:flex">
+      <Float distance={5} duration={3.8}>
+        <GuideFigure pose="check" className="w-20" />
+      </Float>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">{tLanding("trustSection.title")}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ul className="flex flex-col gap-3">
+            {(tLanding.raw("trust") as Array<{ label: string }>).map((item) => (
+              <li key={item.label} className="flex items-start gap-2 text-sm text-foreground">
+                <CircleCheck className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
+                {item.label}
+              </li>
+            ))}
+          </ul>
+        </CardContent>
+      </Card>
+    </div>
     </div>
   );
 }

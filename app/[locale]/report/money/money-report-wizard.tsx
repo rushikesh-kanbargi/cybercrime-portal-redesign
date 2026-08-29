@@ -14,9 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   Info,
   Phone,
-  Copy,
   Download,
-  Check,
   ShieldCheck,
   MessageSquareText,
   FileCheck2,
@@ -24,8 +22,11 @@ import {
   Paperclip,
   ClipboardCheck,
   AlertTriangle,
+  CircleCheck,
 } from "lucide-react";
 import { PageIcon } from "@/components/illustrations/page-icon";
+import { GuideFigure } from "@/components/illustrations/guide-figure";
+import { Float } from "@/components/motion/float";
 import { cn } from "@/lib/utils";
 import { extractFacts, type ExtractedField } from "@/lib/extract";
 import { classifyFraud, FRAUD_SUBCATEGORIES, type FraudSubCategoryCode } from "@/lib/classify";
@@ -47,6 +48,8 @@ import {
 } from "@/components/report/suspect-fields";
 import { UpdatesOptIn } from "@/components/tracking/updates-optin";
 import { ConfirmationIllustration } from "@/components/illustrations/confirmation-illustration";
+import { CopyMorphIcon } from "@/components/motion/copy-morph-icon";
+import { WordProgressRing } from "@/components/motion/word-progress-ring";
 import {
   EVIDENCE_ACCEPT,
   EVIDENCE_MAX_FILES,
@@ -61,7 +64,7 @@ import {
 export const DRAFT_KEY = "cc-money-draft-v1";
 
 const selectClassName =
-  "h-8 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm dark:bg-input/30";
+  "h-11 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm dark:bg-input/30";
 
 type Step = "narrate" | "facts" | "contact" | "evidence" | "review" | "done";
 
@@ -164,6 +167,7 @@ interface SavedProfile {
 export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfile | null }) {
   const t = useTranslations("reportMoney");
   const tCommon = useTranslations("common");
+  const tLanding = useTranslations("landing");
   const locale = useLocale() as AppLocale;
   const dateLocale = locale === "hi" ? "hi-IN" : "en-IN";
   const router = useRouter();
@@ -654,7 +658,8 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
   };
 
   return (
-    <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-4 py-8">
+    <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-4 py-8 lg:grid lg:grid-cols-[1fr_320px] lg:items-start lg:gap-10">
+    <div className="flex w-full max-w-2xl flex-col gap-6 lg:mx-auto">
       {showResumeBanner && step === "narrate" && (
         <Alert>
           <Info />
@@ -663,10 +668,10 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
             <div className="flex flex-col gap-3">
               <p>{t("resumeBanner.body", { savedAt: resumeSavedAtLabel })}</p>
               <div className="flex gap-2">
-                <Button size="sm" onClick={resumeDraft}>
+                <Button size="sm" className="min-h-11" onClick={resumeDraft}>
                   {t("resumeBanner.continue")}
                 </Button>
-                <Button size="sm" variant="outline" onClick={startOver}>
+                <Button size="sm" className="min-h-11" variant="outline" onClick={startOver}>
                   {t("resumeBanner.startOver")}
                 </Button>
               </div>
@@ -700,6 +705,7 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
             <Button
               type="button"
               size="sm"
+                  className="min-h-11"
               variant="outline"
               onClick={handleSaveDraft}
               disabled={draftSaveStatus === "saving"}
@@ -731,6 +737,7 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
                     <Button
                       type="button"
                       size="sm"
+                  className="min-h-11"
                       variant="outline"
                       onClick={async () => {
                         try {
@@ -744,7 +751,7 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
                     >
                       {resumeCodeCopied ? tCommon("actions.copied") : tCommon("actions.copy")}
                     </Button>
-                    <Button type="button" size="sm" variant="ghost" onClick={() => setShowResumeCode(false)}>
+                    <Button type="button" size="sm" className="min-h-11" variant="ghost" onClick={() => setShowResumeCode(false)}>
                       {t("saveDraft.codeDismiss")}
                     </Button>
                   </div>
@@ -762,7 +769,7 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
           replace calling the bank, and someone mid-crisis shouldn't have to
           finish the whole flow before hearing that. */}
       {step === "narrate" && (
-        <Card className="animate-enter border-warning/25 bg-gradient-to-br from-warning/8 via-card to-card">
+        <Card className="animate-enter-calm border-warning/25 bg-gradient-to-br from-warning/8 via-card to-card">
           <CardHeader>
             <div className="mb-1">
               <PageIcon icon={AlertTriangle} className="bg-warning/15 text-warning-foreground" />
@@ -797,7 +804,7 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
       )}
 
       {step !== "done" && (
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-2 lg:hidden">
           <StepProgress steps={t.raw("progress.steps") as string[]} currentIndex={stepIndex} />
           <p className="text-sm text-muted-foreground" aria-live="polite">
             {remaining === 0 ? t("progress.lastQuestion") : t("progress.moreQuestions", { count: remaining })}
@@ -806,7 +813,7 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
       )}
 
       {step === "narrate" && (
-        <Card className="animate-enter border-primary/20 bg-gradient-to-br from-primary/8 via-card to-card">
+        <Card className="animate-enter-calm border-primary/20 bg-gradient-to-br from-primary/8 via-card to-card">
           <CardHeader>
             <div className="mb-1">
               <PageIcon icon={MessageSquareText} tone="primary" />
@@ -842,9 +849,12 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
                 ) : (
                   <span />
                 )}
-                <p id="narrative-count" className="text-xs text-muted-foreground">
-                  {t("narrate.narrativeCount", { count: draft.narrative.length, max: 5000 })}
-                </p>
+                <span className="flex items-center gap-2">
+                  <WordProgressRing text={draft.narrative} />
+                  <p id="narrative-count" className="text-xs text-muted-foreground">
+                    {t("narrate.narrativeCount", { count: draft.narrative.length, max: 5000 })}
+                  </p>
+                </span>
               </div>
             </div>
 
@@ -965,7 +975,7 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
                     </p>
                   )}
                   <div className="flex flex-wrap gap-2">
-                    <Button size="sm" onClick={confirmSuggestedCategory}>
+                    <Button size="sm" className="min-h-11" onClick={confirmSuggestedCategory}>
                       {t("facts.confirmYes")}
                     </Button>
                     <CategoryPicker onChoose={chooseCategory} t={t} categoryLabel={categoryLabel} />
@@ -981,6 +991,7 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
                   </p>
                   <Button
                     size="sm"
+                  className="min-h-11"
                     variant="outline"
                     onClick={() => setDraft((d) => ({ ...d, categoryConfirmed: false }))}
                   >
@@ -1026,7 +1037,7 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
                 <AlertDescription>
                   <div className="flex items-center justify-between gap-3">
                     <span>{t("contact.savedFromProfileBody")}</span>
-                    <Button size="sm" variant="ghost" onClick={dismissProfileAutofill}>
+                    <Button size="sm" className="min-h-11" variant="ghost" onClick={dismissProfileAutofill}>
                       {t("contact.savedFromProfileDismiss")}
                     </Button>
                   </div>
@@ -1290,11 +1301,11 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
                 {result.publicId}
               </p>
               <div className="flex flex-wrap gap-2">
-                <Button size="sm" variant="secondary" onClick={handleCopyId}>
-                  {copied ? <Check className="size-3.5" /> : <Copy className="size-3.5" />}
+                <Button size="sm" className="min-h-11" variant="secondary" onClick={handleCopyId}>
+                  <CopyMorphIcon copied={copied} />
                   {copied ? t("done.copied") : t("done.copy")}
                 </Button>
-                <Button size="sm" variant="secondary" onClick={handleDownloadId}>
+                <Button size="sm" className="min-h-11" variant="secondary" onClick={handleDownloadId}>
                   <Download className="size-3.5" />
                   {t("done.download")}
                 </Button>
@@ -1352,11 +1363,61 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
             demoCode={otpDemoCode}
           />
 
-          <Button variant="outline" className="min-h-11" onClick={() => router.push("/")}>
-            {t("done.backHome")}
-          </Button>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Button asChild size="lg" className="min-h-11">
+              <Link href={`/track/${result.publicId}`}>{t("done.trackButton")}</Link>
+            </Button>
+            <Button variant="outline" className="min-h-11" onClick={() => router.push("/")}>
+              {t("done.backHome")}
+            </Button>
+          </div>
         </div>
       )}
+    </div>
+
+    {step !== "done" && (
+      <div className="hidden flex-col gap-6 lg:sticky lg:top-24 lg:flex">
+        <div className="flex flex-col items-center gap-3 text-center">
+          <Float distance={step === "narrate" ? 3 : 5} duration={step === "narrate" ? 5.5 : 3.8}>
+            <GuideFigure pose="wave" className="w-24" />
+          </Float>
+          <StepProgress steps={t.raw("progress.steps") as string[]} currentIndex={stepIndex} />
+          <p className="text-sm text-muted-foreground" aria-live="off">
+            {remaining === 0 ? t("progress.lastQuestion") : t("progress.moreQuestions", { count: remaining })}
+          </p>
+        </div>
+
+        {step !== "narrate" && (
+          <Card className="border-warning/25 bg-gradient-to-br from-warning/8 via-card to-card">
+            <CardHeader>
+              <div className="mb-1">
+                <PageIcon icon={AlertTriangle} className="bg-warning/15 text-warning-foreground" />
+              </div>
+              <CardTitle className="text-base">{t("done.checklistTitle")}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ActionChecklist items={[t("done.checklist1"), t("done.checklist2"), t("done.checklist3")]} />
+            </CardContent>
+          </Card>
+        )}
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">{tLanding("trustSection.title")}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="flex flex-col gap-3">
+              {(tLanding.raw("trust") as Array<{ label: string }>).map((item) => (
+                <li key={item.label} className="flex items-start gap-2 text-sm text-foreground">
+                  <CircleCheck className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
+                  {item.label}
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      </div>
+    )}
     </div>
   );
 }
@@ -1382,7 +1443,7 @@ function CategoryPicker({
   const [open, setOpen] = React.useState(false);
   if (!open) {
     return (
-      <Button size="sm" variant="outline" onClick={() => setOpen(true)}>
+      <Button size="sm" className="min-h-11" variant="outline" onClick={() => setOpen(true)}>
         {t("facts.changeIt")}
       </Button>
     );

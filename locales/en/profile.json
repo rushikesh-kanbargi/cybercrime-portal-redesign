@@ -7,11 +7,19 @@
   "heroImageAlt": "A clean, minimal desk with a laptop and a small plant.",
   "signedOutTitle": "You're not signed in",
   "signedOutBody": "Complaints linked to an account show up here. File a report, then choose \"Want updates on this complaint?\" and verify your mobile number to link it, or track any complaint directly with its Complaint ID.",
+  "identity": {
+    "title": "Account details",
+    "description": "Name on record, verified through your sign-in. Same masked view shown when you signed in.",
+    "nameLabel": "Name on record",
+    "aadhaarLabel": "Aadhaar",
+    "mobileLabel": "Mobile",
+    "emailLabel": "Email"
+  },
   "complaints": {
     "title": "Your complaints",
     "description": "Complaints linked to your mobile number.",
     "row": "{category} · {status} · filed {date}",
-    "empty": "No complaints are linked to your account yet."
+    "empty": "No complaints are linked to your account yet. When you're ready, we're here."
   },
   "drafts": {
     "title": "Your drafts",
@@ -26,6 +34,21 @@
     "cancel": "Cancel",
     "loadError": "Couldn't open this draft. It may have expired."
   },
+  "extra": {
+    "title": "Alternate contact",
+    "description": "A second way to reach you if your registered mobile becomes unreachable. Optional.",
+    "mobileLabel": "Alternate mobile number",
+    "addressLabel": "Address line",
+    "mobilePlaceholder": "e.g. 9876543210",
+    "addressPlaceholder": "e.g. House no., street, locality",
+    "empty": "No alternate contact saved yet.",
+    "addButton": "Add alternate contact",
+    "editButton": "Edit",
+    "save": "Save",
+    "saving": "Saving…",
+    "cancel": "Cancel",
+    "mobileError": "That doesn't look like a valid mobile number."
+  },
   "saved": {
     "title": "Your saved details",
     "description": "State, district and PIN code, saved so your next report can pre-fill them. Nothing else is stored here.",
@@ -33,7 +56,7 @@
     "none": "not set",
     "empty": "You haven't saved any details yet.",
     "deleteButton": "Delete my saved details",
-    "deleteConfirm": "This removes your saved state, district and PIN code. Your filed complaints are not affected and stay exactly as they are.",
+    "deleteConfirm": "This removes your saved state, district, PIN code, and any alternate contact details. Your filed complaints are not affected and stay exactly as they are.",
     "deleteConfirmButton": "Yes, delete",
     "deleting": "Deleting…",
     "cancel": "Cancel",
