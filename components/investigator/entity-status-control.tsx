@@ -3,11 +3,9 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { FormSelect } from "@/components/ui/form-select";
 import { updateEntityStatus } from "@/lib/actions/entity-intelligence";
 import { ENTITY_STATUSES, ENTITY_STATUS_LABEL, type EntityStatus } from "@/lib/entity-status";
-
-const selectClassName =
-  "h-11 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm dark:bg-input/30";
 
 // P2 — Threat Reputation curation (ADR-012). Any-to-any transition, no
 // state-machine restriction — nothing in requirements/10-entity-
@@ -44,19 +42,13 @@ export function EntityStatusControl({ suspectIdentifierId, currentStatus }: { su
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center gap-2">
-        <select
-          className={selectClassName}
+        <FormSelect
           value={status}
           disabled={saving}
-          onChange={(e) => setStatus(e.target.value as EntityStatus)}
-          aria-label="Entity status"
-        >
-          {ENTITY_STATUSES.map((s) => (
-            <option key={s} value={s}>
-              {ENTITY_STATUS_LABEL[s]}
-            </option>
-          ))}
-        </select>
+          onValueChange={(v) => setStatus(v as EntityStatus)}
+          ariaLabel="Entity status"
+          options={ENTITY_STATUSES.map((s) => ({ value: s, label: ENTITY_STATUS_LABEL[s] }))}
+        />
         <Button type="button" size="sm" className="min-h-11" variant="outline" onClick={handleSave} disabled={saving || (status === currentStatus && !note.trim())}>
           {saving ? "Saving…" : "Save"}
         </Button>

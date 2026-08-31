@@ -3,6 +3,7 @@
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
+import { FormSelect } from "@/components/ui/form-select";
 
 // §17.3.3 — visible in persistent chrome on every screen, including
 // mid-form, and switches locale on the *same* path (never back to the
@@ -16,23 +17,18 @@ export function LanguageSwitcher() {
   const pathname = usePathname();
 
   return (
-    <label className="inline-flex items-center gap-1.5 text-sm">
+    <span className="inline-flex items-center gap-1.5 text-sm">
       <span className="sr-only">{t("label")}</span>
-      <select
-        aria-label={t("label")}
+      <FormSelect
+        ariaLabel={t("label")}
         value={locale}
-        onChange={(e) => {
-          const nextLocale = e.target.value as (typeof routing.locales)[number];
+        onValueChange={(v) => {
+          const nextLocale = v as (typeof routing.locales)[number];
           router.replace(pathname, { locale: nextLocale });
         }}
-        className="h-8 min-h-11 rounded-md border border-input bg-transparent px-2 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
-      >
-        {routing.locales.map((l) => (
-          <option key={l} value={l}>
-            {t(l)}
-          </option>
-        ))}
-      </select>
-    </label>
+        className="data-[size=default]:h-8 min-h-11 w-auto rounded-md px-2 text-sm"
+        options={routing.locales.map((l) => ({ value: l, label: t(l) }))}
+      />
+    </span>
   );
 }

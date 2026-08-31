@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { FormSelect } from "@/components/ui/form-select";
 import {
   assignCase,
   changeCaseStatus,
@@ -12,9 +13,6 @@ import {
   addCaseNote,
   type CaseStatus,
 } from "@/lib/actions/case-management";
-
-const selectClassName =
-  "h-11 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm dark:bg-input/30";
 
 const STATUS_OPTIONS: Array<{ value: CaseStatus; label: string }> = [
   { value: "received", label: "Received" },
@@ -95,18 +93,12 @@ export function AssignToInvestigatorForm({
     <form onSubmit={handleSubmit} className="flex flex-col gap-2">
       <Label htmlFor="assign-investigator">Assign to a specific investigator</Label>
       <div className="flex gap-2">
-        <select
+        <FormSelect
           id="assign-investigator"
-          className={selectClassName}
           value={targetId}
-          onChange={(e) => setTargetId(e.target.value)}
-        >
-          {investigators.map((inv) => (
-            <option key={inv.id} value={inv.id}>
-              {inv.displayName}
-            </option>
-          ))}
-        </select>
+          onValueChange={setTargetId}
+          options={investigators.map((inv) => ({ value: inv.id, label: inv.displayName }))}
+        />
         <Button type="submit" size="sm" className="min-h-11" variant="outline" disabled={busy || targetId === currentAssigneeId}>
           {busy ? "Assigning…" : "Assign"}
         </Button>
@@ -142,18 +134,12 @@ export function StatusChangeForm({ publicId, currentStatus }: { publicId: string
     <form onSubmit={handleSubmit} className="flex flex-col gap-2">
       <Label htmlFor="case-status">Change status</Label>
       <div className="flex gap-2">
-        <select
+        <FormSelect
           id="case-status"
-          className={selectClassName}
           value={status}
-          onChange={(e) => setStatus(e.target.value as CaseStatus)}
-        >
-          {STATUS_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
+          onValueChange={(v) => setStatus(v as CaseStatus)}
+          options={STATUS_OPTIONS}
+        />
         <Button type="submit" size="sm" className="min-h-11" disabled={busy || status === currentStatus}>
           {busy ? "Saving…" : "Save"}
         </Button>

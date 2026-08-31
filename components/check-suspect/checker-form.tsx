@@ -9,12 +9,10 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { FormSelect } from "@/components/ui/form-select";
 import { ShieldCheck, Info, AlertTriangle, ShieldAlert, ArrowRight } from "lucide-react";
 import { SUSPECT_IDENTIFIER_TYPES, type SuspectIdentifierType } from "@/lib/types";
 import type { SuspectCheckTier } from "@/lib/suspect-identifier";
-
-const selectClassName =
-  "h-11 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm dark:bg-input/30";
 
 interface CheckResult {
   tier: SuspectCheckTier;
@@ -104,22 +102,19 @@ export function CheckerForm() {
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="check-type">{t("typeLabel")}</Label>
-              <select
+              <FormSelect
                 id="check-type"
-                className={selectClassName}
                 value={type}
-                onChange={(e) => {
-                  setType(e.target.value as SuspectIdentifierType);
+                onValueChange={(v) => {
+                  setType(v as SuspectIdentifierType);
                   setResult(null);
                   setError(null);
                 }}
-              >
-                {SUSPECT_IDENTIFIER_TYPES.map((identifierType) => (
-                  <option key={identifierType} value={identifierType}>
-                    {t(`types.${identifierType}`)}
-                  </option>
-                ))}
-              </select>
+                options={SUSPECT_IDENTIFIER_TYPES.map((identifierType) => ({
+                  value: identifierType,
+                  label: t(`types.${identifierType}`),
+                }))}
+              />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="check-value">{t("valueLabel")}</Label>

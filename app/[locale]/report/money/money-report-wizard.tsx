@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
+import { FormSelect } from "@/components/ui/form-select";
 import {
   Info,
   Phone,
@@ -27,7 +28,6 @@ import {
 import { PageIcon } from "@/components/illustrations/page-icon";
 import { GuideFigure } from "@/components/illustrations/guide-figure";
 import { Float } from "@/components/motion/float";
-import { cn } from "@/lib/utils";
 import { extractFacts, type ExtractedField } from "@/lib/extract";
 import { classifyFraud, FRAUD_SUBCATEGORIES, type FraudSubCategoryCode } from "@/lib/classify";
 import { INDIAN_STATES } from "@/lib/india-states";
@@ -62,9 +62,6 @@ import {
 // this wizard already reads on mount — reusing the existing resume-banner
 // UI below rather than building a second one.
 export const DRAFT_KEY = "cc-money-draft-v1";
-
-const selectClassName =
-  "h-11 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 md:text-sm dark:bg-input/30";
 
 type Step = "narrate" | "facts" | "contact" | "evidence" | "review" | "done";
 
@@ -1046,20 +1043,14 @@ export function MoneyReportWizard({ savedProfile }: { savedProfile?: SavedProfil
             )}
             <div className="flex flex-col gap-2">
               <Label htmlFor="state">{t("contact.stateLabel")}</Label>
-              <select
+              <FormSelect
                 id="state"
-                className={selectClassName}
                 value={draft.state}
-                onChange={(e) => setDraft((d) => ({ ...d, state: e.target.value }))}
-                aria-invalid={!!errors.state}
-              >
-                <option value="">{t("contact.statePlaceholder")}</option>
-                {INDIAN_STATES.map((s) => (
-                  <option key={s} value={s}>
-                    {t(`states.${s}`)}
-                  </option>
-                ))}
-              </select>
+                onValueChange={(v) => setDraft((d) => ({ ...d, state: v }))}
+                ariaInvalid={!!errors.state}
+                placeholder={t("contact.statePlaceholder")}
+                options={INDIAN_STATES.map((s) => ({ value: s, label: t(`states.${s}`) }))}
+              />
               {errors.state && <p className="text-sm text-destructive">{errors.state}</p>}
             </div>
 
@@ -1450,22 +1441,13 @@ function CategoryPicker({
   }
   return (
     <div className="flex items-center gap-2">
-      <select
-        className={cn(selectClassName, "w-auto")}
-        defaultValue=""
-        onChange={(e) => {
-          if (e.target.value) onChoose(e.target.value as FraudSubCategoryCode);
-        }}
-      >
-        <option value="" disabled>
-          {t("facts.choosePrompt")}
-        </option>
-        {FRAUD_SUBCATEGORIES.map((s) => (
-          <option key={s.code} value={s.code}>
-            {categoryLabel(s.code)}
-          </option>
-        ))}
-      </select>
+      <FormSelect
+        className="w-auto"
+        value=""
+        onValueChange={(v) => onChoose(v as FraudSubCategoryCode)}
+        placeholder={t("facts.choosePrompt")}
+        options={FRAUD_SUBCATEGORIES.map((s) => ({ value: s.code, label: categoryLabel(s.code) }))}
+      />
       <Badge variant="secondary">{t("facts.yourChoice")}</Badge>
 
     </div>
