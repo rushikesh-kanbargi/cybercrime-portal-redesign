@@ -61,6 +61,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : "http://localhost:3000",
+  ),
   title: "Cybercrime Report & Tracking",
   description:
     "A calmer, faster way to report cybercrime and track a complaint. Hackathon prototype, not an official government service.",
